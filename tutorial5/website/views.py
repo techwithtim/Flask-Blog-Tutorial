@@ -42,6 +42,8 @@ def delete_post(id):
     elif current_user.id != post.id:
         flash('You do not have permission to delete this post.', category='error')
     else:
+        for comment in post.comments:
+            db.session.delete(comment)
         db.session.delete(post)
         db.session.commit()
         flash('Post deleted.', category='success')
