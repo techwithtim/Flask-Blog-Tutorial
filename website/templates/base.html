@@ -31,6 +31,7 @@
           <div class="navbar-nav">
             <a class="nav-item nav-link" href="/home">Home</a>
             {% if user.is_authenticated %}
+            <a class="nav-item nav-link" href="/cpap">CPAP Supplies</a>
             <a class="nav-item nav-link" href="/logout">Logout</a>
             {% else %}
             <a class="nav-item nav-link" href="/login">Login</a>

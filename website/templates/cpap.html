@@ -1,0 +1,6 @@
+{% extends "base.html" %} {% block title %}CPAP Supplies{% endblock %}
+{% block content %}
+{% for supply in supplies %}
+    {{supply}}<br>
+{% endfor%}
+{% endblock %}
