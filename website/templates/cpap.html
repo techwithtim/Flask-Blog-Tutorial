@@ -1,6 +1,27 @@
-{% extends "base.html" %} {% block title %}CPAP Supplies{% endblock %}
+{% extends "base.html" %}
+{% block title %}
+    CPAP Supplies
+{% endblock %}
+
 {% block content %}
+<br>
 {% for supply in supplies %}
-    {{supply}}<br>
+<div class="card mb-3 border-dark" style="max-width: 540px;">
+    <div class="row g-0">
+        <div class="col-md-4">
+            <img src={{supply[5]}} class="img-fluid rounded-start"><br />
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <h5 class="card-title">{{supply[1]}}<br>({{supply[2]}})</h5>
+                <p class="card-text">
+                    How Often to Reorder: every {{supply[3]}} days<br>
+                    When To Reorder: {{supply[6]}}</p>
+                <p class="card-text"><small class="text-muted">Last Ordered: {{supply[4]}} </small></p>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
 {% endfor%}
 {% endblock %}
