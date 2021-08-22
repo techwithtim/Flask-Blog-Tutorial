@@ -1,16 +1,19 @@
-{% extends "base.html" %} 
+{% extends "menu-div.html" %}
+
 {% block title %}
-    Guill Menu
+Guill Menu
 {% endblock %}
-{% block content %}
-<h1 class="display-1 text-center" >Guill Menu</h1>
 
+{% block header %}
+<h1 class="display-1 text-center">Guill Menu</h1>
+<h4 class="display-4 text-center">Planner</h4>
+{% endblock %}
 
-
+{% block menu %}
 <input class="form-control" list="datalistOptions" id="exampleDataList" placeholder="Type to search...">
 <datalist id="datalistOptions">
     {% for item in menu %}
-        <option value = "{{item['name']}}">
-    {% endfor %}
+    <option value="{{item}}">
+        {% endfor %}
 </datalist>
 {% endblock %}

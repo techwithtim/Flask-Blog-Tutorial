@@ -1,4 +1,6 @@
 import requests, json
+from . import db
+from .models import Dish
 
 
 def auth(auth_name):
@@ -40,16 +42,23 @@ def get_menu():
     with open("menu.json",'w') as file:
         file.write(json.dumps(jsonResponse))
     
-    menu = []
+    # menu = []
     for i in range(len(jsonResponse['results'])):
         id = jsonResponse['results'][i]['id']
         name = jsonResponse['results'][i]['properties']['Name']['title'][0]['text']['content']
-        littlemenu = {}
-        littlemenu['id'] = id
-        littlemenu['name'] = name
-        menu.append(littlemenu)
+        # littlemenu = {}
+        # littlemenu['id'] = id
+        # littlemenu['name'] = name
+        # menu.append(littlemenu)
+        
+        if Dish.query.filter_by(notionID=id).first():
+            pass
+        else:
+            item = Dish(notionID=id, item=name)
+            db.session.add(item)
+            db.session.commit()
     
-    return menu
+    # return menu
 
 def get_meals():
     pass

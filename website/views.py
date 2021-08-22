@@ -1,9 +1,11 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
 from flask_login import login_required, current_user
-from .models import User
+from .models import Dish, User, Recipe
 from .notion import get_supplies, get_menu
 from datetime import datetime
 from datetime import timedelta
+from . import db
+from sqlalchemy import func
 
 views = Blueprint("views", __name__)
 
@@ -35,7 +37,27 @@ def cpap():
 @views.route("/menu")
 @login_required
 def menu():
-    menu = get_menu()
-    # for item in menu:
-    #         print (item['name'])
-    return render_template("menu.html", user=User, menu=menu)
+    menu = Dish.query.all()
+    maxdate = datetime.today().date()
+
+    menulist = []
+    for menu in menu:
+        menulist.append(menu.item)
+        date = menu.date_created.date()
+        if date > maxdate:
+            maxdate = date
+    if maxdate + timedelta(days=1) < datetime.now().date():
+        get_menu()
+        menu = Dish.query.all()
+    menulist.sort()
+    return render_template("menu.html", user=User, menu=menulist)
+
+@views.route("/menu/recipe")
+@login_required
+def ingredients():
+    return render_template("recipe.html", user=User)
+
+@views.route("/menu/dishes")
+@login_required
+def dishes():
+    return render_template("dishes.html", user=User)

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}
+Guill Menu
+{% endblock %}
+{% block content %}
+{% block header %}
+
+{% endblock %}
+<div class="container">
+    <div class="row">
+        <div class="col-2">
+            <!-- <div class="btn-group-vertical"> -->
+                <div class="btn-group btn-group-vertical" role="group" aria-label="Button group with nested dropdown">
+                    <button type="button" class="btn btn-outline-primary">1</button>
+                    <button type="button" class="btn btn-outline-primary">2</button>
+
+                    <div class="btn-group" role="group">
+                        <button id="btnGroupDrop1" type="button" class="btn btn-outline-primary dropdown-toggle"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Dropdown
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                            <li><a class="dropdown-item" href="#">Dropdown link</a></li>
+                            <li><a class="dropdown-item" href="#">Dropdown link</a></li>
+                        </ul>
+                    </div>
+                </div>
+            <!-- </div> -->
+        </div>
+        <div class="col-10">
+            {% block menu %}
+            {% endblock%}
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
