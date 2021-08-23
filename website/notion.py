@@ -54,7 +54,7 @@ def get_menu():
         if Dish.query.filter_by(notionID=id).first():
             pass
         else:
-            item = Dish(notionID=id, item=name)
+            item = Dish(notionID=id, name=name)
             db.session.add(item)
             db.session.commit()
     

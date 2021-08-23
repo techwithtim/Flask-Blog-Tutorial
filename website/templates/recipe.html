@@ -6,9 +6,45 @@ Guill Menu
 
 {% block header %}
 <h1 class="display-1 text-center">Guill Menu</h1>
-<h4 class="display-4 text-center">Recipes</h4>
+<h4 class="display-4 text-center">Recipe for DISH</h4>
 {% endblock %}
 
 {% block menu %}
-
+<form method="POST">
+    <div class="form-group">
+      <label for="qty">Qty</label>
+      <input
+        type="text"
+        id="qty"
+        name="qty"
+        class="form-control"
+        placeholder="Enter Qty"
+      />
+      <label for="measurement">Measurement</label>
+      <input
+        type="text"
+        id="measurement"
+        name="measurement"
+        class="form-control"
+        placeholder="Enter Measurement"
+      />
+      <label for="ing">Ing</label>
+      <input
+        type="text"
+        id="ing"
+        name="ing"
+        class="form-control"
+        placeholder="Enter Ing"
+      />
+      <label for="notes">Notes</label>
+      <input
+        type="text"
+        id="notes"
+        name="notes"
+        class="form-control"
+        placeholder="Enter Notes"
+      />
+      <div align="center">
+        <button class="btn btn-primary" type="submit">Save</button>
+      </div>
 {% endblock %}

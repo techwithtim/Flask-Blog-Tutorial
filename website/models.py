@@ -1,4 +1,4 @@
-from enum import unique
+from enum import IntFlag, unique
 from . import db
 from flask_login import UserMixin
 from sqlalchemy.sql import func
@@ -21,4 +21,8 @@ class Dish(db.Model):
 
 class Recipe(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    qty = db.Column(db.String(10))
+    measurement = db.Column(db.String(50))
+    ing = db.Column(db.String(150))
+    notes = db.Column(db.String(250), nullable=True)
     date_created = db.Column(db.DateTime(timezone=True), default=func.now())

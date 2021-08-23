@@ -1,38 +1,36 @@
 {% extends "base.html" %}
+
+{% block submenu %}
+<div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+    <a href="/menu"><button type="button" class="btn">Menu</button></a>
+    <a href="/menu/dishes"><button type="button" class="btn">Dishes</button></a>
+
+    <div class="btn-group" role="group">
+        <button id="btnGroupDrop1" type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown"
+            aria-expanded="false">
+            Dropdown
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+            <li><a class="dropdown-item" href="#">Dropdown link</a></li>
+            <li><a class="dropdown-item" href="#">Dropdown link</a></li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
 {% block title %}
 Guill Menu
 {% endblock %}
+
 {% block content %}
 {% block header %}
 
 {% endblock %}
-<div class="container">
-    <div class="row">
-        <div class="col-2">
-            <!-- <div class="btn-group-vertical"> -->
-                <div class="btn-group btn-group-vertical" role="group" aria-label="Button group with nested dropdown">
-                    <button type="button" class="btn btn-outline-primary">1</button>
-                    <button type="button" class="btn btn-outline-primary">2</button>
 
-                    <div class="btn-group" role="group">
-                        <button id="btnGroupDrop1" type="button" class="btn btn-outline-primary dropdown-toggle"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            Dropdown
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                            <li><a class="dropdown-item" href="#">Dropdown link</a></li>
-                            <li><a class="dropdown-item" href="#">Dropdown link</a></li>
-                        </ul>
-                    </div>
-                </div>
-            <!-- </div> -->
-        </div>
-        <div class="col-10">
-            {% block menu %}
-            {% endblock%}
-        </div>
-    </div>
-</div>
+{% block menu %}
+{% endblock%}
+
+
 
 
 {% endblock %}

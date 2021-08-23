@@ -42,7 +42,7 @@ def menu():
 
     menulist = []
     for menu in menu:
-        menulist.append(menu.item)
+        menulist.append(menu.name)
         date = menu.date_created.date()
         if date > maxdate:
             maxdate = date
@@ -50,11 +50,23 @@ def menu():
         get_menu()
         menu = Dish.query.all()
     menulist.sort()
+    # get_menu()
     return render_template("menu.html", user=User, menu=menulist)
 
-@views.route("/menu/recipe")
+@views.route("/menu/recipe", methods=['GET', 'POST'])
 @login_required
-def ingredients():
+def recipe():
+    if request.method == "POST":
+        qty = request.form.get("qty")
+        measurement = request.form.get("measurement")
+        ing = request.form.get("ing")
+        notes = request.form.get("notes")
+        
+        item = Recipe(qty=qty, measurement=measurement, ing=ing, notes=notes)
+        db.session.add(item)
+        db.session.commit()
+        flash('Recipe created!', category='success')
+        
     return render_template("recipe.html", user=User)
 
 @views.route("/menu/dishes")
