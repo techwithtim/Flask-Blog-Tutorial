@@ -6,8 +6,29 @@ from datetime import datetime
 from datetime import timedelta
 from . import db
 from sqlalchemy import func
+import inflect
+
 
 views = Blueprint("views", __name__)
+
+    
+def printnumber(numberoftimes):
+    n2w = inflect.engine()
+    number = n2w.number_to_words(numberoftimes).title().replace("-","")
+    return number
+        
+    
+def get_dishes():
+    dishes = Dish.query.all()
+    count = 1
+    dishlist = []
+    for dish in dishes:
+        id = printnumber(count)
+        littlelist = [id, dish.name]
+        dishlist.append(littlelist)
+        count += 1
+    dishlist.sort(key=lambda x: x[1])
+    return dishlist
 
 
 @views.route("/")
@@ -37,21 +58,8 @@ def cpap():
 @views.route("/menu")
 @login_required
 def menu():
-    menu = Dish.query.all()
-    maxdate = datetime.today().date()
-
-    menulist = []
-    for menu in menu:
-        menulist.append(menu.name)
-        date = menu.date_created.date()
-        if date > maxdate:
-            maxdate = date
-    if maxdate + timedelta(days=1) < datetime.now().date():
-        get_menu()
-        menu = Dish.query.all()
-    menulist.sort()
-    # get_menu()
-    return render_template("menu.html", user=User, menu=menulist)
+    
+    return render_template("menu.html", user=User)
 
 @views.route("/menu/recipe", methods=['GET', 'POST'])
 @login_required
@@ -66,10 +74,12 @@ def recipe():
         db.session.add(item)
         db.session.commit()
         flash('Recipe created!', category='success')
-        
-    return render_template("recipe.html", user=User)
+    else:
+        dishlist = get_dishes()
+    return render_template("recipe.html", user=User, dishes=dishlist)
 
 @views.route("/menu/dishes")
 @login_required
 def dishes():
-    return render_template("dishes.html", user=User)
+    dishlist = get_dishes()
+    return render_template("dishes.html", user=User, dishes=dishlist)
