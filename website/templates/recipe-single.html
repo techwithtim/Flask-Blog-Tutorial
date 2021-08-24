@@ -1,0 +1,392 @@
+{% extends "menu-div.html" %}
+
+{% block style %}
+<style>
+  @charset "UTF-8";
+
+  .image {
+    width: 250px;
+    float: left;
+    margin: 20px;
+  }
+
+  body {
+    font-size: small;
+    line-height: 1.4;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  .performance-facts {
+    border: 1px solid black;
+    margin: 20px;
+    float: left;
+    width: 290px;
+    /* padding: 0.5rem; */
+  }
+
+  .performance-facts table {
+    border-collapse: collapse;
+  }
+
+  .performance-facts__title {
+    font-weight: bold;
+    font-size: 2rem;
+    margin: 0 0 0.25rem 0;
+  }
+
+  .performance-facts__header {
+    border-bottom: 10px solid black;
+    padding: 0 0 0.25rem 0;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .performance-facts__header p {
+    margin: 0;
+  }
+
+  .performance-facts__table,
+  .performance-facts__table--grid,
+  .performance-facts__table--small {
+    width: 100%;
+  }
+
+  .performance-facts__table thead tr th,
+  .performance-facts__table--grid thead tr th,
+  .performance-facts__table--small thead tr th,
+  .performance-facts__table thead tr td,
+  .performance-facts__table--grid thead tr td,
+  .performance-facts__table--small thead tr td {
+    border: 0;
+  }
+
+  .performance-facts__table th,
+  .performance-facts__table--grid th,
+  .performance-facts__table--small th,
+  .performance-facts__table td,
+  .performance-facts__table--grid td,
+  .performance-facts__table--small td {
+    font-weight: normal;
+    text-align: left;
+    /* padding: 0.25rem 0; */
+    border-top: 1px solid black;
+    white-space: nowrap;
+  }
+
+  .performance-facts__table td:last-child,
+  .performance-facts__table--grid td:last-child,
+  .performance-facts__table--small td:last-child {
+    text-align: right;
+  }
+
+  .performance-facts__table .blank-cell,
+  .performance-facts__table--grid .blank-cell,
+  .performance-facts__table--small .blank-cell {
+    width: 1rem;
+    border-top: 0;
+  }
+
+  .performance-facts__table .thick-row th,
+  .performance-facts__table--grid .thick-row th,
+  .performance-facts__table--small .thick-row th,
+  .performance-facts__table .thick-row td,
+  .performance-facts__table--grid .thick-row td,
+  .performance-facts__table--small .thick-row td {
+    border-top-width: 5px;
+  }
+
+  .small-info {
+    font-size: 0.7rem;
+  }
+
+  .performance-facts__table--small {
+    border-bottom: 1px solid #999;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .performance-facts__table--small thead tr {
+    border-bottom: 1px solid black;
+  }
+
+  .performance-facts__table--small td:last-child {
+    text-align: left;
+  }
+
+  .performance-facts__table--small th,
+  .performance-facts__table--small td {
+    border: 0;
+    padding: 0;
+  }
+
+  .performance-facts__table--grid {
+    margin: 0 0 0.5rem 0;
+  }
+
+  .performance-facts__table--grid td:last-child {
+    text-align: left;
+  }
+
+  .performance-facts__table--grid td:last-child::before {
+    content: "•";
+    font-weight: bold;
+    margin: 0 0.25rem 0 0;
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .thick-end {
+    border-bottom: 10px solid black;
+  }
+
+  .thin-end {
+    border-bottom: 1px solid black;
+  }
+</style>>
+{% endblock %}
+
+
+{% block title %}
+Guill Menu - Recipe for {{dish.name}}
+{% endblock %}
+
+{% block header %}
+<h4 class="display-4 text-center">{{dish.name}}</h4>
+{% endblock %}
+
+{% block menu %}
+<div class="container">
+  <div class="row">
+    <div class="col-3">
+      <img src={{dish.pictureURL}} class="img-thumbnail">
+      <form action="/menu/recipe/{{dish.id}}" method="POST">
+      <input type="text" class="form-control" value="{{dish.pictureURL}}">
+      <button class="btn btn-primary" type="submit">Save URL</button>
+      </form>
+    </div>
+    <div class="col-5">
+      <div style="float: left">
+        <h6 class="display-6 text-left">Recipe</h6>
+      </div>
+      <div style="float: right">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addIng">
+          Add
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="addIng" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Ingredient to {{dish.name}}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <!-- TODO: make a button or popover to add a new ing to list.  code for form is below -->
+                <form action="/menu/recipe/{{dish.id}}" method="POST">
+                <div class="form-group">
+                  <label for="qty">Qty</label>
+                  <input type="text" id="qty" name="qty" class="form-control" placeholder="Enter Qty" />
+                  <label for="measurement">Measurement</label>
+                  <input type="text" id="measurement" name="measurement" class="form-control"
+                    placeholder="Enter Measurement" />
+                  <label for="ing">Ing</label>
+                  <input type="text" id="ing" name="ing" class="form-control" placeholder="Enter Ing" />
+                  <label for="notes">Notes</label>
+                  <input type="text" id="notes" name="notes" class="form-control" placeholder="Enter Notes" />
+                  <input type="hidden" id="dishid" name="dishid" calss="form-control" value="{{dish.id}}" />
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-primary" type="submit">Save changes</button>
+              </div>
+            </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <table class="table">
+        <tbody>
+          {% for recipe in recipes %}
+          <tr>
+            <td>{{recipe.qty}}</td>
+            <td>{{recipe.measurement}}</td>
+            <td>{{recipe.ing}}</td>
+            <td>{{recipe.notes}}</td>
+            <td><a href="/deletingIng/{{recipe.id}}/{{dish.id}}" class="btn btn-outline-danger btn-sm" tabindex="-1"  role="button">X</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col-3" id="Nutrition Information">
+      <!-- <img src="https://s.cdpn.io/3/NutritionFacts.gif" class="image"> -->
+      <section class="performance-facts">
+        <header class="performance-facts__header">
+          <h1 class="performance-facts__title">Nutrition Facts</h1>
+          <p>Serving Size 1/2 cup (about 82g)
+            <p>Serving Per Container 8</p>
+        </header>
+        <table class="performance-facts__table">
+          <thead>
+            <tr>
+              <th colspan="3" class="small-info">
+                Amount Per Serving
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th colspan="2">
+                <b>Calories</b>
+                200
+              </th>
+              <td>
+                Calories from Fat
+                130
+              </td>
+            </tr>
+            <tr class="thick-row">
+              <td colspan="3" class="small-info">
+                <b>% Daily Value*</b>
+              </td>
+            </tr>
+            <tr>
+              <th colspan="2">
+                <b>Total Fat</b>
+                14g
+              </th>
+              <td>
+                <b>22%</b>
+              </td>
+            </tr>
+            <tr>
+              <td class="blank-cell">
+              </td>
+              <th>
+                Saturated Fat
+                9g
+              </th>
+              <td>
+                <b>22%</b>
+              </td>
+            </tr>
+            <tr>
+              <td class="blank-cell">
+              </td>
+              <th>
+                Trans Fat
+                0g
+              </th>
+              <td>
+              </td>
+            </tr>
+            <tr>
+              <th colspan="2">
+                <b>Cholesterol</b>
+                55mg
+              </th>
+              <td>
+                <b>18%</b>
+              </td>
+            </tr>
+            <tr>
+              <th colspan="2">
+                <b>Sodium</b>
+                40mg
+              </th>
+              <td>
+                <b>2%</b>
+              </td>
+            </tr>
+            <tr>
+              <th colspan="2">
+                <b>Potassium</b>
+                100mg
+              </th>
+              <td>
+                <b>1%</b>
+              </td>
+            </tr>
+            <tr>
+              <th colspan="2">
+                <b>Total Carbohydrate</b>
+                17g
+              </th>
+              <td>
+                <b>6%</b>
+              </td>
+            </tr>
+            <tr>
+              <td class="blank-cell">
+              </td>
+              <th>
+                Dietary Fiber
+                1g
+              </th>
+              <td>
+                <b>4%</b>
+              </td>
+            </tr>
+            <tr>
+              <td class="blank-cell">
+              </td>
+              <th>
+                Sugars
+                14g
+              </th>
+              <td>
+              </td>
+            </tr>
+            <tr class="thick-end">
+              <th colspan="2">
+                <b>Protein</b>
+                3g
+              </th>
+              <td>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="performance-facts__table--grid">
+          <tbody>
+            <tr>
+              <td colspan="2">
+                Vitamin A
+                10%
+              </td>
+              <td>
+                Vitamin C
+                0%
+              </td>
+            </tr>
+            <tr class="thin-end">
+              <td colspan="2">
+                Calcium
+                10%
+              </td>
+              <td>
+                Iron
+                6%
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      Steps
+    </div>
+  </div>
+</div>
+{% endblock %}
