@@ -145,7 +145,7 @@
   .thin-end {
     border-bottom: 1px solid black;
   }
-</style>>
+</style>
 {% endblock %}
 
 
@@ -162,9 +162,9 @@ Guill Menu - Recipe for {{dish.name}}
   <div class="row">
     <div class="col-3">
       <img src={{dish.pictureURL}} class="img-thumbnail">
-      <form action="/menu/recipe/{{dish.id}}" method="POST">
-      <input type="text" class="form-control" value="{{dish.pictureURL}}">
-      <button class="btn btn-primary" type="submit">Save URL</button>
+      <form action="/menu/recipe/{{dish.id}}/update" method="POST">
+        <input type="text" name="picurl" class="form-control" value="{{dish.pictureURL}}">
+        <button class="btn btn-primary" type="submit">Save URL</button>
       </form>
     </div>
     <div class="col-5">
@@ -186,51 +186,118 @@ Guill Menu - Recipe for {{dish.name}}
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                <!-- TODO: make a button or popover to add a new ing to list.  code for form is below -->
                 <form action="/menu/recipe/{{dish.id}}" method="POST">
-                <div class="form-group">
-                  <label for="qty">Qty</label>
-                  <input type="text" id="qty" name="qty" class="form-control" placeholder="Enter Qty" />
-                  <label for="measurement">Measurement</label>
-                  <input type="text" id="measurement" name="measurement" class="form-control"
-                    placeholder="Enter Measurement" />
-                  <label for="ing">Ing</label>
-                  <input type="text" id="ing" name="ing" class="form-control" placeholder="Enter Ing" />
-                  <label for="notes">Notes</label>
-                  <input type="text" id="notes" name="notes" class="form-control" placeholder="Enter Notes" />
-                  <input type="hidden" id="dishid" name="dishid" calss="form-control" value="{{dish.id}}" />
-                </div>
+                  <div class="form-group">
+                    <label for="qty">Qty</label>
+                    <input type="text" id="qty" name="qty" class="form-control" placeholder="Enter Qty" />
+                    <label for="measurement">Measurement</label>
+                    <input type="text" id="measurement" name="measurement" class="form-control"
+                      placeholder="Enter Measurement" />
+                    <label for="ing">Ing</label>
+                    <input type="text" id="ing" name="ing" class="form-control" placeholder="Enter Ing" />
+                    <label for="notes">Notes</label>
+                    <input type="text" id="notes" name="notes" class="form-control" placeholder="Enter Notes" />
+                    <input type="hidden" id="dishid" name="dishid" class="form-control" value="{{dish.id}}" />
+                  </div>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button class="btn btn-primary" type="submit">Save changes</button>
+                <button class="btn btn-primary" name="ing_modal" id="ing_modal" type="submit">Save changes</button>
               </div>
-            </form>
+              </form>
             </div>
           </div>
         </div>
       </div>
       <table class="table">
+        <thead>
+          <tr>
+            <td></td>
+            <td>Qty</td>
+            <td>Measurement</td>
+            <td>Ing</td>
+            <td>Notes</td>
+          </tr>
+        </thead>
         <tbody>
           {% for recipe in recipes %}
           <tr>
+            <td><img class="img-thumbnail" src="{{recipe.pictureURL}}" width="40" height="40"></td>
             <td>{{recipe.qty}}</td>
             <td>{{recipe.measurement}}</td>
             <td>{{recipe.ing}}</td>
             <td>{{recipe.notes}}</td>
-            <td><a href="/deletingIng/{{recipe.id}}/{{dish.id}}" class="btn btn-outline-danger btn-sm" tabindex="-1"  role="button">X</a></td>
+            <td><a href="/deletingIng/{{recipe.id}}/{{dish.id}}" class="btn btn-outline-danger btn-sm" tabindex="-1"
+                role="button">X</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <br>
+      <!-- Steps Header and Button -->
+      <div style="float: left">
+        <h6 class="display-6 text-left">Steps</h6>
+      </div>
+      <div style="float: right">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStep">
+          Add
+        </button>
+      </div>
+
+      <!-- Steps Modal -->
+      <div class="modal fade" id="addStep" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Add Steps to {{dish.name}}</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form action="/menu/recipe/{{dish.id}}" method="POST">
+                <div class="form-group">
+                  <label for="stepdesc">Step Description</label>
+                  <textarea id="stepdesc" name="stepdesc" class="form-control" placeholder="Enter Step Description"
+                    rows="4" cols="33"></textarea>
+
+                  <input type="hidden" id="dishid" name="dishid" calss="form-control" value="{{dish.id}}" />
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button class="btn btn-primary" name="step_modal" id="step_modal" type="submit">Save changes</button>
+            </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <td style="width: 10%">Number</td>
+            <td style="max-width: 10%">Step</td>
+            <td style="width: 10%">Delete</td>
+          </tr>
+        </thead>
+        <tbody>
+          {% for step in steps %}
+          <tr>
+            <th scope="row">{{step.step_num}}</td>
+            <td>{{step.step_text}}</td>
+            <td><a href="/deletingStep/{{step.id}}/{{dish.id}}" class="btn btn-outline-danger btn-sm" tabindex="-1"
+                role="button">X</a></td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
-
     <div class="col-3" id="Nutrition Information">
       <!-- <img src="https://s.cdpn.io/3/NutritionFacts.gif" class="image"> -->
       <section class="performance-facts">
         <header class="performance-facts__header">
           <h1 class="performance-facts__title">Nutrition Facts</h1>
-          <p>Serving Size 1/2 cup (about 82g)
+          <p>Serving Size FIX THIS (about FIX THIS)
             <p>Serving Per Container 8</p>
         </header>
         <table class="performance-facts__table">
@@ -245,11 +312,11 @@ Guill Menu - Recipe for {{dish.name}}
             <tr>
               <th colspan="2">
                 <b>Calories</b>
-                200
+                {{nutrition.calories}}
               </th>
               <td>
                 Calories from Fat
-                130
+                {{nutrition.calories_fat}}
               </td>
             </tr>
             <tr class="thick-row">
@@ -260,10 +327,10 @@ Guill Menu - Recipe for {{dish.name}}
             <tr>
               <th colspan="2">
                 <b>Total Fat</b>
-                14g
+                {{nutrition.fat_total}}g
               </th>
               <td>
-                <b>22%</b>
+                <b></b>
               </td>
             </tr>
             <tr>
@@ -271,10 +338,10 @@ Guill Menu - Recipe for {{dish.name}}
               </td>
               <th>
                 Saturated Fat
-                9g
+                {{nutrition.fat_sat}}g
               </th>
               <td>
-                <b>22%</b>
+                <b></b>
               </td>
             </tr>
             <tr>
@@ -282,7 +349,7 @@ Guill Menu - Recipe for {{dish.name}}
               </td>
               <th>
                 Trans Fat
-                0g
+                {{nutrition.fat_trans}}g
               </th>
               <td>
               </td>
@@ -290,37 +357,37 @@ Guill Menu - Recipe for {{dish.name}}
             <tr>
               <th colspan="2">
                 <b>Cholesterol</b>
-                55mg
+                {{nutrition.cholesterol}}mg
               </th>
               <td>
-                <b>18%</b>
+                <b></b>
               </td>
             </tr>
             <tr>
               <th colspan="2">
                 <b>Sodium</b>
-                40mg
+                {{nutrition.sodium}}mg
               </th>
               <td>
-                <b>2%</b>
+                <b></b>
               </td>
             </tr>
             <tr>
               <th colspan="2">
                 <b>Potassium</b>
-                100mg
+                {{nutrition.potassium}}mg
               </th>
               <td>
-                <b>1%</b>
+                <b></b>
               </td>
             </tr>
             <tr>
               <th colspan="2">
                 <b>Total Carbohydrate</b>
-                17g
+                {{nutrition.carb_total}}g
               </th>
               <td>
-                <b>6%</b>
+                <b></b>
               </td>
             </tr>
             <tr>
@@ -328,10 +395,10 @@ Guill Menu - Recipe for {{dish.name}}
               </td>
               <th>
                 Dietary Fiber
-                1g
+                {{nutrition.carb_fiber}}g
               </th>
               <td>
-                <b>4%</b>
+                <b></b>
               </td>
             </tr>
             <tr>
@@ -339,7 +406,7 @@ Guill Menu - Recipe for {{dish.name}}
               </td>
               <th>
                 Sugars
-                14g
+                {{nutrition.carb_sugar}}g
               </th>
               <td>
               </td>
@@ -347,34 +414,9 @@ Guill Menu - Recipe for {{dish.name}}
             <tr class="thick-end">
               <th colspan="2">
                 <b>Protein</b>
-                3g
+                {{nutrition.protein}}g
               </th>
               <td>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <table class="performance-facts__table--grid">
-          <tbody>
-            <tr>
-              <td colspan="2">
-                Vitamin A
-                10%
-              </td>
-              <td>
-                Vitamin C
-                0%
-              </td>
-            </tr>
-            <tr class="thin-end">
-              <td colspan="2">
-                Calcium
-                10%
-              </td>
-              <td>
-                Iron
-                6%
               </td>
             </tr>
           </tbody>
@@ -382,11 +424,11 @@ Guill Menu - Recipe for {{dish.name}}
       </section>
     </div>
   </div>
-
   <div class="row">
     <div class="col">
       Steps
     </div>
   </div>
+</div>
 </div>
 {% endblock %}

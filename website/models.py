@@ -24,6 +24,7 @@ class Dish(db.Model):
     notionID = db.Column(db.String(50), unique=True)
     date_created = db.Column(db.DateTime(timezone=True), default=func.now())
     recipe = db.relationship('Recipe', backref='dish', passive_deletes=True)
+    steps = db.relationship('Steps', backref='dish', passive_deletes=True)
 
 
 class Recipe(db.Model):
@@ -51,3 +52,10 @@ class Recipe(db.Model):
     dishfk = db.Column(db.Integer, db.ForeignKey(
         'dish.id', ondelete="CASCADE"), nullable=False)
 
+class Steps(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    step_num = db.Column(db.Integer)
+    step_text = db.Column(db.Text)
+    date_created = db.Column(db.DateTime(timezone=True), default=func.now())    
+    dishfk = db.Column(db.Integer, db.ForeignKey(
+        'dish.id', ondelete="CASCADE"), nullable=False)

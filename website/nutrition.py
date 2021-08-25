@@ -47,11 +47,51 @@ def parse_results(fulljson):
 
     return full_nutrition
 
-def all_nutrition(recipes):
+def nutrition_single(ings):
     allnutrition = {}
+    weight = 0
+    fat_total = 0
+    fat_sat = 0
+    fat_trans = 0
+    cholesterol = 0
+    sodium = 0
+    potassium = 0
+    carb_total = 0
+    carb_fiber = 0
+    carb_sugar = 0
+    protein = 0
+    calories = 0
+    calories_fat = 0
     
-    for recipe in recipes:
-        pass
+    for ing in ings:
+        weight = weight + round(ing.weight)
+        fat_total = fat_total + round(ing.fat_total)
+        fat_sat = fat_sat + round(ing.fat_sat)
+        fat_trans = fat_trans + round(ing.fat_trans)
+        cholesterol = cholesterol + round(ing.cholesterol)
+        sodium = sodium + round(ing.sodium)
+        potassium = potassium + round(ing.potassium)
+        carb_total = carb_total + round(ing.carb_total)
+        carb_fiber = carb_fiber + round(ing.carb_fiber)
+        carb_sugar = carb_sugar + round(ing.carb_sugar)
+        protein = protein + round(ing.protein)
+        calories = calories + round(ing.calories)
+        calories_fat= round(fat_total*9)
+    
+    allnutrition['fat_total'] = fat_total
+    allnutrition['weight'] = weight
+    allnutrition['fat_sat'] = fat_sat
+    allnutrition['fat_trans'] = fat_trans
+    allnutrition['cholesterol'] = cholesterol
+    allnutrition['sodium'] = sodium
+    allnutrition['potassium'] = potassium
+    allnutrition['carb_total'] = carb_total
+    allnutrition['carb_fiber'] = carb_fiber
+    allnutrition['carb_sugar'] = carb_sugar
+    allnutrition['protein'] = protein
+    allnutrition['calories'] = calories
+    allnutrition['calories_fat'] = calories_fat
+    
     return allnutrition
 
 if __name__ == '__main__':

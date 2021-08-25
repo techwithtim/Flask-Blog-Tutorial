@@ -1,13 +1,13 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
 from flask_login import login_required, current_user
-from .models import Dish, User, Recipe
+from .models import Dish, Steps, User, Recipe
 from .notion import get_supplies, get_menu
 from datetime import datetime
 from datetime import timedelta
 from . import db
 from sqlalchemy import func
-import inflect
-from .nutrition import get_food_item, all_nutrition
+import inflect, json
+from .nutrition import get_food_item, nutrition_single
 
 
 views = Blueprint("views", __name__)
@@ -65,101 +65,73 @@ def menu():
 @views.route("/menu/recipe", methods=['GET', 'POST'])
 @login_required
 def recipe():
-    if request.method == "POST":
-        # Info from form
-        qty = request.form.get("qty")
-        measurement = request.form.get("measurement")
-        ing = request.form.get("ing")
-        notes = request.form.get("notes")
-        dishid = request.form.get("dishid")
-
-        #info from nutrition
-        if notes == None:
-            fullitem = qty+" "+measurement+" "+ing
-        else:
-            fullitem = qty+" "+measurement+" "+ing+", "+notes
-            
-        nutrition = get_food_item(fullitem)
-        item = Recipe(
-            qty=qty, 
-            measurement=measurement, 
-            ing=ing, 
-            notes=notes, 
-            dishfk=dishid,
-            weight = nutrition['weight'],
-            fat_total = nutrition['totalFat'],
-            fat_sat = nutrition['satFat'],
-            fat_trans = nutrition['transFat'],
-            cholesterol = nutrition['cholesterol'],
-            sodium = nutrition['sodium'],
-            potassium = nutrition['potassium'],
-            carb_total = nutrition['totalCarb'],
-            carb_fiber = nutrition['fiber'],
-            carb_sugar = nutrition['sugar'],
-            protein = nutrition['protein'],
-            servsize = nutrition['weight'],
-            calories = nutrition['calories'],
-            calories_fat = nutrition['weight']*9,
-            pictureURL = nutrition['picURL'])
-        
-        db.session.add(item)
-        db.session.commit()
-        flash('Recipe created!', category='success')
-    
-    dishlist = get_dishes()
+    dishes = Dish.query.all()
     recipes = Recipe.query.all()
-    return render_template("recipe.html", user=User, dishes=dishlist, recipes=recipes, nutrition=nutrition)
+    steps = Steps.query.all()
+    return render_template("recipe.html", user=User, dishes=dishes, recipes=recipes, steps=steps)
 
 @views.route("/menu/recipe/<id>", methods=['GET', 'POST'])
 @login_required
 def recipe_single(id):
     if request.method == "POST":
-        # Info from form
-        qty = request.form.get("qty")
-        measurement = request.form.get("measurement")
-        ing = request.form.get("ing")
-        notes = request.form.get("notes")
-        dishid = request.form.get("dishid")
-
-        #info from nutrition
-        if notes == None:
-            fullitem = qty+" "+measurement+" "+ing
-        else:
-            fullitem = qty+" "+measurement+" "+ing+", "+notes
+        if request.form.get('step_modal') == '':
+            num = Steps.query.filter_by(dishfk=id).all()
             
-        nutrition = get_food_item(fullitem)
-        item = Recipe(
-            qty=qty, 
-            measurement=measurement, 
-            ing=ing, 
-            notes=notes, 
-            dishfk=dishid,
-            weight = nutrition['weight'],
-            fat_total = nutrition['totalFat'],
-            fat_sat = nutrition['satFat'],
-            fat_trans = nutrition['transFat'],
-            cholesterol = nutrition['cholesterol'],
-            sodium = nutrition['sodium'],
-            potassium = nutrition['potassium'],
-            carb_total = nutrition['totalCarb'],
-            carb_fiber = nutrition['fiber'],
-            carb_sugar = nutrition['sugar'],
-            protein = nutrition['protein'],
-            servsize = nutrition['weight'],
-            calories = nutrition['calories'],
-            calories_fat = nutrition['weight']*9,
-            pictureURL = nutrition['picURL'])
-        
-        db.session.add(item)
-        db.session.commit()
-        flash('Recipe created!', category='success')
+            step = Steps(
+                step_text = request.form.get('stepdesc'),
+                step_num = len(num)+1,
+                dishfk = id
+            )
+            db.session.add(step)
+            db.session.commit()
+            flash("Step Added", category='sucess')
+        else:
+            # Info from form
+            qty = request.form.get("qty")
+            measurement = request.form.get("measurement")
+            ing = request.form.get("ing")
+            notes = request.form.get("notes")
+            dishid = request.form.get("dishid")
+
+            #info from nutrition
+            if notes == None:
+                fullitem = qty+" "+measurement+" "+ing
+            else:
+                fullitem = qty+" "+measurement+" "+ing+", "+notes
+                
+            nutrition = get_food_item(fullitem)
+            item = Recipe(
+                qty=qty, 
+                measurement=measurement, 
+                ing=ing, 
+                notes=notes, 
+                dishfk=dishid,
+                weight = nutrition['weight'],
+                fat_total = nutrition['totalFat'],
+                fat_sat = nutrition['satFat'],
+                fat_trans = nutrition['transFat'],
+                cholesterol = nutrition['cholesterol'],
+                sodium = nutrition['sodium'],
+                potassium = nutrition['potassium'],
+                carb_total = nutrition['totalCarb'],
+                carb_fiber = nutrition['fiber'],
+                carb_sugar = nutrition['sugar'],
+                protein = nutrition['protein'],
+                servsize = nutrition['weight'],
+                calories = nutrition['calories'],
+                calories_fat = nutrition['totalFat']*9,
+                pictureURL = nutrition['picURL'])
+            
+            db.session.add(item)
+            db.session.commit()
+            flash('Recipe created!', category='success')
     
     dish = Dish.query.filter_by(id=id).first()
-    recipes = Recipe.query.filter_by(dishfk=id).all()
+    ings = Recipe.query.filter_by(dishfk=id).all()
+    steps = Steps.query.filter_by(dishfk=id).all()
+    allnutrition = nutrition_single(ings)
     
-    allnutrition = all_nutrition(recipes)
-    
-    return render_template("recipe-single.html", user=User, dish=dish, recipes=recipes)
+    return render_template("recipe-single.html", user=User, dish=dish, recipes=ings, nutrition=allnutrition, steps=steps)
 
 @views.route("/menu/dishes")
 @login_required
@@ -173,3 +145,19 @@ def deleteIng(recID,dishID):
     Recipe.query.filter_by(id=recID).delete()
     db.session.commit()
     return recipe_single(dishID)
+
+@views.route("/deletingStep/<recID>/<dishID>")
+@login_required
+def deleteStep(stepID,dishID):
+    Steps.query.filter_by(id=stepID).delete()
+    db.session.commit()
+    return redirect(url_for('views.recipe_single', id=dishID))
+
+@views.route("/menu/recipe/<id>/update", methods=['POST'])
+@login_required
+def update(id):
+    if request.method == 'POST':
+        update = Dish.query.filter_by(id=id).first()
+        update.pictureURL = request.form.get("picurl")
+        db.session.commit()
+    return redirect(url_for('views.recipe_single', id=id))
