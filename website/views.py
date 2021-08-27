@@ -2,8 +2,8 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 from flask_login import login_required, current_user
 from .models import Dish, Steps, User, Recipe
 from .notion import get_supplies, get_menu
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta, time
+import datetime
 from . import db
 from sqlalchemy import func
 import inflect, json
@@ -48,9 +48,9 @@ def cpap():
         item = supplies['results'][i]['properties']['Item']['title'][0]['plain_text']
         itemNum = supplies['results'][i]['properties']['Item#']['rich_text'][0]['plain_text']
         howOften = supplies['results'][i]['properties']['How often (days)']['number']
-        lastOrdered = datetime.strptime(supplies['results'][i]['properties']['Last Ordered']['date']['start'],"%Y-%m-%d")
+        lastOrdered = datetime.datetime.strptime(supplies['results'][i]['properties']['Last Ordered']['date']['start'],"%Y-%m-%d")
         imgUrl = supplies['results'][i]['properties']['ImageURL']['url']
-        nextOrder = datetime.strptime(supplies['results'][i]['properties']['Last Ordered']['date']['start'],"%Y-%m-%d") + timedelta(days=howOften)
+        nextOrder = datetime.datetime.strptime(supplies['results'][i]['properties']['Last Ordered']['date']['start'],"%Y-%m-%d") + timedelta(days=howOften)
         littlesupply = [id,item,itemNum,howOften,lastOrdered.strftime("%m-%d-%Y"),imgUrl,nextOrder.strftime("%m-%d-%Y")]
         cpapsupplies.append(littlesupply)
     cpapsupplies.sort(key= lambda x: x[6])
@@ -65,7 +65,7 @@ def menu():
 @views.route("/menu/recipe", methods=['GET', 'POST'])
 @login_required
 def recipe():
-    dishes = Dish.query.all()
+    dishes = Dish.query.order_by(Dish.name).all()
     recipes = Recipe.query.all()
     steps = Steps.query.all()
     return render_template("recipe.html", user=User, dishes=dishes, recipes=recipes, steps=steps)
@@ -159,5 +159,31 @@ def update(id):
     if request.method == 'POST':
         update = Dish.query.filter_by(id=id).first()
         update.pictureURL = request.form.get("picurl")
+        update.numServings = request.form.get("servings")
+        update.servingSize = request.form.get("servingSize")
+        update.prepTime = request.form.get("prepTime")
+        update.cookTime = request.form.get("cooktime")
+        update.cookTemp = request.form.get("cookTemp")  
         db.session.commit()
     return redirect(url_for('views.recipe_single', id=id))
+
+@views.route("/menu/recipe/new", methods=['GET', 'POST'])
+@login_required
+def new():
+    if request.method == 'POST':
+        newdish = Dish(
+            name = request.form.get('dishName'),
+            pictureURL = request.form.get('picURL'),
+            numServings = request.form.get('servings'),
+            servingSize = request.form.get('servingSize'),
+            cookTime = request.form.get('cooktime'),
+            prepTime = request.form.get('prepTime'),
+            cookTemp = request.form.get('cookTemp')
+        )
+        db.session.add(newdish)
+        db.session.commit()
+        
+        id = Dish.query.filter_by(name=request.form.get('dishName')).first().id
+        return redirect(url_for('views.recipe_single', id=id))
+    
+    return render_template("new.html", user=User)

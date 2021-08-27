@@ -150,163 +150,85 @@
 
 
 {% block title %}
-Guill Menu - Recipe for {{dish.name}}
+Guill Menu - Add Recipe
 {% endblock %}
 
 {% block header %}
-<h4 class="display-4 text-center">{{dish.name}}</h4>
 {% endblock %}
 
 {% block menu %}
-<div class="container">
+<form action="/menu/recipe/new" method="POST">
+  <div style="margin: auto">
+    <label for="dishName" style="width: 500px;">Dish Name</label>
+    <input type="text" style="width: 500px;" name="dishName" class="form-control">
+  </div>
+  <div class="container">
   <div class="row">
     <div class="col-3" id="Picture and Information">
-      {% if dish.pictureURL %}
-              <img src="{{dish.pictureURL}}" class='img-thumbnail' alt="Picture Of Dish">
-              {% else %}
-              <img
-                src="https://image.shutterstock.com/image-vector/ui-image-placeholder-wireframes-apps-260nw-1037719204.jpg"
-                class='img-thumbnail' alt="Picture Of Dish">
-              {% endif %}
-      <form action="/menu/recipe/{{dish.id}}/update" method="POST">
+      
+        <img src="https://image.shutterstock.com/image-vector/ui-image-placeholder-wireframes-apps-260nw-1037719204.jpg"
+        class='img-fluid rounded-start' alt="Picture Of Dish" width='400'>
         <label for="picurl">Picture URL</label>
-        <input type="text" name="picurl" class="form-control" value="{{dish.pictureURL}}">
+        <input type="text" name="picurl" class="form-control">
+        <br>
         <label for="servings">Servings</label>
-        <input type="text" name="servings" class="form-control" value="{{dish.numServings}}">
+        <input type="text" name="servings" class="form-control" value=1>
         <label for="servingSize">Serving Size</label>
-        <input type="text" name="servingSize" class="form-control" value="{{dish.servingSize}}">
+        <input type="text" name="servingSize" class="form-control" value="1">
+        <br>
         <label for="prepTime">Prep Time</label>
-        <input type="text" name="prepTime" class="form-control" value="{{dish.prepTime}}">
+        <input type="text" name="prepTime" class="form-control">
         <label for="cooktime">Cook Time</label>
-        <input type="text" name="cooktime" class="form-control" value="{{dish.cookTime}}">
+        <input type="text" name="cooktime" class="form-control">
         <label for="cookTemp">Cook Time</label>
-        <input type="text" name="cookTemp" class="form-control" value="{{dish.cookTemp}}">
+        <input type="text" name="cookTemp" class="form-control">
+
         <button class="btn btn-primary" type="submit">Save</button>
       </form>
     </div>
     <div class="col-5" id="Recipe and Steps">
       <div style="float: left">
-        <h6 class="display-6 text-left">Recipe</h6>
-      </div>
-      <div style="float: right">
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addIng">
-          Add
-        </button>
-
-        <!-- Modal -->
-        <div class="modal fade" id="addIng" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Add Ingredient to {{dish.name}}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                <form action="/menu/recipe/{{dish.id}}" method="POST">
-                  <div class="form-group">
-                    <label for="qty">Qty</label>
-                    <input type="text" id="qty" name="qty" class="form-control" placeholder="Enter Qty" />
-                    <label for="measurement">Measurement</label>
-                    <input type="text" id="measurement" name="measurement" class="form-control"
-                      placeholder="Enter Measurement" />
-                    <label for="ing">Ing</label>
-                    <input type="text" id="ing" name="ing" class="form-control" placeholder="Enter Ing" />
-                    <label for="notes">Notes</label>
-                    <input type="text" id="notes" name="notes" class="form-control" placeholder="Enter Notes" />
-                    <input type="hidden" id="dishid" name="dishid" class="form-control" value="{{dish.id}}" />
-                  </div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button class="btn btn-primary" name="ing_modal" id="ing_modal" type="submit">Save changes</button>
-              </div>
-              </form>
-            </div>
-          </div>
-        </div>
+        <h6 class="display-6 text-left text-muted">Recipe</h6>
       </div>
       <table class="table">
         <thead>
           <tr>
             <td></td>
-            <td>Qty</td>
-            <td>Measurement</td>
-            <td>Ing</td>
-            <td>Notes</td>
-            <td>Delete</td>
+            <td class="text-muted">Qty</td>
+            <td class="text-muted">Measurement</td>
+            <td class="text-muted">Ing</td>
+            <td class="text-muted">Notes</td>
+            <td class="text-muted">Delete</td>
           </tr>
         </thead>
         <tbody>
-          {% for recipe in recipes %}
           <tr>
-            <td><img class="img-thumbnail" src="{{recipe.pictureURL}}" width="40" height="40"></td>
-            <td>{{recipe.qty}}</td>
-            <td>{{recipe.measurement}}</td>
-            <td>{{recipe.ing}}</td>
-            <td>{{recipe.notes}}</td>
-            <td><a href="/deletingIng/{{recipe.id}}/{{dish.id}}" class="btn btn-outline-danger btn-sm" tabindex="-1"
-                role="button">X</a></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
           </tr>
-          {% endfor %}
         </tbody>
       </table>
       <br>
       <!-- Steps Header and Button -->
       <div style="float: left">
-        <h6 class="display-6 text-left">Steps</h6>
+        <h6 class="display-6 text-left text-muted"">Steps</h6>
       </div>
-      <div style="float: right">
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStep">
-          Add
-        </button>
-      </div>
-
-      <!-- Steps Modal -->
-      <div class="modal fade" id="addStep" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Add Steps to {{dish.name}}</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <form action="/menu/recipe/{{dish.id}}" method="POST">
-                <div class="form-group">
-                  <label for="stepdesc">Step Description</label>
-                  <textarea id="stepdesc" name="stepdesc" class="form-control" placeholder="Enter Step Description"
-                    rows="4" cols="33"></textarea>
-
-                  <input type="hidden" id="dishid" name="dishid" calss="form-control" value="{{dish.id}}" />
-                </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button class="btn btn-primary" name="step_modal" id="step_modal" type="submit">Save changes</button>
-            </div>
-            </form>
-          </div>
-        </div>
-      </div>
-
+      
       <table class="table">
         <thead>
           <tr>
-            <td style="width: 10%">Number</td>
-            <td style="max-width: 10%">Step</td>
-            <td style="width: 10%">Delete</td>
+            <td class="text-muted" style="width: 10%">Number</td>
+            <td class="text-muted" style="max-width: 10%">Step</td>
+            <td class="text-muted" style="width: 10%">Delete</td>
           </tr>
         </thead>
         <tbody>
-          {% for step in steps %}
           <tr>
-            <th scope="row">{{step.step_num}}</td>
-            <td>{{step.step_text}}</td>
-            <td><a href="/deletingStep/{{step.id}}/{{dish.id}}" class="btn btn-outline-danger btn-sm" tabindex="-1"
-                role="button">X</a></td>
+            <th scope="row"></td>
+            <td></td>
           </tr>
-          {% endfor %}
         </tbody>
       </table>
     </div>
@@ -315,8 +237,8 @@ Guill Menu - Recipe for {{dish.name}}
       <section class="performance-facts">
         <header class="performance-facts__header">
           <h1 class="performance-facts__title">Nutrition Facts</h1>
-          <p>Serving Size: {{ dish.servingSize}}
-          <p>Servings: {{dish.numServings}}</p>
+          <p>Serving Size: 
+          <p>Servings: </p>
         </header>
         <table class="performance-facts__table">
           <thead>
@@ -330,11 +252,9 @@ Guill Menu - Recipe for {{dish.name}}
             <tr>
               <th colspan="2">
                 <b>Calories</b>
-                {{ (nutrition.calories/dish.numServings) | round(1) }}
               </th>
               <td>
                 Calories from Fat
-                {{ ((nutrition.fat_total/dish.numServings)*9) | round(1) }}
               </td>
             </tr>
             <tr class="thick-row">
@@ -345,10 +265,8 @@ Guill Menu - Recipe for {{dish.name}}
             <tr>
               <th colspan="2">
                 <b>Total Fat</b>
-                {{ (nutrition.fat_total/dish.numServings) | round(1) }}g
               </th>
               <td>
-                <b>{{ (((nutrition.fat_total/dish.numServings)/65)*100) | round(1) }}%</b>
               </td>
             </tr>
             <tr>
@@ -356,10 +274,8 @@ Guill Menu - Recipe for {{dish.name}}
               </td>
               <th>
                 Saturated Fat
-                {{ (nutrition.fat_sat/dish.numServings) | round(1) }}g
               </th>
               <td>
-                {{ (((nutrition.fat_sat/dish.numServings)/20)*100) | round(1) }}%
               </td>
             </tr>
             <tr>
@@ -367,55 +283,43 @@ Guill Menu - Recipe for {{dish.name}}
               </td>
               <th>
                 Trans Fat
-                {{ (nutrition.fat_trans/dish.numServings) | round(1) }}g
               </th>
               <td>
-                {{ (((nutrition.fat_trans/dish.numServings)/2)*100) | round(1) }}%
               </td>
             </tr>
             <tr>
               <th colspan="2">
                 <b>Cholesterol</b>
-                {{ (nutrition.cholesterol/dish.numServings) | round(1) }}mg
               </th>
               <td>
-                <b>{{ (((nutrition.cholesterol/dish.numServings)/300)*100) | round(1) }}%</b>
               </td>
             </tr>
             <tr>
               <th colspan="2">
                 <b>Sodium</b>
-                {{ (nutrition.sodium/dish.numServings) | round(1) }}mg
               </th>
               <td>
-                <b>{{ (((nutrition.sodium/dish.numServings)/2400)*100) | round(1) }}%</b>
               </td>
             </tr>
             <tr>
               <th colspan="2">
                 <b>Potassium</b>
-                {{ (nutrition.potassium/dish.numServings) | round(1) }}mg
               </th>
               <td>
-                <b> {{ (((nutrition.potassium/dish.numServings)/4700)*100) | round(1) }}%</b>
               </td>
             </tr>
             <tr>
               <th colspan="2">
                 <b>Total Carbohydrate</b>
-                {{ (nutrition.carb_total/dish.numServings) | round(1) }}g
               </th>
               <td>
-                <b>{{ (((nutrition.carb_total/dish.numServings)/300)*100) | round(1) }}%</b>
               </td>
             </tr>
             <tr>
               <th colspan="2">
                 <b>Net Carbs</b>
-                {{ ((nutrition.carb_total-nutrition.carb_fiber)/dish.numServings) | round(1) }}g
               </th>
               <td>
-                <b>{{ ((((nutrition.carb_total-nutrition.carb_fiber)/dish.numServings)/225)*100) | round(1) }}%</b>
               </td>
             </tr>
             <tr>
@@ -423,10 +327,8 @@ Guill Menu - Recipe for {{dish.name}}
               </td>
               <th>
                 Dietary Fiber
-                {{ (nutrition.carb_fiber/dish.numServings) | round(1) }}g
               </th>
               <td>
-                {{ (((nutrition.carb_fiber/dish.numServings)/25)*100) | round(1) }}%
               </td>
             </tr>
             <tr>
@@ -434,19 +336,15 @@ Guill Menu - Recipe for {{dish.name}}
               </td>
               <th>
                 Sugars
-                {{ (nutrition.carb_sugar/dish.numServings) | round(1) }}g
               </th>
               <td>
-                {{ (((nutrition.carb_sugar/dish.numServings)/50)*100) | round(1) }}%
               </td>
             </tr>
             <tr class="thick-end">
               <th colspan="2">
                 <b>Protein</b>
-                {{ (nutrition.protein/dish.numServings) | round(1) }}g
               </th>
               <td>
-                <b>{{ (((nutrition.protein/dish.numServings)/46)*100) | round(1) }}%</b>
               </td>
             </tr>
           </tbody>

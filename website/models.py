@@ -3,6 +3,7 @@ from re import X
 from . import db
 from flask_login import UserMixin
 from sqlalchemy.sql import func
+import datetime
 
 
 class User(db.Model, UserMixin):
@@ -17,12 +18,13 @@ class Dish(db.Model):
     name = db.Column(db.String(150), unique=True)
     pictureURL = db.Column(db.String(1000))
     numServings = db.Column(db.Integer)
-    servingSize = db.Column(db.Float)
-    cookTime = db.Column(db.Time)
-    prepTime = db.Column(db.Time)
+    servingSize = db.Column(db.String(150))
+    cookTime = db.Column(db.String(10))
+    prepTime = db.Column(db.String(10))
     cookTemp = db.Column(db.String(5))
     notionID = db.Column(db.String(50), unique=True)
     date_created = db.Column(db.DateTime(timezone=True), default=func.now())
+    update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
     recipe = db.relationship('Recipe', backref='dish', passive_deletes=True)
     steps = db.relationship('Steps', backref='dish', passive_deletes=True)
 

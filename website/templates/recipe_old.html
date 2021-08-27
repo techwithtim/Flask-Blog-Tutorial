@@ -1,0 +1,92 @@
+{% extends "menu-div.html" %}
+
+{% block style %}
+
+{% endblock %}
+
+
+{% block title %}
+Guill Menu
+{% endblock %}
+
+{% block header %}
+<h1 class="display-1 text-center">Guill Menu</h1>
+<h4 class="display-4 text-center">Recipes</h4>
+{% endblock %}
+
+{% block menu %}
+<div class="accordion" id="recipeaccordion">
+  {% for dish in dishes %}
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="heading{{dish.id}}">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{dish.id}}"
+        aria-expanded="true" aria-controls="collapse{{dish.id}}">
+        {{dish.name}}
+      </button>
+    </h2>
+    <div id="collapse{{dish.id}}" class="accordion-collapse collapse show" aria-labelledby="heading{{dish.id}}"
+      data-bs-parent="#recipeaccordion">
+      <div class="accordion-body">
+        <a href="/menu/recipe/{{dish.id}}"><button class="btn btn-success">Go</button></a>
+        <div class="container">
+          <div class="row">
+            <div class="col-3" id="picture">
+              {% if dish.pictureURL %}
+              <img src="{{dish.pictureURL}}" class='img-thumbnail' alt="Picture Of Dish">
+              {% else %}
+              <img
+                src="https://image.shutterstock.com/image-vector/ui-image-placeholder-wireframes-apps-260nw-1037719204.jpg"
+                class='img-thumbnail' alt="Picture Of Dish">
+              {% endif %}
+            </div>
+            <div class="col-4" id="Ing">
+              <h6 class="display-6 text-left"">Ingredients</h6>
+              <table class=" table table-hover">
+                <thead>
+                  <td>Qty</td>
+                  <td>Measurement</td>
+                  <td>Ing</td>
+                  <td>Notes</td>
+                </thead>
+                <tbody>
+                  {% for recipe in recipes %}
+                  {% if recipe.dishfk == dish.id %}
+                  <tr>
+                    <td>{{recipe.qty}}</td>
+                    <td>{{recipe.measurement}}</td>
+                    <td>{{recipe.ing}}</td>
+                    <td>{{recipe.notes}}</td>
+                  </tr>
+                  {% endif %}
+                  {% endfor %}
+                </tbody>
+                </table>
+            </div>
+            <div class="col-4" id="Steps">
+              <h6 class="display-6 text-left">Steps</h6>
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <td>Step</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for step in steps %}
+                  {% if dish.id == step.dishfk %}
+                  <tr>
+                    <td><b>{{step.step_num}}. </b>{{step.step_text}}</td>
+                  </tr>
+                  {% endif %}
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
+
+  {% endblock %}

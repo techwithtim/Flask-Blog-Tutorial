@@ -29,18 +29,16 @@
             <a class="nav-item nav-link" href="/home">Home</a>
             {% if user.is_authenticated %}
             <a class="nav-item nav-link" href="/cpap">CPAP Supplies</a>
-
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="/menu" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 Guill Menu
               </a>
               <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
-                <li><a class="dropdown-item" href="/menu">Menu</a></li>
+                <li><a class="dropdown-item" href="/menu">Planner</a></li>
                 <li><a class="dropdown-item" href="/menu/recipe">Recipe</a></li>
-                <li><a class="dropdown-item" href="/menu/dishes">Dishes</a></li>
+                <li><a class="dropdown-item" href="/menu/recipe/new">Add a Recipe</a></li> <!-- TODO: -->
               </ul>
             </li>
-
             <a class="nav-item nav-link" href="/logout">Logout</a>
             {% else %}
             <a class="nav-item nav-link" href="/login">Login</a>

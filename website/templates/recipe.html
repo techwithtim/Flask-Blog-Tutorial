@@ -1,151 +1,7 @@
 {% extends "menu-div.html" %}
 
 {% block style %}
-<style>
-  @charset "UTF-8";
 
-  .image {
-    width: 250px;
-    float: left;
-    margin: 20px;
-  }
-
-  body {
-    font-size: small;
-    line-height: 1.4;
-  }
-
-  p {
-    margin: 0;
-  }
-
-  .performance-facts {
-    border: 1px solid black;
-    margin: 20px;
-    float: left;
-    width: 290px;
-    /* padding: 0.5rem; */
-  }
-
-  .performance-facts table {
-    border-collapse: collapse;
-  }
-
-  .performance-facts__title {
-    font-weight: bold;
-    font-size: 2rem;
-    margin: 0 0 0.25rem 0;
-  }
-
-  .performance-facts__header {
-    border-bottom: 10px solid black;
-    padding: 0 0 0.25rem 0;
-    margin: 0 0 0.5rem 0;
-  }
-
-  .performance-facts__header p {
-    margin: 0;
-  }
-
-  .performance-facts__table,
-  .performance-facts__table--grid,
-  .performance-facts__table--small {
-    width: 100%;
-  }
-
-  .performance-facts__table thead tr th,
-  .performance-facts__table--grid thead tr th,
-  .performance-facts__table--small thead tr th,
-  .performance-facts__table thead tr td,
-  .performance-facts__table--grid thead tr td,
-  .performance-facts__table--small thead tr td {
-    border: 0;
-  }
-
-  .performance-facts__table th,
-  .performance-facts__table--grid th,
-  .performance-facts__table--small th,
-  .performance-facts__table td,
-  .performance-facts__table--grid td,
-  .performance-facts__table--small td {
-    font-weight: normal;
-    text-align: left;
-    /* padding: 0.25rem 0; */
-    border-top: 1px solid black;
-    white-space: nowrap;
-  }
-
-  .performance-facts__table td:last-child,
-  .performance-facts__table--grid td:last-child,
-  .performance-facts__table--small td:last-child {
-    text-align: right;
-  }
-
-  .performance-facts__table .blank-cell,
-  .performance-facts__table--grid .blank-cell,
-  .performance-facts__table--small .blank-cell {
-    width: 1rem;
-    border-top: 0;
-  }
-
-  .performance-facts__table .thick-row th,
-  .performance-facts__table--grid .thick-row th,
-  .performance-facts__table--small .thick-row th,
-  .performance-facts__table .thick-row td,
-  .performance-facts__table--grid .thick-row td,
-  .performance-facts__table--small .thick-row td {
-    border-top-width: 5px;
-  }
-
-  .small-info {
-    font-size: 0.7rem;
-  }
-
-  .performance-facts__table--small {
-    border-bottom: 1px solid #999;
-    margin: 0 0 0.5rem 0;
-  }
-
-  .performance-facts__table--small thead tr {
-    border-bottom: 1px solid black;
-  }
-
-  .performance-facts__table--small td:last-child {
-    text-align: left;
-  }
-
-  .performance-facts__table--small th,
-  .performance-facts__table--small td {
-    border: 0;
-    padding: 0;
-  }
-
-  .performance-facts__table--grid {
-    margin: 0 0 0.5rem 0;
-  }
-
-  .performance-facts__table--grid td:last-child {
-    text-align: left;
-  }
-
-  .performance-facts__table--grid td:last-child::before {
-    content: "•";
-    font-weight: bold;
-    margin: 0 0.25rem 0 0;
-  }
-
-  .text-center {
-    text-align: center;
-  }
-
-  .thick-end {
-    border-bottom: 10px solid black;
-  }
-
-  .thin-end {
-    border-bottom: 1px solid black;
-  }
-</style>>
 {% endblock %}
 
 
@@ -159,215 +15,82 @@ Guill Menu
 {% endblock %}
 
 {% block menu %}
-<div class="accordion" id="recipeaccordion">
-  {% for dish in dishes %}
-  <div class="accordion-item">
-    <h2 class="accordion-header" id="heading{{dish.id}}">
-      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{dish.id}}"
-        aria-expanded="true" aria-controls="collapse{{dish.id}}">
-        {{dish.name}}
-      </button>
-    </h2>
-    <div id="collapse{{dish.id}}" class="accordion-collapse collapse show" aria-labelledby="heading{{dish.id}}"
-      data-bs-parent="#recipeaccordion">
-      <div class="accordion-body">
-        <a href="/menu/recipe/{{dish.id}}"><button class="btn btn-success">Go</button></a>
-        <div class="container">
-          <div class="row">
-            <div class="col-2">
-              {% if dish.pictureURL %}
-              <img src="{{dish.pictureURL}}" class='img-thumbnail' alt="Picture Of Dish">
-              {% else %}
-              <img
-                src="https://image.shutterstock.com/image-vector/ui-image-placeholder-wireframes-apps-260nw-1037719204.jpg"
-                class='img-thumbnail' alt="Picture Of Dish">
-              {% endif %}
-            </div>
-            <div class="col">
-              <h6 class="display-6 text-left"">Ingredients</h6>
-              <table class=" table table-hover">
-                <thead>
-                  <td>Qty</td>
-                  <td>Measurement</td>
-                  <td>Ing</td>
-                  <td>Notes</td>
-                </thead>
-                <tbody>
-                  {% for recipe in recipes %}
-                  {% if recipe.dishfk == dish.id %}
-                  <tr>
-                    <td>{{recipe.qty}}</td>
-                    <td>{{recipe.measurement}}</td>
-                    <td>{{recipe.ing}}</td>
-                    <td>{{recipe.notes}}</td>
-                  </tr>
-                  {% endif %}
-                  {% endfor %}
-                </tbody>
-                </table>
-            </div>
-            <div class="col">
-              <h6 class="display-6 text-left">Steps</h6>
-              <table class=" table table-hover">
-                <thead>
-                  <td>Step Number</td>
-                  <td>Step Description</td>
-                </thead>
-                <tbody>
-                  {% for step in steps %}
-                  {% if step.dishid == dish.id %}
-                  <tr>
-                    <td>{{step.step_num}}</td>
-                    <td>{{step.step_text}}</td>
-                  </tr>
-                  {% endif %}
-                  {% endfor %}
-                </tbody>
-              </table>
-                
-            </div>
-            <div class="col-2" id="Nutrition Information">
-              <!-- <img src="https://s.cdpn.io/3/NutritionFacts.gif" class="image"> -->
-              <section class="performance-facts">
-                <header class="performance-facts__header">
-                  <h1 class="performance-facts__title">Nutrition Facts</h1>
-                  <p>Serving Size 1/2 cup (about 82g)
-                    <p>Serving Per Container 8</p>
-                </header>
-                <table class="performance-facts__table">
+
+{% for dish in dishes %}
+<div class="card border-dark" style="width: 80rem;">
+  <div class="row">
+    <div class="col-4">
+      {% if dish.pictureURL %}
+      <img src="{{dish.pictureURL}}" class='img-fluid rounded-start' alt="Picture Of Dish" width='400'>
+      {% else %}
+      <img src="https://image.shutterstock.com/image-vector/ui-image-placeholder-wireframes-apps-260nw-1037719204.jpg"
+        class='img-fluid rounded-start' alt="Picture Of Dish" width='400'>
+      {% endif %}
+      <h5 class="display-5 text-capitalize text-center">{{dish.name}}</h5>
+      <div class='text-center'>
+        <a href="/menu/recipe/{{dish.id}}"><button class="btn btn-lg btn-success">Edit</button></a>
+      </div>
+
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <div class="card-text">
+          <div class="container">
+            <div class="row">
+              <div class="col" id="Ing">
+                <h6 class="display-6 text-left"">Ingredients</h6>
+                <table class=" table table-hover">
+                  <thead>
+                    <td>Qty</td>
+                    <td>Measurement</td>
+                    <td>Ing</td>
+                    <td>Notes</td>
+                  </thead>
+                  <tbody>
+                    {% for recipe in recipes %}
+                    {% if recipe.dishfk == dish.id %}
+                    <tr>
+                      <td>{{recipe.qty}}</td>
+                      <td>{{recipe.measurement}}</td>
+                      <td>{{recipe.ing}}</td>
+                      <td>{{recipe.notes}}</td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                  </tbody>
+                  </table>
+              </div>
+              <div class="col" id="Steps">
+                <h6 class="display-6 text-left">Steps</h6>
+                <table class="table table-hover">
                   <thead>
                     <tr>
-                      <th colspan="3" class="small-info">
-                        Amount Per Serving
-                      </th>
+                      <td>Step</td>
                     </tr>
                   </thead>
                   <tbody>
+                    {% for step in steps %}
+                    {% if dish.id == step.dishfk %}
                     <tr>
-                      <th colspan="2">
-                        <b>Calories</b>
-                        200
-                      </th>
-                      <td>
-                        Calories from Fat
-                        130
-                      </td>
+                      <td><b>{{step.step_num}}. </b>{{step.step_text}}</td>
                     </tr>
-                    <tr class="thick-row">
-                      <td colspan="3" class="small-info">
-                        <b>% Daily Value*</b>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th colspan="2">
-                        <b>Total Fat</b>
-                        14g
-                      </th>
-                      <td>
-                        <b>22%</b>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="blank-cell">
-                      </td>
-                      <th>
-                        Saturated Fat
-                        9g
-                      </th>
-                      <td>
-                        <b>22%</b>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="blank-cell">
-                      </td>
-                      <th>
-                        Trans Fat
-                        0g
-                      </th>
-                      <td>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th colspan="2">
-                        <b>Cholesterol</b>
-                        55mg
-                      </th>
-                      <td>
-                        <b>18%</b>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th colspan="2">
-                        <b>Sodium</b>
-                        40mg
-                      </th>
-                      <td>
-                        <b>2%</b>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th colspan="2">
-                        <b>Potassium</b>
-                        100mg
-                      </th>
-                      <td>
-                        <b>1%</b>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th colspan="2">
-                        <b>Total Carbohydrate</b>
-                        17g
-                      </th>
-                      <td>
-                        <b>6%</b>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="blank-cell">
-                      </td>
-                      <th>
-                        Dietary Fiber
-                        1g
-                      </th>
-                      <td>
-                        <b>4%</b>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="blank-cell">
-                      </td>
-                      <th>
-                        Sugars
-                        14g
-                      </th>
-                      <td>
-                      </td>
-                    </tr>
-                    <tr class="thick-end">
-                      <th colspan="2">
-                        <b>Protein</b>
-                        3g
-                      </th>
-                      <td>
-                      </td>
-                    </tr>
+                    {% endif %}
+                    {% endfor %}
                   </tbody>
                 </table>
-              </section>
+              </div>
             </div>
           </div>
-          <div class="row">
-            <div class="col">
-              Steps
-            </div>
+          <div>
+            <p class="card-text"><small class="text-muted">Last updated: {{dish.update_time}}</small></p>
           </div>
         </div>
       </div>
     </div>
   </div>
-  {% endfor %}
+</div>
+<br>
+{% endfor %}
 
 
-  {% endblock %}
+{% endblock %}

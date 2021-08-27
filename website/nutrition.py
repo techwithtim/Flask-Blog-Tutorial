@@ -25,23 +25,23 @@ def get_food_item(item):
 
 def parse_results(fulljson):
     full_nutrition = {}
-    full_nutrition['weight'] = fulljson['foods'][0]['serving_weight_grams']
-    full_nutrition['calories'] = fulljson['foods'][0]['nf_calories']
-    full_nutrition['calFat'] = (fulljson['foods'][0]['nf_total_fat'])*9
-    full_nutrition['totalFat'] = fulljson['foods'][0]['nf_total_fat']
-    full_nutrition['satFat'] = fulljson['foods'][0]['nf_saturated_fat']
+    full_nutrition['weight'] = round(fulljson['foods'][0]['serving_weight_grams'],1)
+    full_nutrition['calories'] = round(fulljson['foods'][0]['nf_calories'],1)
+    full_nutrition['calFat'] = round((fulljson['foods'][0]['nf_total_fat'])*9,1)
+    full_nutrition['totalFat'] = round(fulljson['foods'][0]['nf_total_fat'],1)
+    full_nutrition['satFat'] = round(fulljson['foods'][0]['nf_saturated_fat'],1)
     if 'nf_trans_fatty_acid' in fulljson:
-        full_nutrition['transFat'] = fulljson['foods'][0]['nf_trans_fatty_acid']
+        full_nutrition['transFat'] = round(fulljson['foods'][0]['nf_trans_fatty_acid'],1)
     else:
         full_nutrition['transFat'] = 0
-    full_nutrition['cholesterol'] = fulljson['foods'][0]['nf_cholesterol']
-    full_nutrition['sodium'] = fulljson['foods'][0]['nf_sodium']
-    full_nutrition['totalCarb'] = fulljson['foods'][0]['nf_total_carbohydrate']
-    full_nutrition['fiber'] = fulljson['foods'][0]['nf_dietary_fiber']
-    full_nutrition['sugar'] = fulljson['foods'][0]['nf_sugars']
-    full_nutrition['protein'] = fulljson['foods'][0]['nf_protein']
-    full_nutrition['potassium'] = fulljson['foods'][0]['nf_potassium']
-    full_nutrition['sugar'] = fulljson['foods'][0]['nf_sugars']
+    full_nutrition['cholesterol'] = round(fulljson['foods'][0]['nf_cholesterol'],1)
+    full_nutrition['sodium'] = round(fulljson['foods'][0]['nf_sodium'],1)
+    full_nutrition['totalCarb'] = round(fulljson['foods'][0]['nf_total_carbohydrate'],1)
+    full_nutrition['fiber'] = round(fulljson['foods'][0]['nf_dietary_fiber'],1)
+    full_nutrition['sugar'] = round(fulljson['foods'][0]['nf_sugars'],1)
+    full_nutrition['protein'] = round(fulljson['foods'][0]['nf_protein'],1)
+    full_nutrition['potassium'] = round(fulljson['foods'][0]['nf_potassium'],1)
+    full_nutrition['sugar'] = round(fulljson['foods'][0]['nf_sugars'],1)
     full_nutrition['picURL'] = fulljson['foods'][0]['photo']['thumb']
 
 
