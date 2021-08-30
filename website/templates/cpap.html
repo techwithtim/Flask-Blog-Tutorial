@@ -5,6 +5,9 @@
 
 {% block content %}
 <br>
+<form action="/cpap" method="POST">
+<input type="submit" value="ReOrder Supplies">
+</form>
 {% for supply in supplies %}
 <div class="card mb-3 border-dark" style="max-width: 540px;">
     <div class="row g-0">

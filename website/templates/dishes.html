@@ -13,7 +13,7 @@ Guill Menu
 <input class="form-control" list="datalistOptions" id="exampleDataList" placeholder="Type to search...">
 <datalist id="datalistOptions">
     {% for dish in dishes %}
-    <option value="{{dish[1]}}">
+    <option value="{{dish.id}}">{{dish.name}}</option>
         {% endfor %}
 </datalist>
 {% endblock %}

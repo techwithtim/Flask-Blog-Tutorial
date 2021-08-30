@@ -10,5 +10,24 @@ Guill Menu
 {% endblock %}
 
 {% block menu %}
-
+{% for date, plan in plans | groupby('date') %}
+<h4>{{ date.strftime('%A, %B %d, %Y') }}<br></h4>
+<form action="/menu" method='POST'>
+    <div class="input-group mb-3">
+        <input type="hidden" name="datefield" class="form-control form-control-color" value="{{ date }}">
+        <select class="form-control" id="dishid" name='dishid' placeholder="Type to search...">
+            {% for dish in dishes %}
+            <option value="{{dish.id}}">{{dish.name}}</option>
+            {% endfor %}
+            <input type="submit" class="btn btn-outline-primary">
+    </div>
+</form>
+<div class="lead">
+    {% for plan in plans %}
+    {% if plan.date == date %}
+    {{ plan.item }} <br>
+    {% endif %}
+    {% endfor %} <br><br>
+</div>
+{% endfor %}
 {% endblock %}

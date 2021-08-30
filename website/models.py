@@ -1,4 +1,5 @@
 from enum import IntFlag, unique
+from operator import itemgetter
 from re import X
 from . import db
 from flask_login import UserMixin
@@ -27,6 +28,8 @@ class Dish(db.Model):
     update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
     recipe = db.relationship('Recipe', backref='dish', passive_deletes=True)
     steps = db.relationship('Steps', backref='dish', passive_deletes=True)
+    plan = db.relationship('Planner', backref='dish', passive_deletes=True)
+
 
 
 class Recipe(db.Model):
@@ -34,6 +37,7 @@ class Recipe(db.Model):
     qty = db.Column(db.String(10))
     measurement = db.Column(db.String(50))
     ing = db.Column(db.String(150))
+    catagory = db.Column(db.String(50))
     notes = db.Column(db.String(250), nullable=True)
     fat_total = db.Column(db.Integer, nullable=True)
     weight = db.Column(db.Integer, nullable=True)
@@ -61,3 +65,20 @@ class Steps(db.Model):
     date_created = db.Column(db.DateTime(timezone=True), default=func.now())    
     dishfk = db.Column(db.Integer, db.ForeignKey(
         'dish.id', ondelete="CASCADE"), nullable=False)
+    
+class Todo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    item = db.Column(db.String(500))
+    project = db.Column(db.String(50))
+    checked = db.Column(db.BOOLEAN)
+    date_created = db.Column(db.DateTime(timezone=True), default=func.now()) 
+    
+class Planner(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.DateTime(timezone=True))
+    item = db.Column(db.String(200))
+    dishfk = db.Column(db.Integer, db.ForeignKey(
+        'dish.id', ondelete="CASCADE"), nullable=True)
+    update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
+    date_created = db.Column(db.DateTime(timezone=True), default=func.now()) 
+

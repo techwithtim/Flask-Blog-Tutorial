@@ -1,0 +1,36 @@
+{% extends "menu-div.html" %}
+
+{% block title %}
+Guill Menu
+{% endblock %}
+
+{% block header %}
+<h1 class="display-1 text-center">Guill Menu</h1>
+<h4 class="display-4 text-center">Shopping List</h4>
+{% endblock %}
+
+{% block menu %}
+{% for catagory, item in items | groupby('catagory') %}
+<ul class="list-group">
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+        <h6 class="display-6 text-uppercase">{{catagory}}</h6><br>
+        {% for count in counts %}
+        {% if count[0] == catagory %}
+        <span class="badge bg-primary ">{{count[1]}}</span>
+        {% endif %}
+{% endfor %}
+    </li>
+</ul>
+{% for item in items %}
+{% if item.catagory == catagory %}
+<div class="list-group">
+    {% if item.IngCount <= 1 %}
+    <a href="/menu/recipe/{{item.dishfk}}" class="list-group-item list-group-item-action">{{item.ing}}</a>
+    {% else %}
+    <a href="/menu/recipe/{{item.dishfk}}" class="list-group-item list-group-item-action">{{item.ing}} x {{item.IngCount}}</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% endblock %}
