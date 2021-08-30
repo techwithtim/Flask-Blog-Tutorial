@@ -5,25 +5,23 @@ Guill Menu
 {% endblock %}
 
 {% block header %}
+{% for date, item in items | groupby('date') %}
 <h1 class="display-1 text-center">Guill Menu</h1>
-<h4 class="display-4 text-center">Planner</h4>
+<h4 class="display-4 text-center">{{date.strftime('%A, %B %d, %Y')}}</h4>
+{% endfor %}
 {% endblock %}
 
 {% block menu %}
 
-{% for date, plan in plans | groupby('date') %}
-<!-- Select Specific Date -->
-<form action="/plan/single", method='POST'>
-    <label for="dateselector">Select a date to jump to:</label>
-    <div class="input-group mb-3">
-        <input class="form-control border-dark" name="dateselector" id="dateselector" type="date"></input>
-        <input type="submit" class="btn btn-outline-primary" value="Go">
-    </div>
-</form>
-<hr>
+{% for item in items %}
+<picture>
+    <img src="{{item.pictureURL}}" alt="{{item.name}}" width="150px" height="150px">
+</picture>
+{{item.item}} <br>
+{% endfor %}
 
-<!-- List of All Dates and Dishes -->
-<h4>{{ date.strftime('%A, %B %d, %Y') }}</h4>
+<!-- {% for date, plan in plans | groupby('date') %}
+<h4>{{ date.strftime('%A, %B %d, %Y') }}<br></h4>
 <form action="/menu" method='POST'>
     <div class="input-group mb-3">
         <input type="hidden" name="datefield" class="form-control form-control-color" value="{{ date }}">
@@ -38,11 +36,9 @@ Guill Menu
 {% if plan.date == date %}
 <div class="lead d-flex justify-content-between">
     {{ plan.item }}
-    <span title="{{plan.item}}"><a href="/deletingPlan/{{plan.id}}" class="btn btn-outline-danger btn-sm" tabindex="-1"
-            role="button">X</a></span>
+    <span title="{{plan.item}}"><a href="/deletingPlan/{{plan.id}}" class="btn btn-outline-danger btn-sm" tabindex="-1" role="button">X</a></span>
 </div>
 {% endif %}
-{% endfor %}
-{% endfor %}
-<br> <br>
+{% endfor %} <br><br>
+{% endfor %} -->
 {% endblock %}

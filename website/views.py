@@ -63,9 +63,19 @@ def menu():
     dishlist = Dish.query.order_by(Dish.name).all()
     plans = Planner.query.order_by(Planner.date).limit(90)
     items = Recipe.query.order_by(Recipe.dishfk).all()
+    ref = db.session.query(Planner.id, Planner.date).group_by(Planner.date).order_by(Planner.date)
     
-    return render_template("menu.html", user=User, dishes=dishlist, plans=plans, items=items)
+    return render_template("menu.html", user=User, dishes=dishlist, plans=plans, items=items, ref=ref)
 
+
+@views.route("/plan/single", methods=['GET', 'POST'])
+@login_required
+def menu_single():
+    if request.method == 'POST':
+        
+        date = request.form.get('dateselector')
+        items = db.session.query(Planner.date, Planner.id, Planner.dishfk, Planner.item, Dish.pictureURL).join(Dish, Dish.id == Planner.dishfk).filter(func.date(Planner.date) == date).all()
+    return render_template("plan_single.html", user=User, items=items)
 
 # Recipe Functions
 @views.route("/menu/recipe", methods=['GET', 'POST'])
@@ -157,6 +167,13 @@ def deleteStep(stepID,dishID):
     db.session.commit()
     return redirect(url_for('views.recipe_single', id=dishID))
 
+@views.route("/deletingPlan/<id>")
+@login_required
+def deletePlan(id):
+    Planner.query.filter_by(id=id).delete()
+    db.session.commit()
+    return redirect(url_for('views.menu'))
+
 
 @views.route("/menu/recipe/<id>/update", methods=['POST'])
 @login_required
@@ -226,7 +243,7 @@ def shopping():
     if request.method == 'POST':
         pass
         
-    items = db.session.query(Recipe.ing, Recipe.catagory, func.count(Recipe.ing).label('IngCount')).filter(Recipe.dishfk == Planner.dishfk).group_by(Recipe.ing).order_by(Recipe.ing).all()
+    items = db.session.query(Recipe.ing, Recipe.catagory, Recipe.dishfk, func.count(Recipe.ing).label('IngCount')).filter(Recipe.dishfk == Planner.dishfk).group_by(Recipe.ing).order_by(Recipe.ing).all()
     counts = db.session.query(Recipe.catagory, func.count(Recipe.catagory)).filter(Recipe.dishfk == Planner.dishfk).group_by(Recipe.catagory).all()
 
     

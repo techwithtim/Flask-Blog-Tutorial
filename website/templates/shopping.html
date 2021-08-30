@@ -25,9 +25,9 @@ Guill Menu
 {% if item.catagory == catagory %}
 <div class="list-group">
     {% if item.IngCount <= 1 %}
-    <a href="/menu/recipe/{{item.dishfk}}" class="list-group-item list-group-item-action">{{item.ing}}</a>
+    <div class="list-group-item list-group-item-action">{{item.ing}}</div>
     {% else %}
-    <a href="/menu/recipe/{{item.dishfk}}" class="list-group-item list-group-item-action">{{item.ing}} x {{item.IngCount}}</a>
+    <div class="list-group-item list-group-item-action">{{item.ing}} x {{item.IngCount}}</div>
     {% endif %}
 </div>
 {% endif %}
