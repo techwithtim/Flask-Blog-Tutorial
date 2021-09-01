@@ -1,6 +1,7 @@
 from operator import itemgetter
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required
+from sqlalchemy.sql.expression import join
 from .models import Dish, Planner, Steps, User, Recipe, Todo
 from .notion import get_supplies, get_menu
 from datetime import datetime, timedelta
@@ -72,10 +73,36 @@ def menu():
 @login_required
 def menu_single():
     if request.method == 'POST':
-        
         date = request.form.get('dateselector')
-        items = db.session.query(Planner.date, Planner.id, Planner.dishfk, Planner.item, Dish.pictureURL).join(Dish, Dish.id == Planner.dishfk).filter(func.date(Planner.date) == date).all()
-    return render_template("plan_single.html", user=User, items=items)
+        
+        recipes = db.session.query(\
+            Recipe.carb_fiber, Recipe.carb_total, Recipe.catagory, Recipe.dishfk, Recipe.ing, Recipe.qty, Recipe.measurement, Recipe.notes)\
+                .join(Dish, Dish.id == Recipe.dishfk)\
+                    .join(Planner, Planner.dishfk == Recipe.dishfk)\
+                        .filter(func.date(Planner.date) == date)\
+                            .order_by(Recipe.date_created)\
+                                .all()
+        
+        dishes = db.session.query(\
+            Dish.id, Dish.cookTemp, Dish.cookTime, Dish.numServings, Dish.prepTime, Dish.servingSize)\
+                .join(Planner, Planner.dishfk == Dish.id)\
+                    .filter(func.date(Planner.date) == date)\
+                         .all()
+                         
+        steps = db.session.query(\
+            Steps.step_num, Steps.step_text, Steps.dishfk)\
+                .join(Dish, Dish.id == Steps.dishfk)\
+                    .join(Planner, Planner.dishfk == Steps.dishfk)\
+                        .filter(func.date(Planner.date) == date)\
+                            .all()
+                                
+        items = db.session.query(\
+            Planner.date, Planner.dishfk, Planner.id, Planner.dishfk, Planner.item, Dish.pictureURL)\
+                .join(Dish, Dish.id == Planner.dishfk)\
+                    .filter(func.date(Planner.date) == date)\
+                        .all()
+                        
+        return render_template("plan_single.html", user=User, recipes=recipes, dishs=dishes, steps=steps, items=items)
 
 # Recipe Functions
 @views.route("/menu/recipe", methods=['GET', 'POST'])
@@ -103,28 +130,24 @@ def recipe_single(id):
             db.session.add(step)
             db.session.commit()
         else:
-            # Info from form
-            qty = request.form.get("qty")
-            measurement = request.form.get("measurement")
-            ing = request.form.get("ing").capitalize()
-            notes = request.form.get("notes")
-            dishid = request.form.get("dishid")
-            catagory = request.form.get('catagory')
-
-            #info from nutrition
-            if notes == None:
-                fullitem = qty+" "+measurement+" "+ing
+           
+            #info for nutrition
+            if request.form.get("notes") == None:
+                fullitem = request.form.get("qty")+" "+request.form.get("measurement").title()+" "+request.form.get("ing").title()
             else:
-                fullitem = qty+" "+measurement+" "+ing+", "+notes
-                
+                fullitem = request.form.get("qty")+" "+request.form.get("measurement").title()+" "+request.form.get("ing").title()+", "+request.form.get("notes")
+            
+            #get nutrition informtion  
             nutrition = get_food_item(fullitem)
+            
+            #build insert commnd to place data into database
             item = Recipe(
-                qty=qty, 
-                measurement=measurement, 
-                ing=ing, 
-                notes=notes, 
-                dishfk=dishid,
-                catagory = catagory,
+                qty=request.form.get("qty"), 
+                measurement= request.form.get("measurement").title(), 
+                ing= request.form.get("ing").title(),
+                notes=request.form.get("notes"), 
+                dishfk=request.form.get("dishid"),
+                catagory = request.form.get('catagory'),
                 weight = nutrition['weight'],
                 fat_total = nutrition['totalFat'],
                 fat_sat = nutrition['satFat'],
@@ -140,7 +163,7 @@ def recipe_single(id):
                 calories = nutrition['calories'],
                 calories_fat = nutrition['totalFat']*9,
                 pictureURL = nutrition['picURL'])
-            
+            #add and commit the record to the database
             db.session.add(item)
             db.session.commit()
     

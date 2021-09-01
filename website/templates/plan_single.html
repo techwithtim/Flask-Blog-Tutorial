@@ -1,12 +1,13 @@
 {% extends "menu-div.html" %}
 
 {% block title %}
-Guill Menu
+{% for date, item in items | groupby('date') %}
+Dinner for {{date.strftime('%A, %B %d, %Y')}}
+{% endfor %}
 {% endblock %}
 
 {% block header %}
 {% for date, item in items | groupby('date') %}
-<h1 class="display-1 text-center">Guill Menu</h1>
 <h4 class="display-4 text-center">{{date.strftime('%A, %B %d, %Y')}}</h4>
 {% endfor %}
 {% endblock %}
@@ -14,10 +15,67 @@ Guill Menu
 {% block menu %}
 
 {% for item in items %}
-<picture>
-    <img src="{{item.pictureURL}}" alt="{{item.name}}" width="150px" height="150px">
-</picture>
-{{item.item}} <br>
+<div class="card border-dark mb-3" style="max-width: 1900px;">
+    <div class="row g-0">
+        <div class="col-md-4 border-dark">
+            <a href="/menu/recipe/{{item.dishfk}}"><img src="{{item.pictureURL}}" class="img-fluid rounded-start"
+                    alt="{{item.item}}"></a>
+        </div>
+        <div class="col-md-8">
+            <div class="container-fluid justify-content-between">
+                <div class="card-body">
+                    <p class="card-title display-4"><bold>{{item.item}}</bold></p>
+                    <div class="row g-0">
+                        <div class="col card-text">
+                            <table>
+                                {% for recipe in recipes %}
+                                {% if recipe.dishfk == item.dishfk %}
+                                <tr>
+                                    <td>
+                                        {{recipe.qty}} {{recipe.measurement}} {{recipe.ing}}
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </table>
+                        </div>
+                        <div class="col card-text">
+                            <table>
+                                {% for step in steps %}
+                                {% if step.dishfk == item.dishfk %}
+                                <tr>
+                                    <td>
+                                        {{step.step_num}}. {{step.step_text}}
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer col">
+                {% for dish in dishs %}
+                {% if dish.id == item.dishfk %}
+                Number of Servings: {{dish.numServings}} <br>
+                Serving Size: {{dish.servingSize}}
+                <div class="small">
+                    {% set carb = {'total_amount': 0} %}
+                    {% for rec in recipes %}
+                    {% if dish.id == rec.dishfk %}
+                    {% if carb.update({'total_amount': carb.total_amount + rec.carb_total }) %}{% endif %}
+                    {% set fiber = rec.carb_fiber %}
+                    {% endif %}
+                    {% endfor %}
+                    Total Carbs: {{ "%.2f"|format(carb.total_amount / dish.numServings) }} per serving
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endfor %}
 
 <!-- {% for date, plan in plans | groupby('date') %}
