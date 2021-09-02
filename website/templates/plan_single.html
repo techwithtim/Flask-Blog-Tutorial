@@ -9,6 +9,16 @@ Dinner for {{date.strftime('%A, %B %d, %Y')}}
 {% block header %}
 {% for date, item in items | groupby('date') %}
 <h4 class="display-4 text-center">{{date.strftime('%A, %B %d, %Y')}}</h4>
+<form action="/plan/single" method='POST'>
+    <div class="input-group mb-3">
+        <input type="hidden" name="datefield" class="form-control form-control-color" value="{{ date }}">
+        <select class="form-control" id="dishid" name='dishid' placeholder="Type to search...">
+            {% for dish in dishlist %}
+            <option value="{{dish.id}}">{{dish.name}}</option>
+            {% endfor %}
+            <input type="submit" name='AddDishToPlanner' class="btn btn-outline-sucess" value="AddDishToPlanner">
+    </div>
+</form>
 {% endfor %}
 {% endblock %}
 
@@ -24,7 +34,9 @@ Dinner for {{date.strftime('%A, %B %d, %Y')}}
         <div class="col-md-8">
             <div class="container-fluid justify-content-between">
                 <div class="card-body">
-                    <p class="card-title display-4"><bold>{{item.item}}</bold></p>
+                    <p class="card-title display-4">
+                        <bold>{{item.item}}</bold>
+                    </p>
                     <div class="row g-0">
                         <div class="col card-text">
                             <table>

@@ -12,6 +12,7 @@ from .nutrition import get_food_item, nutrition_single
 import sys
 from subprocess import run, PIPE
 from sqlalchemy.sql import func
+import pdfkit
 
 
 views = Blueprint("views", __name__)
@@ -73,6 +74,18 @@ def menu():
 @login_required
 def menu_single():
     if request.method == 'POST':
+        if request.form.get('AddDishToPlanner') == "AddDishToPlanner":
+            
+            plan = Planner(
+                date = datetime.datetime.strptime(request.form.get('datefield'),"%Y-%m-%d %H:%M:%S.%f"),
+                # date = request.form.get('datefield'),
+                item = Dish.query.filter_by(id=request.form.get('dishid')).first().name,
+                dishfk = request.form.get('dishid')
+            )
+            db.session.add(plan)
+            db.session.commit()
+        
+        
         date = request.form.get('dateselector')
         
         recipes = db.session.query(\
@@ -83,11 +96,6 @@ def menu_single():
                             .order_by(Recipe.date_created)\
                                 .all()
         
-        dishes = db.session.query(\
-            Dish.id, Dish.cookTemp, Dish.cookTime, Dish.numServings, Dish.prepTime, Dish.servingSize)\
-                .join(Planner, Planner.dishfk == Dish.id)\
-                    .filter(func.date(Planner.date) == date)\
-                         .all()
                          
         steps = db.session.query(\
             Steps.step_num, Steps.step_text, Steps.dishfk)\
@@ -102,7 +110,14 @@ def menu_single():
                     .filter(func.date(Planner.date) == date)\
                         .all()
                         
-        return render_template("plan_single.html", user=User, recipes=recipes, dishs=dishes, steps=steps, items=items)
+        dishes = db.session.query(\
+            Dish.id, Dish.cookTemp, Dish.cookTime, Dish.numServings, Dish.prepTime, Dish.servingSize)\
+                .join(Planner, Planner.dishfk == Dish.id)\
+                    .filter(func.date(Planner.date) == date)\
+                            .all()
+                            
+        dishesForList = db.session.query(Dish).all()
+        return render_template("plan_single.html", user=User, recipes=recipes, dishs=dishes, steps=steps, items=items, dishlist=dishesForList)
 
 # Recipe Functions
 @views.route("/menu/recipe", methods=['GET', 'POST'])
@@ -260,12 +275,12 @@ def deleteTodo(id):
 
 #Shopping Functions
 @views.route("/menu/shopping", methods=['GET', 'POST'])
-@login_required
+# @login_required
 def shopping():
     # makedates()
     if request.method == 'POST':
-        pass
-        
+        if request.form['exportPDF'] == 'exportPDF':
+            pdfkit.from_url("http://127.0.0.1:5000"+url_for('views.shopping'), 'shopping.pdf')
     items = db.session.query(Recipe.ing, Recipe.catagory, Recipe.dishfk, func.count(Recipe.ing).label('IngCount')).filter(Recipe.dishfk == Planner.dishfk).group_by(Recipe.ing).order_by(Recipe.ing).all()
     counts = db.session.query(Recipe.catagory, func.count(Recipe.catagory)).filter(Recipe.dishfk == Planner.dishfk).group_by(Recipe.catagory).all()
 
