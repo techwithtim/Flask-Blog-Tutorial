@@ -19,6 +19,10 @@ import datetime, sys, pdfkit, flask_login, os
 
 views = Blueprint("views", __name__)
 
+#IDEA: Home Wifi
+#IDEA: Code Snippits
+#IDEA: Goals
+#IDEA: Project todos
 
 @views.route("/")
 @views.route("/home")
@@ -33,6 +37,9 @@ def cpap():
     if request.method == "POST":
         run([sys.executable,'cpap/main.py'], shell=False, stdout=PIPE)
         flash("Order Script ran!", category='sucess')
+        #BUG: Sort By Date (Currently A String) Want It Done By Date.
+        #TODO: Make to where multi users are capable.  Will need to factor in every user has a notion secrete key
+        
         return redirect(url_for('views.cpap'))
     
     supplies = get_supplies()
@@ -48,7 +55,7 @@ def cpap():
         littlesupply = [id,item,itemNum,howOften,lastOrdered.strftime("%m-%d-%Y"),imgUrl,nextOrder.strftime("%m-%d-%Y")]
         cpapsupplies.append(littlesupply)
     cpapsupplies.sort(key= lambda x: x[6])
-    return render_template("cpap.html", user=User, supplies = cpapsupplies)
+    return render_template("cpap.html", user=User, supplies=cpapsupplies)
 
 @views.route("/menu", methods=['GET', 'POST'])
 @login_required
@@ -292,8 +299,11 @@ def shopping():
     return render_template("shopping.html", user=User, items=items, counts=counts)#, dishes=dishlist, plans=plans)
 
 #Health
+#IDEA: A1C
 @views.route("/health", methods=['GET'])
 # @login_required
+#TODO: Make surgery page
+#TODO: Make hosptial page
 def health():
     return render_template("health/health.html", user=User)
 
@@ -345,6 +355,8 @@ def facilities():
 
 @views.route("/health/medications", methods=['GET', 'POST'])
 @login_required
+# TODO: Make it so the user can know when the medication is due to be refilled.
+# IDEA: Text the person whent he medication is due to be refilled.
 def medications():
     if request.method == 'POST':
         newmed = Medications(
@@ -422,3 +434,23 @@ def makeCard(id):
         return response
     return send_file(filename, attachment_filename=filename)
     
+@views.route("/health/doctors/edit/<id>", methods=['GET', 'POST'])
+@login_required
+def doctorsEdit(id):
+    if request.method == 'POST':
+        editDr = Doctor.query.filter_by(id=id).first()
+        editDr.name=request.form.get('drname')
+        editDr.facilityfk=request.form.get('facility')
+        editDr.userid=request.form.get('thisuserid')
+        editDr.address=request.form.get('address')
+        editDr.city=request.form.get('city')
+        editDr.state=request.form.get('state')
+        editDr.zip=request.form.get('zip')
+        editDr.phone=request.form.get('phone')
+        editDr.email=request.form.get('email')
+        editDr.asst=request.form.get('asst')
+        db.session.commit()
+        return render_template(url_for('views.doctors'))
+    # BUG: figure out why this script makes a new record rather than updating the current record in the database.
+    doctors = db.session.query(Doctor.name, Doctor.address, Doctor.city, Doctor.state, Doctor.zip, Doctor.phone, Doctor.email, Doctor.asst, Doctor.userid, Facility.name.label('facility'), Doctor.facilityfk).join(Facility,Facility.id == Doctor.facilityfk).filter(Doctor.userid == flask_login.current_user.id).filter(Doctor.id == id).order_by(Doctor.facilityfk).all()
+    return render_template("health/doctorsEdit.html", user=User, doctors=doctors)

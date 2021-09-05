@@ -10,8 +10,12 @@
             <label class="btn btn-primary" for="project2">Cpap Supplies</label>
         </div>
         <div class="form-check form-check-inline">
-            <input class="btn-check g-0" type="radio" name="project" id="project1" value="Menu" checked>
+            <input class="btn-check g-0" type="radio" name="project" id="project1" value="Menu">
             <label class="btn btn-primary" for="project1">Menu</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="btn-check g-0" type="radio" name="project" id="project1" value="Health" checked>
+            <label class="btn btn-primary" for="project1">Health</label>
         </div>
         <input type="submit" class="btn btn btn-warning"></input>
     </form>
@@ -27,6 +31,8 @@
             <span class="badge bg-danger rounded-pill">{{item.project}}</span>
             {% elif item.project == "Cpap Supplies" %}
             <span class="badge bg-primary rounded-pill">{{item.project}}</span>
+            {% elif item.project == "Health" %}
+            <span class="badge bg-success rounded-pill">{{item.project}}</span>
             {% else %}
             <span class="badge bg-dark rounded-pill">{{item.project}}</span>
             {% endif %}

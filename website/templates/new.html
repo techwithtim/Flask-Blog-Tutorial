@@ -160,7 +160,7 @@ Guill Menu - Add Recipe
 <form action="/menu/recipe/new" method="POST">
   <div style="margin: auto">
     <label for="dishName" style="width: 500px;">Dish Name</label>
-    <input type="text" style="width: 500px;" name="dishName" class="form-control">
+    <input type="text" style="width: 500px;" name="dishName" class="form-control" required>
   </div>
   <div class="container">
   <div class="row">
@@ -169,7 +169,7 @@ Guill Menu - Add Recipe
         <img src="https://image.shutterstock.com/image-vector/ui-image-placeholder-wireframes-apps-260nw-1037719204.jpg"
         class='img-fluid rounded-start' alt="Picture Of Dish" width='400'>
         <label for="picurl">Picture URL</label>
-        <input type="text" name="picurl" class="form-control">
+        <input type="text" name="picurl" class="form-control" required>
         <br>
         <label for="servings">Servings</label>
         <input type="text" name="servings" class="form-control" value=1>

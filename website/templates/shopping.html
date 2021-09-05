@@ -13,6 +13,7 @@ Guill Menu
 <form action="/menu/shopping" method='POST'>
 <input type="submit" name="exportPDF" class='btn btn-warning' value="exportPDF" >
 </form>
+<!-- FIXME: Fix The Pdf To Make It A Single Page Width And Format It Within A Single Page Width (Perhaps Make A New Page, Then Call The Pdf To Make) -->
 {% for catagory, item in items | groupby('catagory') %}
 <div style="max-width: 7in;">
 <ul class="list-group">

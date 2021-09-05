@@ -9,12 +9,13 @@
 <input type="submit" value="ReOrder Supplies">
 </form>
 {% for supply in supplies %}
-<div class="card mb-3 border-dark" style="max-width: 540px;">
+<!-- FIXME: Have this into two columns -->
+<div class="card mb-3 border-dark justify-content-around" style="max-width: 500px;">
     <div class="row g-0">
-        <div class="col-md-4">
+        <div class="col md-4">
             <img src={{supply[5]}} class="img-fluid rounded-start"><br />
         </div>
-        <div class="col-md-8">
+        <div class="col md-8">
             <div class="card-body">
                 <h5 class="card-title">{{supply[1]}}<br>({{supply[2]}})</h5>
                 <p class="card-text">
