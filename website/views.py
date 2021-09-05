@@ -1,8 +1,12 @@
 from operator import itemgetter
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-from flask_login import login_required
+from flask_login import login_required, current_user
+import flask_login
+from sqlalchemy.orm import session
 from sqlalchemy.sql.expression import join
-from .models import Dish, Planner, Steps, User, Recipe, Todo
+from sqlalchemy.sql.functions import current_user, session_user
+from werkzeug.datastructures import ContentSecurityPolicy
+from .models import Dish, Doctor, Facility, Medications, Planner, Steps, User, Recipe, Todo
 from .notion import get_supplies, get_menu
 from datetime import datetime, timedelta
 import datetime
@@ -51,10 +55,15 @@ def cpap():
 @views.route("/menu", methods=['GET', 'POST'])
 @login_required
 def menu():
-    # makedates()
+    #see if there are more than 60 dates from today and if not make them
+    records = db.session.query(func.count(Planner.id).label('totalcount')).filter(Planner.date >= datetime.datetime.today()).all()
+    maxdate = db.session.query(func.max(Planner.date).label('max_date')).first()
+    if records[0][0] <= 60:
+        makedates(datetime.datetime.strftime(maxdate.max_date,"%Y-%m-%d"))
+    # makedates(howmany=1, startdate='2021-01-01')
     if request.method == 'POST':
         plan = Planner(
-            date = datetime.datetime.strptime(request.form.get('datefield'),"%Y-%m-%d %H:%M:%S.%f"),
+            date = datetime.datetime.strptime(request.form.get('datefield'),"%Y-%m-%d %H:%M:%S"),
             # date = request.form.get('datefield'),
             item = Dish.query.filter_by(id=request.form.get('dishid')).first().name,
             dishfk = request.form.get('dishid')
@@ -63,7 +72,7 @@ def menu():
         db.session.commit()
         
     dishlist = Dish.query.order_by(Dish.name).all()
-    plans = Planner.query.order_by(Planner.date).limit(90)
+    plans = Planner.query.filter(Planner.date >= (datetime.datetime.today()- timedelta(days=2))).order_by(Planner.date).limit(60)
     items = Recipe.query.order_by(Recipe.dishfk).all()
     ref = db.session.query(Planner.id, Planner.date).group_by(Planner.date).order_by(Planner.date)
     
@@ -77,7 +86,7 @@ def menu_single():
         if request.form.get('AddDishToPlanner') == "AddDishToPlanner":
             
             plan = Planner(
-                date = datetime.datetime.strptime(request.form.get('datefield'),"%Y-%m-%d %H:%M:%S.%f"),
+                date = datetime.datetime.strptime(request.form.get('datefield'),"%Y-%m-%d %H:%M:%S"),
                 # date = request.form.get('datefield'),
                 item = Dish.query.filter_by(id=request.form.get('dishid')).first().name,
                 dishfk = request.form.get('dishid')
@@ -277,13 +286,104 @@ def deleteTodo(id):
 @views.route("/menu/shopping", methods=['GET', 'POST'])
 # @login_required
 def shopping():
-    # makedates()
     if request.method == 'POST':
         if request.form['exportPDF'] == 'exportPDF':
             pdfkit.from_url("http://127.0.0.1:5000"+url_for('views.shopping'), 'shopping.pdf')
     items = db.session.query(Recipe.ing, Recipe.catagory, Recipe.dishfk, func.count(Recipe.ing).label('IngCount')).filter(Recipe.dishfk == Planner.dishfk).group_by(Recipe.ing).order_by(Recipe.ing).all()
     counts = db.session.query(Recipe.catagory, func.count(Recipe.catagory)).filter(Recipe.dishfk == Planner.dishfk).group_by(Recipe.catagory).all()
-
-    
-    
     return render_template("shopping.html", user=User, items=items, counts=counts)#, dishes=dishlist, plans=plans)
+
+#Health
+@views.route("/health", methods=['GET'])
+# @login_required
+def health():
+    return render_template("health/health.html", user=User)
+
+@views.route("/health/doctors", methods=['GET', 'POST'])
+@login_required
+def doctors():
+    if request.method == 'POST':
+        
+        newdr = Doctor(
+            name=request.form.get('drname'), 
+            facilityfk=request.form.get('facility'), 
+            userid=request.form.get('thisuserid'),
+            address=request.form.get('address'),
+            city=request.form.get('city'),
+            state=request.form.get('state'),
+            zip=request.form.get('zip'),
+            phone=request.form.get('phone'),
+            email=request.form.get('email'),
+            asst=request.form.get('asst')
+            )
+        db.session.add(newdr)
+        db.session.commit() 
+    
+    doctors = db.session.query(Doctor).filter(Doctor.userid == flask_login.current_user.id).order_by(Doctor.facilityfk).all()
+    facilities = db.session.query(Facility).filter(Facility.userid == flask_login.current_user.id).all()
+    return render_template("health/doctors.html", user=User, doctors=doctors, facilities=facilities)
+
+@views.route("/health/facilities", methods=['GET', 'POST'])
+@login_required
+def facilities():
+    if request.method == 'POST':
+        newfac = Facility(
+            name=request.form.get('name'),
+            address=request.form.get('addy'),
+            city=request.form.get('city'),
+            state=request.form.get('state'),
+            zip=request.form.get('zip'),
+            phone=request.form.get('phone'),
+            type = request.form.get('type'),
+            userid = request.form.get('thisuserid')
+            )
+        
+        db.session.add(newfac)
+        db.session.commit()
+        
+    facilities = db.session.query(Facility).filter(Facility.userid == flask_login.current_user.id).all()
+    return render_template("health/facilities.html", user=User, facilities=facilities)
+
+@views.route("/health/medications", methods=['GET', 'POST'])
+@login_required
+def medications():
+    if request.method == 'POST':
+        newmed = Medications(
+            name=request.form.get('name').title(),
+            dose=request.form.get('dose'),
+            how_often=request.form.get('howoften'),
+            num_filled_days=request.form.get('num_filled_days'),
+            reason_for_taking=request.form.get('reason_for_taking'),
+            pharmacy=request.form.get('pharm'),
+            userid=request.form.get('thisuserid'),
+            doctorfk=request.form.get('doctor')
+            )
+        db.session.add(newmed)
+        db.session.commit()
+    
+    pharmacy = db.session.query(Facility).filter(Facility.userid == flask_login.current_user.id).filter(Facility.type == "Pharmacy").all()
+    doctors = db.session.query(Doctor).filter(Doctor.userid == flask_login.current_user.id).all()
+    facilities = db.session.query(Facility).filter(Facility.userid == flask_login.current_user.id).all()
+    medications = db.session.query(Medications).filter(Medications.userid == flask_login.current_user.id).all()
+    return render_template("health/medications.html", user=User, facilities=facilities, doctors=doctors, pharmacy=pharmacy, medications=medications)
+
+@views.route("/deletingMed/<id>")
+@login_required
+def deleteMed(id):
+    Medications.query.filter_by(id=id).delete()
+    db.session.commit()
+    return redirect(url_for('views.medications'))
+
+@views.route("/deletingFacility/<id>")
+@login_required
+def deleteFacility(id):
+    Facility.query.filter_by(id=id).delete()
+    db.session.commit()
+    return redirect(url_for('views.facilities'))
+
+@views.route("/deletingDoctors/<id>")
+@login_required
+def deleteDoctors(id):
+    Doctor.query.filter_by(id=id).delete()
+    db.session.commit()
+    return redirect(url_for('views.doctors'))

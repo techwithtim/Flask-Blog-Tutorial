@@ -1,0 +1,45 @@
+{% extends "health-div.html" %}
+
+{% block title %}
+{{current_user.username}} Facilities
+{% endblock %}
+
+{% block header %}
+<h1 class="display-1 text-center">Facility List for {{current_user.firstname}} {{current_user.lastname}}</h1>
+<!-- <h4 class="display-4 text-center">Planner</h4> -->
+{% endblock %}
+
+{% block menu %}
+<div class="display-8">
+{{current_user.firstname}}'s Facility list
+</div>
+{% for facility in facilities %}
+{% if facility.userid == current_user.id %}
+<div>
+{{facility.name}}
+{% endif %}
+{% endfor %}
+</div>
+
+<form action="/health/facilities", method="POST">
+    <label for="drname">Facility Name</label>
+    <input type="text" class="form-control" id="name" name="name">
+    <label for="addy">Address</label>
+    <input type="text" class="form-control" name="addy" id="addy">
+    <label for="city">City</label>
+    <input type="text" class="form-control" id="city" name="city">
+    <label for="state">State</label>
+    <input type="text" class="form-control" name="state" id="state" maxlength="2">
+    <label for="zip">Zip Code</label>
+    <input type="text" class="form-control" name="zip" id="zip">
+    <label for="type">Type of Facility</label>
+    <select name="type" id="type">
+        <option value="Hosptial">Hosptial</option>
+        <option value="Clinic">Clinic</option>
+        <option value="Pharmacy">Pharmacy</option>
+        <option value="DME">DME</option>
+    </select>
+    <input type="hidden" name='thisuserid' value="{{current_user.id}}">
+    <input type="submit" name='facSubmit' value="Add Facility">
+</form>
+{% endblock %}

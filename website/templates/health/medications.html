@@ -1,0 +1,73 @@
+{% extends "health-div.html" %}
+
+{% block title %}
+{{current_user.username}} Medications
+{% endblock %}
+
+{% block header %}
+<h1 class="display-1 text-center">Medication List for {{current_user.firstname}} {{current_user.lastname}}</h1>
+<!-- <h4 class="display-4 text-center">Planner</h4> -->
+{% endblock %}
+
+{% block menu %}
+<div class="row justify-content-between">
+    {% for medication in medications %}
+    <div class="col-4">
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">
+                    {{medication.name}}
+                </h5>
+                <h6 class="card-subtitle mb-2 text-muted">
+                    {% for doctor in doctors %}
+                    {% if doctor.id == medication.doctorfk %}
+                    {{doctor.name}}
+                    {% endif %}
+                    {% endfor %}
+                </h6>
+                <div class="card-text">
+                    {{medication.dose}}-
+                    {{medication.how_often}} for {{medication.reason_for_taking}}<br>
+                    {{medication.num_filled_days}} day supply <br>
+
+                </div>
+                <a href="/deletingMed/{{medication.id}}" class="btn btn-outline-danger btn-sm" role="button">X</a>
+                <!-- <a href="#" class="card-link">Another link</a> -->
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+
+<div class="form-floating">
+    <form action="/health/medications" , method="POST">
+        <label for="name">Medication Name</label>
+        <input type="text" class="form-control" id="name" name="name">
+        <label for="dose">Dose</label>
+        <input type="text" class="form-control" name="dose" id="dose">
+        <label for="howoften">How Often</label>
+        <input type="text" class="form-control" id="howoften" name="howoften">
+        <label for="num_filled_days">How many days was this filled</label>
+        <input type="text" class="form-control" id="num_filled_days" name="num_filled_days">
+        <label for="reason_for_taking">Reason for taking</label>
+        <input type="text" class="form-control" id="reason_for_taking" name="reason_for_taking">
+        <label for="pharm">Pharmacy</label>
+        <select name="pharm" id="pharm">
+            {% for pharm in pharmacy %}
+            <option value="{{pharm.id}}">{{pharm.name}}</option>
+            {% endfor %}
+        </select>
+        <label for="doctor">Prescribing Doctor</label>
+        <select name="doctor" id="doctor">
+            {% for doctor in doctors %}
+            {% if doctor.userid == current_user.id %}
+            <option value="{{doctor.id}}">{{doctor.name}}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+        <input type="hidden" name='thisuserid' value="{{current_user.id}}">
+        <input type="submit" name='facSubmit' value="Add Medication">
+    </form>
+</div>
+{% endblock %}

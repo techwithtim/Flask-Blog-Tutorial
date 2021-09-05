@@ -6,14 +6,17 @@ from flask_login import UserMixin
 from sqlalchemy.sql import func
 import datetime
 
-
+#Users
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
+    firstname = db.Column(db.String(150))
+    lastname = db.Column(db.String(150))
     email = db.Column(db.String(150), unique=True)
     username = db.Column(db.String(150), unique=True)
     password = db.Column(db.String(150))
     date_created = db.Column(db.DateTime(timezone=True), default=func.now())
 
+#Guill Menu
 class Dish(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), unique=True)
@@ -29,8 +32,6 @@ class Dish(db.Model):
     recipe = db.relationship('Recipe', backref='dish', passive_deletes=True)
     steps = db.relationship('Steps', backref='dish', passive_deletes=True)
     plan = db.relationship('Planner', backref='dish', passive_deletes=True)
-
-
 
 class Recipe(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -65,14 +66,7 @@ class Steps(db.Model):
     date_created = db.Column(db.DateTime(timezone=True), default=func.now())    
     dishfk = db.Column(db.Integer, db.ForeignKey(
         'dish.id', ondelete="CASCADE"), nullable=False)
-    
-class Todo(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    item = db.Column(db.String(500))
-    project = db.Column(db.String(50))
-    checked = db.Column(db.BOOLEAN)
-    date_created = db.Column(db.DateTime(timezone=True), default=func.now()) 
-    
+
 class Planner(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime(timezone=True))
@@ -82,3 +76,99 @@ class Planner(db.Model):
     update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
     date_created = db.Column(db.DateTime(timezone=True), default=func.now()) 
 
+#ToDo List
+class Todo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    item = db.Column(db.String(500))
+    project = db.Column(db.String(50))
+    checked = db.Column(db.BOOLEAN)
+    date_created = db.Column(db.DateTime(timezone=True), default=func.now()) 
+    
+#Medical
+class Facility(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name=db.Column(db.String(100))
+    address=db.Column(db.String(100))
+    city=db.Column(db.String(50))
+    state=db.Column(db.String(2))
+    zip=db.Column(db.String(10))
+    phone=db.Column(db.String(20))
+    type = db.Column(db.String(50))
+    userid = db.Column(db.Integer, nullable=False)
+    #relationship
+    doctor = db.relationship('Doctor', backref='facility', passive_deletes=True)
+    hosptial = db.relationship('Hosptial', backref='facility', passive_deletes=True)
+    surgeries = db.relationship('Surgeries', backref='facility', passive_deletes=True)
+    
+class Doctor(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name=db.Column(db.String(100))
+    address=db.Column(db.String(100))
+    city=db.Column(db.String(50))
+    state=db.Column(db.String(2))
+    zip=db.Column(db.String(10))
+    phone=db.Column(db.String(15))
+    email=db.Column(db.String(100))
+    asst=db.Column(db.String(100))
+    userid = db.Column(db.Integer, nullable=False)
+    update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
+    date_created = db.Column(db.DateTime(timezone=True), default=func.now())
+    #relationships
+    hosptial = db.relationship('Hosptial', backref='doctor', passive_deletes=True)
+    surgeries = db.relationship('Surgeries', backref='doctor', passive_deletes=True)
+    medication = db.relationship('Medications', backref='doctor', passive_deletes=True)
+    #forignkeys
+    facilityfk=db.Column(db.Integer, db.ForeignKey(
+        'facility.id', ondelete="CASCADE"), nullable=False)
+
+class Hosptial(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    datestart=db.Column(db.Date, nullable=False)
+    dateend=db.Column(db.Date, nullable=False)
+    reason=db.Column(db.String(100))
+    userid = db.Column(db.Integer, nullable=False)
+    update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
+    date_created = db.Column(db.DateTime(timezone=True), default=func.now()) 
+    #forign keys
+    doctorfk=db.Column(db.Integer, db.ForeignKey('doctor.id', ondelete="CASCADE"), nullable=False)
+    facilityfk=db.Column(db.Integer, db.ForeignKey('facility.id', ondelete="CASCADE"), nullable=False)
+    
+class Surgeries(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name=db.Column(db.String(100), nullable=False)
+    date=db.Column(db.Date, nullable=False)
+    description=db.Column(db.String(500))
+    body_part=db.Column(db.String(50))
+    age=db.Column(db.Integer)
+    userid = db.Column(db.Integer, nullable=False)
+    update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
+    date_created = db.Column(db.DateTime(timezone=True), default=func.now()) 
+    #forign keys
+    doctorfk = db.Column(db.Integer, db.ForeignKey('doctor.id', ondelete="CASCADE"), nullable=False)
+    facilityfk=db.Column(db.Integer, db.ForeignKey('facility.id', ondelete="CASCADE"), nullable=False)
+
+class Medications(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name=db.Column(db.String(100))
+    dose=db.Column(db.String(50))
+    how_often=db.Column(db.String(100))
+    num_filled_days=db.Column(db.Integer)
+    reason_for_taking=db.Column(db.String(100))
+    pharmacy = db.Column(db.String(100))
+    userid = db.Column(db.Integer, nullable=False)
+    update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
+    date_created = db.Column(db.DateTime(timezone=True), default=func.now()) 
+    #relationships
+    allergies = db.relationship('Allergies', backref='medications', passive_deletes=True)
+    #forign keys
+    doctorfk = db.Column(db.Integer, db.ForeignKey('doctor.id', ondelete="CASCADE"), nullable=False)
+
+class Allergies(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    reaction=db.Column(db.String(50))
+    dateadded=db.Column(db.Date, nullable=False)
+    userid = db.Column(db.Integer, nullable=False)
+    update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
+    date_created = db.Column(db.DateTime(timezone=True), default=func.now()) 
+    #forign keys
+    medicationfk=db.Column(db.Integer, db.ForeignKey('medications.id', ondelete="CASCADE"), nullable=False)
