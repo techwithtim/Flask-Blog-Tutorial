@@ -1,22 +1,20 @@
 from operator import itemgetter
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, send_file, after_this_request
 from flask_login import login_required, current_user
-import flask_login
 from sqlalchemy.orm import session
 from sqlalchemy.sql.expression import join
 from sqlalchemy.sql.functions import current_user, session_user
 from werkzeug.datastructures import ContentSecurityPolicy
-from .models import Dish, Doctor, Facility, Medications, Planner, Steps, User, Recipe, Todo
+from .models import Allergies, Dish, Doctor, Facility, Medications, Planner, Steps, User, Recipe, Todo
 from .notion import get_supplies, get_menu
 from datetime import datetime, timedelta
-import datetime
 from . import db
 from .makedates import makedates
 from .nutrition import get_food_item, nutrition_single
-import sys
 from subprocess import run, PIPE
 from sqlalchemy.sql import func
-import pdfkit
+from .vfc_maker import make_vfc
+import datetime, sys, pdfkit, flask_login, os
 
 
 views = Blueprint("views", __name__)
@@ -341,8 +339,9 @@ def facilities():
         db.session.add(newfac)
         db.session.commit()
         
-    facilities = db.session.query(Facility).filter(Facility.userid == flask_login.current_user.id).all()
-    return render_template("health/facilities.html", user=User, facilities=facilities)
+    facilities = db.session.query(Facility).filter(Facility.userid == flask_login.current_user.id).order_by(Facility.type, Facility.name).all()
+    doctors = db.session.query(Doctor).filter(Doctor.userid == flask_login.current_user.id).all()
+    return render_template("health/facilities.html", user=User, facilities=facilities, doctors=doctors)
 
 @views.route("/health/medications", methods=['GET', 'POST'])
 @login_required
@@ -387,3 +386,39 @@ def deleteDoctors(id):
     Doctor.query.filter_by(id=id).delete()
     db.session.commit()
     return redirect(url_for('views.doctors'))
+
+@views.route("/health/allergies", methods=['GET', 'POST'])
+@login_required
+def allergies():
+    if request.method == 'POST':
+        allergic = Allergies(
+            name=request.form.get('name').title(),
+            reaction = request.form.get('reaction'),
+            dateadded = datetime.datetime.strptime(request.form.get('dateadded'),"%Y-%m-%d"),
+            userid=request.form.get('thisuserid')
+            )
+        db.session.add(allergic)
+        db.session.commit()
+    
+    allergies = db.session.query(Allergies).filter(Allergies.userid ==flask_login.current_user.id).order_by(Allergies.name).all()
+    return render_template("health/allergies.html", user=User, allergies=allergies)
+
+@views.route("/deletingAllergy/<id>")
+@login_required
+def deletingAllergy(id):
+    Allergies.query.filter_by(id=id).delete()
+    db.session.commit()
+    return redirect(url_for('views.allergies'))
+
+@views.route("/health/doctor/card/<id>", methods=['GET'])
+def makeCard(id): 
+    doctorinfo = db.session.query(Doctor.name, Doctor.address, Doctor.city, Doctor.state, Doctor.zip, Doctor.phone, Doctor.email, Facility.name.label('company')).filter(Doctor.id == id).join(Facility,Facility.id == Doctor.facilityfk).first()
+    filename = make_vfc(doctorinfo)
+    
+    @after_this_request
+    def deletefile(response):
+        if os.path.exists("website/"+filename):
+            os.remove("website/"+filename)
+        return response
+    return send_file(filename, attachment_filename=filename)
+    

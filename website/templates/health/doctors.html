@@ -13,37 +13,48 @@
 <div class="row justify-content-between">
     {% for doctor in doctors %}
     <div class="col-4 mb-4">
-        <div class="card" style="width: 26rem;">
+        <div class="card" style="width: 100%;">
             <div class="card-body">
-                <h5 class="card-title">
-                    {{doctor.name}}
-                </h5>
-                <h6 class="card-subtitle mb-2 text-muted">
-                    {% for facility in facilities %}
-                    {% if facility.id == doctor.facilityfk %}
-                    {{facility.name}}
-                    {% endif %}
-                    {% endfor %}
-                </h6>
-                <div class="card-text">
-                    {{doctor.address}} <br>
-                    {{doctor.city}}, {{doctor.state}} {{doctor.zip}}<br>
-                    {{doctor.phone}} | {{doctor.email}}<br>
-
+                <div class="card-header">
+                    <h5 class="card-title">
+                        {{doctor.name}}
+                    </h5>
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        {% for facility in facilities %}
+                        {% if facility.id == doctor.facilityfk %}
+                        {{facility.name}}
+                        {% endif %}
+                        {% endfor %}
+                    </h6>
                 </div>
-                <a href="/deletingDoctors/{{doctor.id}}" class="btn btn-outline-danger btn-sm" role="button">X</a>
-                <!-- <a href="#" class="card-link">Another link</a> -->
+                <div class="card-text">
+                    {{doctor.address}} {{doctor.city}}, {{doctor.state}} {{doctor.zip}}<br>
+                    {{doctor.phone}} | {{doctor.email}}<br>
+                </div>
+                <div class="card-footer align-content-between">
+                    <div class="col">
+                        <a href="/health/doctor/card/{{doctor.id}}"><i class="fa fa-address-card"></i><button
+                                class="btn" name="cardmaker">Card</button></a>
+                    </div>
+                    <div class="col">
+                        <a href="/deletingDoctors/{{doctor.id}}" class="btn btn-outline-danger btn-sm"
+                            role="button">X</a>
+                    </div>
+                    <!-- <div class="col">
+                        <a href="#" class="card-link">Another link</a>
+                    </div> -->
+                </div>
             </div>
         </div>
     </div>
-    {% endfor %}
-</div>
+{% endfor %}
+
 
 <form action="/health/doctors" , method="POST">
     <label for="drname">Doctor's Name</label>
     <input type="text" class="form-control" id="drname" name="drname">
     <div>
-    <label for="facility">Facility</label>
+        <label for="facility">Facility</label>
         <select type="text" name="facility" id="facility" list="facility">
             {% for facility in facilities %}
             {% if facility.userid == current_user.id %}

@@ -10,36 +10,68 @@
 {% endblock %}
 
 {% block menu %}
-<div class="display-8">
-{{current_user.firstname}}'s Facility list
-</div>
-{% for facility in facilities %}
-{% if facility.userid == current_user.id %}
-<div>
-{{facility.name}}
-{% endif %}
-{% endfor %}
-</div>
+<div class="row justify-content-between">
+    {% for facility in facilities %}
+    <div class="col-4 mb-4">
+        {% if facility.type == "Pharmacy" %}
+        <div class="card border-success" style="width: 26rem;">
+            {% elif facility.type == "Clinic" %}
+            <div class="card border-primary" style="width: 26rem;">
+                {% elif facility.type == "Hosptial" %}
+                <div class="card border-warning" style="width: 26rem;">
+                    {% else %}
+                    <div class="card border-dark" style="width: 26rem;">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                {{facility.name}}
+                            </h5>
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                {% if facility.type == "Clinic" %}
+                                {% for doctor in doctors %}
+                                {% if facility.id == doctor.facilityfk %}
+                                {{doctor.name}} <br>
+                                {% endif %}
+                                {% endfor %}
+                                {% else %}
+                                {{facility.type}}
+                                {% endif %}
+                            </h6>
+                            <div class="card-text">
+                                {{facility.address}} <br>
+                                {{facility.city}}, {{facility.state}} {{facility.zip}}<br>
+                                {{facility.phone}}
+                            </div>
+                            <a href="/deletingFacility/{{facility.id}}" class="btn btn-outline-danger btn-sm"
+                                role="button">X</a>
+                            <!-- <a href="#" class="card-link">Another link</a> -->
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
 
-<form action="/health/facilities", method="POST">
-    <label for="drname">Facility Name</label>
-    <input type="text" class="form-control" id="name" name="name">
-    <label for="addy">Address</label>
-    <input type="text" class="form-control" name="addy" id="addy">
-    <label for="city">City</label>
-    <input type="text" class="form-control" id="city" name="city">
-    <label for="state">State</label>
-    <input type="text" class="form-control" name="state" id="state" maxlength="2">
-    <label for="zip">Zip Code</label>
-    <input type="text" class="form-control" name="zip" id="zip">
-    <label for="type">Type of Facility</label>
-    <select name="type" id="type">
-        <option value="Hosptial">Hosptial</option>
-        <option value="Clinic">Clinic</option>
-        <option value="Pharmacy">Pharmacy</option>
-        <option value="DME">DME</option>
-    </select>
-    <input type="hidden" name='thisuserid' value="{{current_user.id}}">
-    <input type="submit" name='facSubmit' value="Add Facility">
-</form>
-{% endblock %}
+            <form action="/health/facilities" , method="POST">
+                <label for="drname">Facility Name</label>
+                <input type="text" class="form-control" id="name" name="name">
+                <label for="addy">Address</label>
+                <input type="text" class="form-control" name="addy" id="addy">
+                <label for="city">City</label>
+                <input type="text" class="form-control" id="city" name="city">
+                <label for="state">State</label>
+                <input type="text" class="form-control" name="state" id="state" maxlength="2">
+                <label for="zip">Zip Code</label>
+                <input type="text" class="form-control" name="zip" id="zip">
+                <label for="type">Type of Facility</label> <br>
+                <select name="type" id="type">
+                    <option value="Hosptial">Hosptial</option>
+                    <option value="Clinic">Clinic</option>
+                    <option value="Pharmacy">Pharmacy</option>
+                    <option value="DME">DME</option>
+                </select> <br>
+                <label for="phone">Phone Number</label>
+                <input type="text" class="form-control" name="phone" id="phone">
+                <input type="hidden" name='thisuserid' value="{{current_user.id}}">
+                <input type="submit" name='facSubmit' value="Add Facility">
+            </form>
+            {% endblock %}

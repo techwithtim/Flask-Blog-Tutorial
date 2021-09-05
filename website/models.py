@@ -158,17 +158,14 @@ class Medications(db.Model):
     userid = db.Column(db.Integer, nullable=False)
     update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
     date_created = db.Column(db.DateTime(timezone=True), default=func.now()) 
-    #relationships
-    allergies = db.relationship('Allergies', backref='medications', passive_deletes=True)
     #forign keys
     doctorfk = db.Column(db.Integer, db.ForeignKey('doctor.id', ondelete="CASCADE"), nullable=False)
 
 class Allergies(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    name=db.Column(db.String(100))
     reaction=db.Column(db.String(50))
     dateadded=db.Column(db.Date, nullable=False)
     userid = db.Column(db.Integer, nullable=False)
     update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
     date_created = db.Column(db.DateTime(timezone=True), default=func.now()) 
-    #forign keys
-    medicationfk=db.Column(db.Integer, db.ForeignKey('medications.id', ondelete="CASCADE"), nullable=False)
