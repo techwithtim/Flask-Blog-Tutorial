@@ -357,8 +357,16 @@ def facilities():
 @login_required
 # TODO: Make it so the user can know when the medication is due to be refilled.
 # IDEA: Text the person whent he medication is due to be refilled.
+# IDEA: Create a wallet size report in pdf that can be printed out
+# FIXME: Create a 8.5 x 11 report in pdf to print out. (made report medlist.html.  Need to get it to print with pdfkit)
 def medications():
     if request.method == 'POST':
+        # if request.form['exportPDF'] == 'exportPDF':
+        #     pdfkit.from_url("http://127.0.0.1:5000"+url_for('views.medlistPrint'), 'medlist-'+flask_login.current_user.firstname+' '+flask_login.current_user.lastname+'.pdf')
+        #     render_template(url_for('views.medications'))
+        lastrefill = datetime.datetime.strptime(request.form.get('lastordered'),"%Y-%m-%d")
+        numfilleddays=request.form.get('num_filled_days')
+
         newmed = Medications(
             name=request.form.get('name').title(),
             dose=request.form.get('dose'),
@@ -366,6 +374,8 @@ def medications():
             num_filled_days=request.form.get('num_filled_days'),
             reason_for_taking=request.form.get('reason_for_taking'),
             pharmacy=request.form.get('pharm'),
+            last_refilled = lastrefill,
+            next_refill = lastrefill + datetime.timedelta(days=int(numfilleddays)),
             userid=request.form.get('thisuserid'),
             doctorfk=request.form.get('doctor')
             )
@@ -375,7 +385,7 @@ def medications():
     pharmacy = db.session.query(Facility).filter(Facility.userid == flask_login.current_user.id).filter(Facility.type == "Pharmacy").all()
     doctors = db.session.query(Doctor).filter(Doctor.userid == flask_login.current_user.id).all()
     facilities = db.session.query(Facility).filter(Facility.userid == flask_login.current_user.id).all()
-    medications = db.session.query(Medications).filter(Medications.userid == flask_login.current_user.id).all()
+    medications = db.session.query(Medications).filter(Medications.userid == flask_login.current_user.id).order_by(Medications.next_refill, Medications.name).all()
     return render_template("health/medications.html", user=User, facilities=facilities, doctors=doctors, pharmacy=pharmacy, medications=medications)
 
 @views.route("/deletingMed/<id>")
@@ -454,3 +464,9 @@ def doctorsEdit(id):
     # BUG: figure out why this script makes a new record rather than updating the current record in the database.
     doctors = db.session.query(Doctor.name, Doctor.address, Doctor.city, Doctor.state, Doctor.zip, Doctor.phone, Doctor.email, Doctor.asst, Doctor.userid, Facility.name.label('facility'), Doctor.facilityfk).join(Facility,Facility.id == Doctor.facilityfk).filter(Doctor.userid == flask_login.current_user.id).filter(Doctor.id == id).order_by(Doctor.facilityfk).all()
     return render_template("health/doctorsEdit.html", user=User, doctors=doctors)
+
+@views.route("/health/medlist", methods=['GET'])
+def medlistPrint():
+    medications = db.session.query(Medications).filter(Medications.userid == flask_login.current_user.id).order_by(Medications.reason_for_taking,Medications.name).all()
+    doctors = db.session.query(Doctor).filter(Doctor.userid == flask_login.current_user.id).order_by(Doctor.name).all()
+    return render_template("health/medicationlist.html", user=User, medications=medications, doctors=doctors)

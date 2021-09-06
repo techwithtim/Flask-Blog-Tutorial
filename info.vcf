@@ -1,9 +1,0 @@
-BEGIN:VCARD
-VERSION:3.0
-PRODID:-//Apple Inc.//macOS 12.0//EN
-N:CHRISTIANSEN;DUSTIN;;;
-FN:DUSTIN CHRISTIANSEN
-item1.EMAIL;type=INTERNET;type=pref:
-TEL;type=WORK;type=VOICE;type=pref: 844-338-5445
-ADR;type=WORK;type=pref:;;1430 Commercial Street SE;Salem;OR;97302;United States
-END:VCARD

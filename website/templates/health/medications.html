@@ -6,40 +6,12 @@
 
 {% block header %}
 <h1 class="display-1 text-center">Medication List for {{current_user.firstname}} {{current_user.lastname}}</h1>
-<!-- <h4 class="display-4 text-center">Planner</h4> -->
 {% endblock %}
 
 {% block menu %}
-<div class="row justify-content-between">
-    {% for medication in medications %}
-    <div class="col-4">
-        <div class="card" style="width: 18rem;">
-            <div class="card-body">
-                <h5 class="card-title">
-                    {{medication.name}}
-                </h5>
-                <h6 class="card-subtitle mb-2 text-muted">
-                    {% for doctor in doctors %}
-                    {% if doctor.id == medication.doctorfk %}
-                    {{doctor.name}}
-                    {% endif %}
-                    {% endfor %}
-                </h6>
-                <div class="card-text">
-                    {{medication.dose}}-
-                    {{medication.how_often}} for {{medication.reason_for_taking}}<br>
-                    {{medication.num_filled_days}} day supply <br>
-
-                </div>
-                <a href="/deletingMed/{{medication.id}}" class="btn btn-outline-danger btn-sm" role="button">X</a>
-                <!-- <a href="#" class="card-link">Another link</a> -->
-            </div>
-        </div>
-    </div>
-    {% endfor %}
-</div>
-
-
+<form action="/health/medications" method='POST'>
+    <input type="submit" name="exportPDF" class='btn btn-warning' value="exportPDF">
+</form>
 <div class="form-floating">
     <form action="/health/medications" , method="POST">
         <label for="name">Medication Name</label>
@@ -66,8 +38,42 @@
             {% endif %}
             {% endfor %}
         </select>
+        <label for="lastordered">Last Ordered</label>
+        <input type="date" class="form-control" id="lastordered" name="lastordered">
         <input type="hidden" name='thisuserid' value="{{current_user.id}}">
-        <input type="submit" name='facSubmit' value="Add Medication">
+        <input class="btn btn-success btn-lg" type="submit" name='facSubmit' value="Add Medication"> <br> <br>
     </form>
+</div>
+
+<div class="row justify-content-between">
+    {% for medication in medications %}
+    <div class="col-4 mb-4">
+        <div class="card border-dark" style="width: 26rem;">
+            <div class="card-body">
+                <h5 class="card-title">
+                    {{medication.name}}
+                </h5>
+                <h6 class="card-subtitle mb-2 text-muted">
+                    {% for doctor in doctors %}
+                    {% if doctor.id == medication.doctorfk %}
+                    {{doctor.name}}
+                    {% endif %}
+                    {% endfor %}
+                </h6>
+                <div class="card-text">
+                    {{medication.dose}}-
+                    {{medication.how_often}} for {{medication.reason_for_taking}}<br>
+                    {{medication.num_filled_days}} day supply <br>
+                </div>
+                <div class="card-footer">
+                    Last Refill: {{ medication.last_refilled.strftime("%m-%d-%Y") }} <br>
+                    Next Refill: {{ medication.next_refill.strftime("%m-%d-%Y") }}
+                </div>
+                <a href="/deletingMed/{{medication.id}}" class="btn btn-outline-danger btn-sm" role="button">X</a>
+                <!-- <a href="#" class="card-link">Another link</a> -->
+            </div>
+        </div>
+    </div>
+    {% endfor %}
 </div>
 {% endblock %}
