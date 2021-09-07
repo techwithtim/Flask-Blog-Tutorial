@@ -5,7 +5,7 @@ from sqlalchemy.orm import session
 from sqlalchemy.sql.expression import join
 from sqlalchemy.sql.functions import current_user, session_user
 from werkzeug.datastructures import ContentSecurityPolicy
-from .models import Allergies, Dish, Doctor, Facility, Medications, Planner, Steps, User, Recipe, Todo
+from .models import Allergies, Dish, Doctor, Facility, Goals, Medications, Planner, Projects, Steps, Tasks, User, Recipe
 from .notion import get_supplies, get_menu
 from datetime import datetime, timedelta
 from . import db
@@ -19,43 +19,12 @@ import datetime, sys, pdfkit, flask_login, os
 
 views = Blueprint("views", __name__)
 
-#IDEA: Home Wifi
-#IDEA: Code Snippits
-#IDEA: Goals
-#IDEA: Project todos
 
 @views.route("/")
 @views.route("/home")
 @login_required
 def home():
     return render_template("home.html", user=User)
-
-
-@views.route("/cpap", methods=['GET','POST'])
-@login_required
-def cpap():
-    if request.method == "POST":
-        run([sys.executable,'cpap/main.py'], shell=False, stdout=PIPE)
-        flash("Order Script ran!", category='sucess')
-        #BUG: Sort By Date (Currently A String) Want It Done By Date.
-        #TODO: Make to where multi users are capable.  Will need to factor in every user has a notion secrete key
-        
-        return redirect(url_for('views.cpap'))
-    
-    supplies = get_supplies()
-    cpapsupplies = []
-    for i in range(len(supplies['results'])):
-        id = supplies['results'][i]['id']
-        item = supplies['results'][i]['properties']['Item']['title'][0]['plain_text']
-        itemNum = supplies['results'][i]['properties']['Item#']['rich_text'][0]['plain_text']
-        howOften = supplies['results'][i]['properties']['How often (days)']['number']
-        lastOrdered = datetime.datetime.strptime(supplies['results'][i]['properties']['Last Ordered']['date']['start'],"%Y-%m-%d")
-        imgUrl = supplies['results'][i]['properties']['ImageURL']['url']
-        nextOrder = datetime.datetime.strptime(supplies['results'][i]['properties']['Last Ordered']['date']['start'],"%Y-%m-%d") + timedelta(days=howOften)
-        littlesupply = [id,item,itemNum,howOften,lastOrdered.strftime("%m-%d-%Y"),imgUrl,nextOrder.strftime("%m-%d-%Y")]
-        cpapsupplies.append(littlesupply)
-    cpapsupplies.sort(key= lambda x: x[6])
-    return render_template("cpap.html", user=User, supplies=cpapsupplies)
 
 @views.route("/menu", methods=['GET', 'POST'])
 @login_required
@@ -264,29 +233,6 @@ def recipe_new():
     return render_template("new.html", user=User)
 
 
-# Todo list
-@views.route("/todo", methods=['GET', 'POST'])
-def todo():
-    if request.method == 'POST':
-        task = Todo(
-            item = request.form.get('item').title(),
-            project = request.form.get("project").title(),
-            checked = request.form.get("checked")
-        )
-        db.session.add(task)
-        db.session.commit()
-
-    items = Todo.query.order_by(Todo.project.asc(), Todo.item.asc()).limit(100).all()
-    return render_template("todo.html", user=User, items=items)
-
-
-@views.route("/deletingTodo/<id>")
-@login_required
-def deleteTodo(id):
-    Todo.query.filter_by(id=id).delete()
-    db.session.commit()
-    return redirect(url_for('views.todo'))
-
 #Shopping Functions
 @views.route("/menu/shopping", methods=['GET', 'POST'])
 # @login_required
@@ -298,8 +244,8 @@ def shopping():
     counts = db.session.query(Recipe.catagory, func.count(Recipe.catagory)).filter(Recipe.dishfk == Planner.dishfk).group_by(Recipe.catagory).all()
     return render_template("shopping.html", user=User, items=items, counts=counts)#, dishes=dishlist, plans=plans)
 
+
 #Health
-#IDEA: A1C
 @views.route("/health", methods=['GET'])
 # @login_required
 #TODO: Make surgery page
@@ -311,7 +257,6 @@ def health():
 @login_required
 def doctors():
     if request.method == 'POST':
-        
         newdr = Doctor(
             name=request.form.get('drname'), 
             facilityfk=request.form.get('facility'), 
@@ -356,14 +301,13 @@ def facilities():
 @views.route("/health/medications", methods=['GET', 'POST'])
 @login_required
 # TODO: Make it so the user can know when the medication is due to be refilled.
-# IDEA: Text the person whent he medication is due to be refilled.
-# IDEA: Create a wallet size report in pdf that can be printed out
 # FIXME: Create a 8.5 x 11 report in pdf to print out. (made report medlist.html.  Need to get it to print with pdfkit)
 def medications():
     if request.method == 'POST':
         # if request.form['exportPDF'] == 'exportPDF':
         #     pdfkit.from_url("http://127.0.0.1:5000"+url_for('views.medlistPrint'), 'medlist-'+flask_login.current_user.firstname+' '+flask_login.current_user.lastname+'.pdf')
         #     render_template(url_for('views.medications'))
+        
         lastrefill = datetime.datetime.strptime(request.form.get('lastordered'),"%Y-%m-%d")
         numfilleddays=request.form.get('num_filled_days')
 
@@ -387,6 +331,32 @@ def medications():
     facilities = db.session.query(Facility).filter(Facility.userid == flask_login.current_user.id).all()
     medications = db.session.query(Medications).filter(Medications.userid == flask_login.current_user.id).order_by(Medications.next_refill, Medications.name).all()
     return render_template("health/medications.html", user=User, facilities=facilities, doctors=doctors, pharmacy=pharmacy, medications=medications)
+
+@views.route("/health/cpap", methods=['GET','POST'])
+@login_required
+def cpap():
+    if request.method == "POST":
+        run([sys.executable,'cpap/main.py'], shell=False, stdout=PIPE)
+        flash("Order Script ran!", category='sucess')
+        #BUG: Sort By Date (Currently A String) Want It Done By Date.
+        #TODO: Make to where multi users are capable.  Will need to factor in every user has a notion secrete key
+        
+        return redirect(url_for('views.cpap'))
+    
+    supplies = get_supplies()
+    cpapsupplies = []
+    for i in range(len(supplies['results'])):
+        id = supplies['results'][i]['id']
+        item = supplies['results'][i]['properties']['Item']['title'][0]['plain_text']
+        itemNum = supplies['results'][i]['properties']['Item#']['rich_text'][0]['plain_text']
+        howOften = supplies['results'][i]['properties']['How often (days)']['number']
+        lastOrdered = datetime.datetime.strptime(supplies['results'][i]['properties']['Last Ordered']['date']['start'],"%Y-%m-%d")
+        imgUrl = supplies['results'][i]['properties']['ImageURL']['url']
+        nextOrder = datetime.datetime.strptime(supplies['results'][i]['properties']['Last Ordered']['date']['start'],"%Y-%m-%d") + timedelta(days=howOften)
+        littlesupply = [id,item,itemNum,howOften,lastOrdered.strftime("%m-%d-%Y"),imgUrl,nextOrder.strftime("%m-%d-%Y")]
+        cpapsupplies.append(littlesupply)
+    cpapsupplies.sort(key= lambda x: x[6])
+    return render_template("health/cpap.html", user=User, supplies=cpapsupplies)
 
 @views.route("/deletingMed/<id>")
 @login_required
@@ -470,3 +440,53 @@ def medlistPrint():
     medications = db.session.query(Medications).filter(Medications.userid == flask_login.current_user.id).order_by(Medications.reason_for_taking,Medications.name).all()
     doctors = db.session.query(Doctor).filter(Doctor.userid == flask_login.current_user.id).order_by(Doctor.name).all()
     return render_template("health/medicationlist.html", user=User, medications=medications, doctors=doctors)
+
+
+# Productivity
+@views.route("/productivity", methods=['GET', 'POST'])
+@login_required
+def productivity():
+    return render_template("productivity/productivity.html", user=User)
+
+@views.route("productivity/goals", methods=['GET', 'POST'])
+@login_required
+def goals():
+    return render_template("productivity/goals.html", user=User)
+
+@views.route("productivity/projects", methods=['GET', 'POST'])
+@login_required
+def projects():
+    if request.method == 'POST':
+        newProj = Projects(
+            name = request.form.get('name'),
+            pictureurl = request.form.get('pictureurl'),
+            status = request.form.get('status'),
+            last_reviewed = datetime.datetime.strptime(request.form.get('last_reviewed'),"%Y-%m-%d"),
+            when_review = request.form.get('when_review'),
+            userid = request.form.get('thisuserid')
+        )
+        db.session.add(newProj)
+        db.session.commit()
+        
+    projects = db.session.query(Projects).filter(Projects.userid == flask_login.current_user.id).order_by(Projects.name).all()
+    return render_template("productivity/projects.html", user=User, projects=projects)
+
+@views.route("productivity/tasks", methods=['GET', 'POST'])
+@login_required
+def tasks():
+    if request.method == 'POST':
+        if request.form.get('complete') == 'on': complete = True 
+        else: complete = False
+        newtask = Tasks(
+            project = request.form.get('project'),
+            item = request.form.get('task'),
+            checked = complete,
+            userid = request.form.get('thisuserid'),
+            goalfk = None
+        )
+        db.session.add(newtask)
+        db.session.commit()
+        
+    projects = db.session.query(Projects).filter(Projects.userid == flask_login.current_user.id).order_by(Projects.name).all()
+    tasks = db.session.query(Projects.name.label('projectname'), Projects.status.label('projectstatus'), Tasks.checked, Tasks.goalfk, Tasks.id, Tasks.item).join(Projects, Projects.id == Tasks.project).filter(Tasks.userid == flask_login.current_user.id).order_by(Projects.name).all()
+    return render_template("productivity/tasks.html", user=User, projects=projects, tasks=tasks)

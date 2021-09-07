@@ -1,0 +1,53 @@
+{% extends "productivity/prod-div.html" %}
+
+{% block title %}
+{{current_user.username}} Tasks
+{% endblock %}
+
+{% block header %}
+<h1 class="display-1 text-center">Tasks for {{current_user.firstname}} {{current_user.lastname}}</h1>
+{% endblock %}
+
+{% block menu %}
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Complete</th>
+            <th>Task</th>
+            <th>Project</th>
+            <th>Due Date</th>
+        </tr>
+        <tr>
+            <form action="/productivity/tasks" method="POST">
+                <td><input type="checkbox" name="complete" id="complete" class="form-check-input"></td>
+                <td><input type="text" name="task" id="task" class="form-control"></td>
+                <td><select name="project" id="project" class="form-select">
+                        {% for project in projects %}
+                        <option value="{{project.id}}">{{project.name}}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td><input type="date" name="dueDate" id="dueDate" class="form-control"></td>
+                <td><input type="hidden" name='thisuserid' value="{{current_user.id}}"></td>
+                <td><input type="submit" value="submit"></td>
+            </form>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in tasks %}
+        <tr>
+            <td>
+                {% if task.checked %}
+                <input type="checkbox" class="form-check-input" checked disabled>
+                {% else %}
+                <input type="checkbox" class="form-check-input" disabled>
+                {% endif %}
+            </td>
+            <td>{{task.item}}</td>
+            <td>{{task.projectname}}</td>
+            <td>{{task.duedate}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -76,15 +76,7 @@ class Planner(db.Model):
         'dish.id', ondelete="CASCADE"), nullable=True)
     update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
     date_created = db.Column(db.DateTime(timezone=True), default=func.now()) 
-
-#ToDo List
-class Todo(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    item = db.Column(db.String(500))
-    project = db.Column(db.String(50))
-    checked = db.Column(db.BOOLEAN)
-    date_created = db.Column(db.DateTime(timezone=True), default=func.now()) 
-    
+  
 #Medical
 class Facility(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -172,3 +164,43 @@ class Allergies(db.Model):
     userid = db.Column(db.Integer, nullable=False)
     update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
     date_created = db.Column(db.DateTime(timezone=True), default=func.now()) 
+  
+#Goals  
+class Goals(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name=db.Column(db.String(100))
+    pictureurl=db.Column(db.String(500))
+    status=db.Column(db.String(50))
+    measurement=db.Column(db.String(500))
+    datestart = db. Column (db. DateTime)
+    dateend = db. Column (db. DateTime)
+    userid = db.Column(db.Integer, nullable=False)
+    update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
+    date_created = db.Column(db.DateTime(timezone=True), default=func.now())
+    #relationships
+    tasks = db.relationship('Tasks', backref='goals', passive_deletes=True)
+    
+#Tasks
+class Tasks(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    item = db.Column(db.String(500))
+    checked = db.Column(db.BOOLEAN)
+    userid = db.Column(db.Integer, nullable=False)
+    update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
+    date_created = db.Column(db.DateTime(timezone=True), default=func.now()) 
+    #forign keys
+    goalfk = db.Column(db.Integer, db.ForeignKey('goals.id', ondelete="CASCADE"), nullable=True)
+    project = db.Column(db.Integer, db.ForeignKey('projects.id', ondelete="CASCADE"), nullable=True)
+
+class Projects(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name=db.Column(db.String(100))
+    pictureurl=db.Column(db.String(500))
+    status=db.Column(db.String(50))
+    last_reviewed=db.Column(db.DateTime)
+    when_review=db.Column(db.Integer)
+    userid = db.Column(db.Integer, nullable=False)
+    update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
+    date_created = db.Column(db.DateTime(timezone=True), default=func.now())
+    #relationships
+    tasks = db.relationship('Tasks', backref='projects', passive_deletes=True)

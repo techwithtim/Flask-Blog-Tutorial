@@ -1,0 +1,162 @@
+{% extends "productivity/prod-div.html" %}
+
+{% block title %}
+{{current_user.username}} Project
+{% endblock %}
+
+{% block header %}
+<h1 class="display-1 text-center">Projects for {{current_user.firstname}} {{current_user.lastname}}</h1>
+{% endblock %}
+
+{% block menu %}
+<div id="form">
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+        Add New Project
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Add Project</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/productivity/projects" method="POST">
+                        <label for="name" class="form-label">Name of Project</label>
+                        <input type="text" name="name" id="name" class="form-control">
+                        <label for="pictureurl" class="form-label">URL of Picture</label>
+                        <input type="text" name="pictureurl" id="pictureurl" class="form-control">
+                        <label for="status" class="form-label">Status</label>
+                        <select name="status" id="status" class="form-control">
+                            <option value="Active">Active</option>
+                            <option value="Complete">Complete</option>
+                            <option value="On Hold">On Hold</option>
+                        </select>
+                        <label for="last_reviewed" class="form-label">Last Reviewed</label>
+                        <input type="date" name="last_reviewed" id="last_reviewed" class="form-control">
+                        <label for="when_review" class="form-label">When to review (in days)</label>
+                        <input type="number" name="when_review" id="when_review" class="form-control">
+                        <input type="hidden" name='thisuserid' value="{{current_user.id}}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="tabsheets">
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <button class="nav-link active" id="nav-active-tab" data-bs-toggle="tab" data-bs-target="#nav-active"
+                type="button" role="tab" aria-controls="nav-active" aria-selected="true">Active</button>
+            <button class="nav-link" id="nav-complete-tab" data-bs-toggle="tab" data-bs-target="#nav-complete"
+                type="button" role="tab" aria-controls="nav-complete" aria-selected="false">Complete</button>
+            <button class="nav-link" id="nav-onhold-tab" data-bs-toggle="tab" data-bs-target="#nav-onhold" type="button"
+                role="tab" aria-controls="nav-onhold" aria-selected="false">On Hold</button>
+        </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-active" role="tabpanel" aria-labelledby="nav-active-tab">
+            <div id="active">
+                <h1 class="display-1 g4">Active Projects</h1>
+                <div class="row justify-content-between">
+                    {% for project in projects %}
+                    {% if project.status == "Active" %}
+                    <div class="col-4 mb-4">
+                        <div class="card border-dark" style="width: 26rem;">
+                            <a href="/productivity/projects/{{project.id}}"><img src="{{project.pictureurl}}"
+                                    width="100%" height="275px" class="card-img-top" alt="{{project.name}}"></a>
+                            <div class="card-body">
+                                <div class="card-header">
+                                    <h5 class="card-title">
+                                        <h2>{{project.name}}</h2>
+                                    </h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">
+                                        {{project.status}}
+                                    </h6>
+                                </div>
+                                <div class="card-text">
+                                    Last Reviewed: {{project.last_reviewed.strftime("%A, %B %d, %Y")}}<br>
+                                    Review every {{project.when_review}} days
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="nav-complete" role="tabpanel" aria-labelledby="nav-complete-tab">
+            <div id="completed">
+                <h1 class="display-1 g4">Completed Projects</h1>
+                <div class="row justify-content-between">
+                    {% for project in projects %}
+                    {% if project.status == "Complete" %}
+                    <div class="col-4 mb-4">
+                        <div class="card border-success" style="width: 26rem;">
+                            <a href="/productivity/projects/{{project.id}}"><img src="{{project.pictureurl}}"
+                                    width="100%" height="275px" class="card-img-top" alt="{{project.name}}"></a>
+                            <div class="card-body">
+                                <div class="card-header">
+                                    <h5 class="card-title">
+                                        <h2>{{project.name}}</h2>
+                                    </h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">
+                                        {{project.status}}
+                                    </h6>
+                                </div>
+                                <div class="card-text">
+                                    Last Time Reviewed: {{project.last_reviewed.strftime("%A, %B %d, %Y")}}<br>
+                                    Reviewed every {{project.when_review}} days
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="nav-onhold" role="tabpanel" aria-labelledby="nav-onhold-tab">
+            <div id="On-Hold">
+                <h1 class="display-1 g4">On-Hold Projects</h1>
+                <div class="row justify-content-between">
+                    {% for project in projects %}
+                    {% if project.status == "On Hold" %}
+                    <div class="col-4 mb-4">
+                        <div class="card border-warning" style="width: 26rem;">
+                            <a href="/productivity/projects/{{project.id}}"><img src="{{project.pictureurl}}" width="100%"
+                                    height="275px" class="card-img-top" alt="{{project.name}}"></a>
+                            <div class="card-body">
+                                <div class="card-header">
+                                    <h5 class="card-title">
+                                        <h2>{{project.name}}</h2>
+                                    </h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">
+                                        {{project.status}}
+                                    </h6>
+                                </div>
+                                <div class="card-text">
+                                    Last Time Reviewed: {{project.last_reviewed.strftime("%A, %B %d, %Y")}}<br>
+                                    Reviewed every {{project.when_review}} days
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

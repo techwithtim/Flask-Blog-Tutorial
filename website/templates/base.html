@@ -29,7 +29,6 @@
           <ul class="navbar-nav">
             <a class="nav-item nav-link" href="/home">Home</a>
             {% if user.is_authenticated %}
-            <a class="nav-item nav-link" href="/cpap">CPAP Supplies</a>
             <!-- health -->
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="/health" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -40,6 +39,7 @@
                 <li><a class="dropdown-item" href="/health/doctors">Doctors</a></li>
                 <li><a class="dropdown-item" href="/health/facilities">Facilities</a></li>
                 <li><a class="dropdown-item" href="/health/medications">Medications</a></li>
+                <li><a class="dropdown-item" href="/health/cpap">CPAP Supplies</a></li>
               </ul>
             </li>
             <!-- Guill menu -->
@@ -54,12 +54,21 @@
                 <li><a class="dropdown-item" href="/menu/recipe/new">Add a Recipe</a></li>
               </ul>
             </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="/productivity/productivity" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Productivity
+              </a>
+              <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                <li><a class="nav-item nav-link" href="/productivity/goals">Goals</a></li>
+                <li><a class="nav-item nav-link" href="/productivity/tasks">Tasks</a></li>
+                <li><a class="nav-item nav-link" href="/productivity/projects">Projects</a></li>
+              </ul>
+            </li>
             <a class="nav-item nav-link" href="/logout">Logout</a>
             {% else %}
             <a class="nav-item nav-link" href="/login">Login</a>
             <a class="nav-item nav-link" href="/sign-up">Sign Up</a>
             {% endif %}
-            <a class="nav-item nav-link" href="/todo">ToDo List</a>
           </div>
         </div>
       </div>
