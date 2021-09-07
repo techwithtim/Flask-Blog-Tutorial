@@ -45,7 +45,7 @@
             </td>
             <td>{{task.item}}</td>
             <td>{{task.projectname}}</td>
-            <td>{{task.duedate}}</td>
+            <td>{{task.duedate.strftime("%m/%d/%y")}}</td>
         </tr>
         {% endfor %}
     </tbody>

@@ -482,11 +482,12 @@ def tasks():
             item = request.form.get('task'),
             checked = complete,
             userid = request.form.get('thisuserid'),
+            duedate = datetime.datetime.strptime(request.form.get('dueDate'),"%Y-%m-%d"),
             goalfk = None
         )
         db.session.add(newtask)
         db.session.commit()
         
     projects = db.session.query(Projects).filter(Projects.userid == flask_login.current_user.id).order_by(Projects.name).all()
-    tasks = db.session.query(Projects.name.label('projectname'), Projects.status.label('projectstatus'), Tasks.checked, Tasks.goalfk, Tasks.id, Tasks.item).join(Projects, Projects.id == Tasks.project).filter(Tasks.userid == flask_login.current_user.id).order_by(Projects.name).all()
+    tasks = db.session.query(Projects.name.label('projectname'), Projects.status.label('projectstatus'), Tasks.checked, Tasks.duedate, Tasks.goalfk, Tasks.id, Tasks.item).join(Projects, Projects.id == Tasks.project).filter(Tasks.userid == flask_login.current_user.id).order_by(Tasks.duedate, Tasks.project, Tasks.item).all()
     return render_template("productivity/tasks.html", user=User, projects=projects, tasks=tasks)

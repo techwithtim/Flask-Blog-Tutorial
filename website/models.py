@@ -186,6 +186,7 @@ class Tasks(db.Model):
     item = db.Column(db.String(500))
     checked = db.Column(db.BOOLEAN)
     userid = db.Column(db.Integer, nullable=False)
+    duedate = db.Column(db.DateTime)
     update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
     date_created = db.Column(db.DateTime(timezone=True), default=func.now()) 
     #forign keys
