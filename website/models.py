@@ -200,6 +200,7 @@ class Projects(db.Model):
     status=db.Column(db.String(50))
     last_reviewed=db.Column(db.DateTime)
     when_review=db.Column(db.Integer)
+    notionid = db.Column(db.String(50))
     userid = db.Column(db.Integer, nullable=False)
     update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
     date_created = db.Column(db.DateTime(timezone=True), default=func.now())

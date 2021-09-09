@@ -1,0 +1,210 @@
+{
+    "object": "page",
+    "id": "9fcf992b-47c3-4f6e-96a5-656c6ab6c857",
+    "created_time": "2021-04-10T08:34:00.000Z",
+    "last_edited_time": "2021-08-28T22:01:00.000Z",
+    "cover": {
+        "type": "external",
+        "external": {
+            "url": "https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb"
+        }
+    },
+    "icon": {
+        "type": "external",
+        "external": {
+            "url": "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/320/apple/279/house-with-garden_1f3e1.png"
+        }
+    },
+    "parent": {
+        "type": "database_id",
+        "database_id": "eff25566-ca52-4f7f-aa28-7b79e5175186"
+    },
+    "archived": false,
+    "properties": {
+        "Status": {
+            "id": "CZnq",
+            "type": "select",
+            "select": {
+                "id": "4645931d-34de-406c-9f57-2ba3ac871217",
+                "name": "Active",
+                "color": "green"
+            }
+        },
+        "Tasks": {
+            "id": "R:Vp",
+            "type": "relation",
+            "relation": [
+                {
+                    "id": "11b9d166-01cc-4445-859d-e82bd2b37937"
+                },
+                {
+                    "id": "0104bba5-d66c-4372-b69c-d6596714acd1"
+                },
+                {
+                    "id": "94da9b46-d34a-4ed2-9a3e-16e080a47d28"
+                },
+                {
+                    "id": "6abfa175-895e-4fdd-989e-6dc8f9b6f788"
+                },
+                {
+                    "id": "2336723a-5a77-4281-947a-f6beaf05f0e0"
+                },
+                {
+                    "id": "bd0bb32d-312a-45fd-8dca-17ba0698ff62"
+                },
+                {
+                    "id": "93edf636-afec-447a-8914-0c420c43a16f"
+                },
+                {
+                    "id": "4a8ff372-caac-4b71-aff0-8ed84a101eaf"
+                },
+                {
+                    "id": "2f64c040-e43b-41fc-9805-b63df306ad61"
+                },
+                {
+                    "id": "2f1dbc75-0bf3-4bb6-8909-c3b08be2e37c"
+                },
+                {
+                    "id": "16a27728-0065-45f5-ade8-07dc30919e53"
+                },
+                {
+                    "id": "3d18ff46-0345-444d-91e2-02921b7b6e37"
+                },
+                {
+                    "id": "1cd411f0-bce3-4222-bd01-177229b9edf6"
+                },
+                {
+                    "id": "cd6b189a-e5f0-4913-bab5-758e390df2ee"
+                },
+                {
+                    "id": "2933736a-869e-43fe-9b15-35b8b135edb3"
+                },
+                {
+                    "id": "8da1ee11-8c48-40c2-a93f-d1e7b88ae457"
+                },
+                {
+                    "id": "739c1466-a3a5-4502-a9fd-0fab7c5e5165"
+                },
+                {
+                    "id": "bd22ddee-dc02-4330-ae51-203c36476dac"
+                },
+                {
+                    "id": "9014052a-bceb-4371-b4bd-e664da116aa3"
+                },
+                {
+                    "id": "b9f2a267-e888-4a41-8ba1-7d4e652ec554"
+                },
+                {
+                    "id": "ec04352b-9867-44fc-800e-b9e8e0747a6f"
+                },
+                {
+                    "id": "a8306250-90ea-4b3c-9968-b29e2b3c6298"
+                }
+            ]
+        },
+        "Total Tasks": {
+            "id": "Rn@P",
+            "type": "rollup",
+            "rollup": {
+                "type": "number",
+                "number": 22
+            }
+        },
+        "Complete Script": {
+            "id": "TOWC",
+            "type": "formula",
+            "formula": {
+                "type": "string",
+                "string": "Total Tasks - 22"
+            }
+        },
+        "Next Review": {
+            "id": "UA\\J",
+            "type": "formula",
+            "formula": {
+                "type": "date",
+                "date": {
+                    "start": "2021-09-11",
+                    "end": null
+                }
+            }
+        },
+        "When Review": {
+            "id": "U\\er",
+            "type": "number",
+            "number": 14
+        },
+        "Progress Bar": {
+            "id": "XSV^",
+            "type": "formula",
+            "formula": {
+                "type": "string",
+                "string": "▓▓▓▓▓▓░░░░ 59%"
+            }
+        },
+        "Copy of Complete Script": {
+            "id": "qtfl",
+            "type": "formula",
+            "formula": {
+                "type": "string",
+                "string": "Tasks Compleated - 13"
+            }
+        },
+        "Percent Complete": {
+            "id": "sDX^",
+            "type": "formula",
+            "formula": {
+                "type": "number",
+                "number": 0.590909090909
+            }
+        },
+        "Overdue?": {
+            "id": "y^b\\",
+            "type": "formula",
+            "formula": {
+                "type": "boolean",
+                "boolean": false
+            }
+        },
+        "Completed Tasks": {
+            "id": "{<^I",
+            "type": "rollup",
+            "rollup": {
+                "type": "number",
+                "number": 13
+            }
+        },
+        "Last Reviewed": {
+            "id": "|^`^",
+            "type": "date",
+            "date": {
+                "start": "2021-08-28",
+                "end": null
+            }
+        },
+        "Project Name": {
+            "id": "title",
+            "type": "title",
+            "title": [
+                {
+                    "type": "text",
+                    "text": {
+                        "content": "House",
+                        "link": null
+                    },
+                    "annotations": {
+                        "bold": false,
+                        "italic": false,
+                        "strikethrough": false,
+                        "underline": false,
+                        "code": false,
+                        "color": "default"
+                    },
+                    "plain_text": "House",
+                    "href": null
+                }
+            ]
+        }
+    },
+    "url": "https://www.notion.so/House-9fcf992b47c34f6e96a5656c6ab6c857"
+}

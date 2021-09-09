@@ -489,5 +489,104 @@ def tasks():
         db.session.commit()
         
     projects = db.session.query(Projects).filter(Projects.userid == flask_login.current_user.id).order_by(Projects.name).all()
-    tasks = db.session.query(Projects.name.label('projectname'), Projects.status.label('projectstatus'), Tasks.checked, Tasks.duedate, Tasks.goalfk, Tasks.id, Tasks.item).join(Projects, Projects.id == Tasks.project).filter(Tasks.userid == flask_login.current_user.id).order_by(Tasks.duedate, Tasks.project, Tasks.item).all()
-    return render_template("productivity/tasks.html", user=User, projects=projects, tasks=tasks)
+    complete = db.session.query(Projects.name.label('projectname'), Projects.status.label('projectstatus'), Tasks.checked, Tasks.duedate, Tasks.goalfk, Tasks.id, Tasks.item).join(Projects, Projects.id == Tasks.project).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.checked == 0).order_by(Tasks.duedate, Tasks.project, Tasks.item).all()
+    incomplete = db.session.query(Projects.name.label('projectname'), Projects.status.label('projectstatus'), Tasks.checked, Tasks.duedate, Tasks.goalfk, Tasks.id, Tasks.item).join(Projects, Projects.id == Tasks.project).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.checked == 1).order_by(Tasks.project, Tasks.duedate, Tasks.item).all()
+    return render_template("productivity/tasks.html", user=User, projects=projects, complete=complete, incomplete=incomplete)
+
+@views.route("productivity/projects/<id>", methods=['GET', 'POST'])
+@login_required
+def project_single(id):
+    if request.method == 'POST':
+        if request.form.get('complete') == 'on': complete = True 
+        else: complete = False
+        newtask = Tasks(
+            project = request.form.get('project'),
+            item = request.form.get('task'),
+            checked = complete,
+            userid = request.form.get('thisuserid'),
+            duedate = datetime.datetime.strptime(request.form.get('dueDate'),"%Y-%m-%d"),
+            goalfk = None
+        )
+        db.session.add(newtask)
+        db.session.commit()
+        return redirect(url_for('views.project_single', id=id))
+    
+    completedTasks = db.session.query(Tasks.item).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.project == id).filter(Tasks.checked == True).count()
+    allTasks = db.session.query(Tasks.item).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.project == id).count()
+    
+    if allTasks == 0:
+        percentcomplete = 0
+    else:
+        percentcomplete = round((completedTasks/allTasks)*100,2)
+
+    projects = db.session.query(Projects).filter(Projects.userid == flask_login.current_user.id).filter(Projects.id == id).all()
+    tasks = db.session.query(Tasks).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.project == id).order_by(Tasks.checked, Tasks.duedate, Tasks.item).all()
+    return render_template("productivity/projects_single.html", user=User, projects=projects, tasks=tasks, percentcomplete=percentcomplete)
+
+@views.route("productivity/noTOyes/<taskid>/<projectid>")
+@login_required
+def noTOyes(taskid, projectid):
+    
+    task = Tasks.query.filter_by(id=taskid).first()
+    task.checked = True
+    db.session.commit()
+    return redirect(url_for('views.project_single', id=projectid))
+
+@views.route("productivity/yesTOno/<taskid>/<projectid>")
+@login_required
+def yesTOno(taskid, projectid):
+    
+    task = Tasks.query.filter_by(id=taskid).first()
+    task.checked = False
+    db.session.commit()
+    return redirect(url_for('views.project_single', id=projectid))
+
+@views.route("productivity/deletetask/<taskid>/<projectid>")
+@login_required
+def deletetask(taskid, projectid):
+    
+    task = Tasks.query.filter_by(id=taskid).delete()
+    db.session.commit()
+    return redirect(url_for('views.project_single', id=projectid))
+
+@views.route("productivity/importNotion")
+@login_required
+def importNotion():
+    from .taskinport import get_tasks, getNextTasks, parsejsonMakeTask, notionidupdate
+    
+    notionidupdate()
+    
+    json = get_tasks()
+    parsejsonMakeTask(json)
+    
+    while json['next_cursor'] != None:
+        nextcursor = json['next_cursor']
+        json = getNextTasks(nextcursor)
+        parsejsonMakeTask(json)
+    
+    return redirect(url_for('views.tasks'))
+
+@views.route("productivity/taskdelete/<taskid>")
+@login_required
+def taskdelete(taskid):
+    Tasks.query.filter_by(id=taskid).delete()
+    db.session.commit()
+    return redirect(url_for('views.tasks'))
+
+@views.route("productivity/task_noTOyes/<taskid>")
+@login_required
+def task_noTOyes(taskid):
+    
+    task = Tasks.query.filter_by(id=taskid).first()
+    task.checked = True
+    db.session.commit()
+    return redirect(url_for('views.tasks'))
+
+@views.route("productivity/task_yesTOno/<taskid>")
+@login_required
+def task_yesTOno(taskid):
+    
+    task = Tasks.query.filter_by(id=taskid).first()
+    task.checked = False
+    db.session.commit()
+    return redirect(url_for('views.tasks'))
