@@ -1,5 +1,5 @@
 {% extends "productivity/prod-div.html" %}
-<!-- FIXME: figure out how to get the next set of results from the json -->
+
 {% block title %}
 {{current_user.username}} Tasks
 {% endblock %}
@@ -33,10 +33,13 @@
             <tbody>
                 {% for task in incomplete %}
                 <tr>
-                    <td><a href="{{ url_for('views.task_yesTOno', taskid=task.id) }}"><button name="markdone" class="btn btn-warning">Undone</button></a></td>
+                    <td><a href="{{ url_for('views.task_yesTOno', taskid=task.id) }}"><button name="markdone"
+                                class="btn btn-warning">Undone</button></a></td>
                     <td>{{task.item}}</td>
                     <td>{{task.projectname}}</td>
                     <td>{{task.duedate.strftime("%m/%d/%y")}}</td>
+                    <td><a href="#"><button class="btn btn-outline-primary"><i class="far fa-edit"></i></button></a>
+                    </td>
                     <td><a href="{{ url_for('views.taskdelete', taskid=task.id) }}"><button
                                 class="btn btn-outline-danger">X</button></a></td>
                 </tr>
@@ -71,13 +74,22 @@
             </thead>
             <tbody>
                 {% for task in complete %}
+                {% if task.duedate.strftime("%m/%d/%Y") < task.duedate.now().strftime("%m/%d/%Y") %}
+                <tr class="text-danger">
+                    {% elif task.duedate.strftime("%m/%d/%y") == task.duedate.now().strftime("%m/%d/%y") %}
+                <tr class="text-success">
+                    {% else %}
                 <tr>
-                    <td><a href="{{ url_for('views.task_noTOyes', taskid=task.id) }}"><button name="markdone" class="btn btn-success">Complete</button></a></td>
+                    {% endif %}
+                    <td><a href="{{ url_for('views.task_noTOyes', taskid=task.id) }}"><button name="markdone"
+                                class="btn btn-success">Complete</button></a></td>
                     <td>{{task.item}}</td>
                     <td>{{task.projectname}}</td>
                     <td>{{task.duedate.strftime("%m/%d/%y")}}</td>
-                    <td><a href="{{ url_for('views.taskdelete', taskid=task.id) }}"><button
-                                class="btn btn-outline-danger">X</button></a></td>
+                    <td><a href="{{ url_for('views.taskupdate', taskid=task.id) }}"><button type="button"
+                                class="btn btn-primary"><i class="far fa-edit"></i></button></a></td>
+                    <td><a href="{{ url_for('views.taskdelete', taskid=task.id) }}"><button class="btn btn-danger"><i
+                                    class="fas fa-trash-alt"></i></button></a></td>
                 </tr>
                 {% endfor %}
             </tbody>

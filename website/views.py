@@ -5,17 +5,18 @@ from sqlalchemy.orm import session
 from sqlalchemy.sql.expression import join
 from sqlalchemy.sql.functions import current_user, session_user
 from werkzeug.datastructures import ContentSecurityPolicy
-from .models import Allergies, Dish, Doctor, Facility, Goals, Medications, Planner, Projects, Steps, Tasks, User, Recipe
+from .models import Allergies, Dish, Doctor, Facility, Goals, Medications, Planner, Projects, Steps, Tasks, User, Recipe, A1C
 from .notion import get_supplies, get_menu
 from datetime import datetime, timedelta
 from . import db
 from .makedates import makedates
 from .nutrition import get_food_item, nutrition_single
 from subprocess import run, PIPE
-from sqlalchemy.sql import func
+from sqlalchemy.sql import func, desc
 from .vfc_maker import make_vfc
 import datetime, sys, pdfkit, flask_login, os
-
+from math import ceil
+from flask import json
 
 views = Blueprint("views", __name__)
 
@@ -402,6 +403,45 @@ def deletingAllergy(id):
     db.session.commit()
     return redirect(url_for('views.allergies'))
 
+@views.route("/health/a1c", methods=['GET', 'POST'])
+@login_required
+def a1c():
+    if request.method == "POST":
+        newresult = A1C(
+            date = datetime.datetime.strptime(request.form.get('testdate'), "%Y-%m-%d"),
+            testresult = request.form.get('testresult'),
+            userid = request.form.get('thisuserid'),
+            doctorfk = request.form.get('doctor')
+        )
+        db.session.add(newresult)
+        db.session.commit()
+        
+    results = db.session.query(A1C).filter(A1C.userid == flask_login.current_user.id).order_by(desc(A1C.date)).all()
+    
+    labels = []
+    dataset = []
+    aegdata = []
+    for result in results:
+        label = result.date.strftime("%m/%y")
+        data = result.testresult
+        aeg = round((28.7 * result.testresult - 46.7),0)
+        labels.append(label)
+        aegdata.append(aeg)
+        dataset.append(data)
+    # labels = json.dumps(labels)
+    # dataset = json.dumps(dataset)
+    # aegdata = json.dumps(aegdata)
+
+    
+    currentvalue = db.session.query(func.max(A1C.date).label('ld'), A1C.testresult, A1C.userid).filter(A1C.userid == flask_login.current_user.id).order_by(A1C.date).first()
+    if currentvalue.testresult is None:
+        eag=0
+    else:
+        eag = ceil(28.7 * currentvalue.testresult - 46.7)
+    
+    doctors = db.session.query(Doctor).filter(Doctor.userid ==flask_login.current_user.id).order_by(Doctor.name).all()
+    return render_template("/health/a1c.html", user=User, results=results, currentvalue=currentvalue, doctors=doctors, eag=eag, labels=labels, dataset=dataset, aegdata=aegdata)
+
 @views.route("/health/doctor/card/<id>", methods=['GET'])
 def makeCard(id): 
     doctorinfo = db.session.query(Doctor.name, Doctor.address, Doctor.city, Doctor.state, Doctor.zip, Doctor.phone, Doctor.email, Facility.name.label('company')).filter(Doctor.id == id).join(Facility,Facility.id == Doctor.facilityfk).first()
@@ -457,19 +497,41 @@ def goals():
 @login_required
 def projects():
     if request.method == 'POST':
+        when = int(request.form.get('when_review'))
+        nextrev = datetime.datetime.strptime(request.form.get('last_reviewed'),"%Y-%m-%d") + timedelta(days=when)
         newProj = Projects(
             name = request.form.get('name'),
             pictureurl = request.form.get('pictureurl'),
             status = request.form.get('status'),
             last_reviewed = datetime.datetime.strptime(request.form.get('last_reviewed'),"%Y-%m-%d"),
             when_review = request.form.get('when_review'),
+            next_review = nextrev,
             userid = request.form.get('thisuserid')
         )
         db.session.add(newProj)
         db.session.commit()
+    
+    completedTasks = db.session.query(Tasks.project,func.count(Tasks.id).label('count')).filter(Tasks.checked == True).group_by(Tasks.project).all()
+    allTasks = db.session.query(Tasks.project,func.count(Tasks.id).label('count')).group_by(Tasks.project).all()
+    
+    percentcomplete=[]
+    projects = []
+    for completed in completedTasks:
+        projects.append(completed[0])
         
-    projects = db.session.query(Projects).filter(Projects.userid == flask_login.current_user.id).order_by(Projects.name).all()
-    return render_template("productivity/projects.html", user=User, projects=projects)
+    for i in range(len(allTasks)):
+        allvalue=allTasks[i][0]
+        if allvalue in projects:
+            for a in range(len(allTasks)):
+                if allTasks[i][0] == completedTasks[a][0]:
+                    perc = round(completedTasks[a][1]/allTasks[i][1]*100,2)
+                    percentcomplete.append(tuple((allTasks[i][0],perc)))
+                    break
+                else:
+                    next
+    
+    projects = db.session.query(Projects).order_by(Projects.name).all()
+    return render_template("productivity/projects.html", user=User, projects=projects, percentcomplete=percentcomplete)
 
 @views.route("productivity/tasks", methods=['GET', 'POST'])
 @login_required
@@ -479,7 +541,7 @@ def tasks():
         else: complete = False
         newtask = Tasks(
             project = request.form.get('project'),
-            item = request.form.get('task'),
+            item = request.form.get('task').title(),
             checked = complete,
             userid = request.form.get('thisuserid'),
             duedate = datetime.datetime.strptime(request.form.get('dueDate'),"%Y-%m-%d"),
@@ -501,7 +563,7 @@ def project_single(id):
         else: complete = False
         newtask = Tasks(
             project = request.form.get('project'),
-            item = request.form.get('task'),
+            item = request.form.get('task').title(),
             checked = complete,
             userid = request.form.get('thisuserid'),
             duedate = datetime.datetime.strptime(request.form.get('dueDate'),"%Y-%m-%d"),
@@ -519,7 +581,7 @@ def project_single(id):
     else:
         percentcomplete = round((completedTasks/allTasks)*100,2)
 
-    projects = db.session.query(Projects).filter(Projects.userid == flask_login.current_user.id).filter(Projects.id == id).all()
+    projects = db.session.query(Projects.id, Projects.name, Projects.status, Projects.last_reviewed, Projects.when_review, Projects.next_review.strptime("%Y-%m-%d"), Projects.pictureurl, Projects.userid).filter(Projects.userid == flask_login.current_user.id).filter(Projects.id == id).all()
     tasks = db.session.query(Tasks).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.project == id).order_by(Tasks.checked, Tasks.duedate, Tasks.item).all()
     return render_template("productivity/projects_single.html", user=User, projects=projects, tasks=tasks, percentcomplete=percentcomplete)
 
@@ -590,3 +652,34 @@ def task_yesTOno(taskid):
     task.checked = False
     db.session.commit()
     return redirect(url_for('views.tasks'))
+
+@views.route("productivity/taskupdate/<taskid>", methods=['GET','POST'])
+@login_required
+def taskupdate(taskid):
+    if request.method == 'POST':
+        updatetask = Tasks.query.filter(Tasks.id == taskid).first()
+        updatetask.item = request.form.get('name').title()
+        updatetask.duedate = datetime.datetime.strptime(request.form.get('duedate'),"%Y-%m-%d")
+        updatetask.userid = request.form.get('thisuserid')
+        db.session.commit()
+        return redirect(url_for('views.tasks'))
+
+    task = db.session.query(Projects.name.label('projectname'), Projects.status.label('projectstatus'), Tasks.checked, Tasks.duedate, Tasks.goalfk, Tasks.id, Tasks.item).join(Projects, Projects.id == Tasks.project).filter(Tasks.id == taskid).all()
+    return render_template("productivity/taskupdate.html", user=User, task=task)
+
+#FIXME: fix next review issue
+# @views.route('/updatewhen')
+# def updatewhen():
+#     updatetask = db.session.query(Projects.last_reviewed, Projects.when_review, Projects.next_review).all()
+#     for ut in updatetask:
+#         newtime = ut.last_reviewed + timedelta(days=ut.when_review)
+#         ut[2] = newtime
+#         db.session.commit()
+#         return render_template(url_for(views.projects))
+
+@views.route("/health/a1c/delete/<id>")
+@login_required
+def deleteA1C(id):
+    A1C.query.filter_by(id=id).delete()
+    db.session.commit()
+    return redirect(url_for('views.a1c'))

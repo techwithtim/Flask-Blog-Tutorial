@@ -110,6 +110,7 @@ class Doctor(db.Model):
     hosptial = db.relationship('Hosptial', backref='doctor', passive_deletes=True)
     surgeries = db.relationship('Surgeries', backref='doctor', passive_deletes=True)
     medication = db.relationship('Medications', backref='doctor', passive_deletes=True)
+    a1c = db.relationship('A1C', backref='doctor', passive_deletes=True)
     #forignkeys
     facilityfk=db.Column(db.Integer, db.ForeignKey(
         'facility.id', ondelete="CASCADE"), nullable=False)
@@ -164,7 +165,17 @@ class Allergies(db.Model):
     userid = db.Column(db.Integer, nullable=False)
     update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
     date_created = db.Column(db.DateTime(timezone=True), default=func.now()) 
-  
+
+class A1C(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.DateTime)
+    testresult = db.Column(db.Float)
+    userid = db.Column(db.Integer, nullable=False)
+    update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
+    date_created = db.Column(db.DateTime(timezone=True), default=func.now()) 
+    #forign keys
+    doctorfk = db.Column(db.Integer, db.ForeignKey('doctor.id', ondelete="CASCADE"), nullable=False)
+ 
 #Goals  
 class Goals(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -201,6 +212,7 @@ class Projects(db.Model):
     last_reviewed=db.Column(db.DateTime)
     when_review=db.Column(db.Integer)
     notionid = db.Column(db.String(50))
+    # next_review = db.Column(db.DateTime)
     userid = db.Column(db.Integer, nullable=False)
     update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
     date_created = db.Column(db.DateTime(timezone=True), default=func.now())

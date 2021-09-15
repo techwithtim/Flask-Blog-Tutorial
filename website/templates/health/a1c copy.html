@@ -1,0 +1,53 @@
+{% extends "health-div.html" %}
+
+{% block title %}
+A1C for {{current_user.username}}
+{% endblock %}
+
+{% block header %}
+<h2 class="display-2 text-danger text-center">Current A1C: {{currentvalue.testresult}}%</h2>
+<h2 class="display-6 text-center">Avg blood glucose: {{eag}}</h6>
+{% endblock %}
+
+{% block menu %}
+
+<div class="form-floating">
+    <form action="/health/a1c" , method="POST">
+        <label for="name">Date of test</label>
+        <input type="date" class="form-control" id="testdate" name="testdate">
+        <label for="reaction">Test Result (0.0)</label>
+        <input type="float" class="form-control" name="testresult" id="testresult">
+        <select name="doctor" id="doctor" class='form-select'>
+            {% for doctor in doctors %}
+            <option value="{{doctor.id}}">{{doctor.name}}</option>
+            {% endfor %}
+        </select>
+        <input type="hidden" name='thisuserid' value="{{current_user.id}}">
+        <input type="submit" name='allergySubmit' value="Add Allergy">
+    </form>
+</div>
+<div id="table">
+    <table class="table table-responsive table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Result</th>
+                <th>Doctor</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in results %}
+            <tr>
+                <td>{{result.date.strftime("%A, %B %d, %Y")}}</td>
+                <td>{{result.testresult}}</td>
+                {% for doctor in doctors %}
+                {% if doctor.id == result.doctorfk %}
+                <td>{{doctor.name}}</td>
+                {% endif %}
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
