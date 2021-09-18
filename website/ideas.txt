@@ -1,10 +1,11 @@
 IDEA: make a page that has archive plan information.  a place you can look back at different weeks and see what you had
-IDEA: Home Wifi
 IDEA: Code Snippits
-IDEA: Goals
 IDEA: Text the person when the medication is due to be refilled.
 IDEA: Create a wallet size report in pdf that can be printed out
 TODO: Place the keys in the database
+IDEA: Make each menu item selectable according to user (menu on for me off for shawn for example)
 
-WORKING: A1C
+Working: Goals
+DONE: Home Wifi
+DONE: A1C
 DONE: Project todos

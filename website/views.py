@@ -5,7 +5,7 @@ from sqlalchemy.orm import session
 from sqlalchemy.sql.expression import join
 from sqlalchemy.sql.functions import current_user, session_user
 from werkzeug.datastructures import ContentSecurityPolicy
-from .models import Allergies, Dish, Doctor, Facility, Goals, Medications, Planner, Projects, Steps, Tasks, User, Recipe, A1C
+from .models import Allergies, Dish, Doctor, Facility, Goals, Medications, Planner, Projects, Steps, Tasks, User, Recipe, A1C, Wifi
 from .notion import get_supplies, get_menu
 from datetime import datetime, timedelta
 from . import db
@@ -16,7 +16,7 @@ from sqlalchemy.sql import func, desc
 from .vfc_maker import make_vfc
 import datetime, sys, pdfkit, flask_login, os
 from math import ceil
-from flask import json
+from .wifiqrcode import generate_code
 
 views = Blueprint("views", __name__)
 
@@ -491,7 +491,97 @@ def productivity():
 @views.route("productivity/goals", methods=['GET', 'POST'])
 @login_required
 def goals():
-    return render_template("productivity/goals.html", user=User)
+    if request.method == 'POST':
+        newGoal = Goals(
+            name = request.form.get('name'),
+            pictureurl = request.form.get('pictureurl'),
+            status = request.form.get('status'),
+            measurement = request.form.get('measurement'),
+            datestart = datetime.datetime.strptime(request.form.get('datestart'), "%Y-%m-%d"),
+            dateend = datetime.datetime.strptime(request.form.get('dateend'), "%Y-%m-%d"),
+            userid = request.form.get('thisuserid'),
+        )
+        db.session.add(newGoal)
+        db.session.commit()
+    
+    completedTasks = db.session.query(Tasks.goalfk,func.count(Tasks.id).label('count')).filter(Tasks.checked == True).group_by(Tasks.goalfk).all()
+    allTasks = db.session.query(Tasks.goalfk,func.count(Tasks.id).label('count')).group_by(Tasks.goalfk).all()
+    
+    percentcomplete=[]
+    projects = []
+    for completed in completedTasks:
+        projects.append(completed[0])
+        
+    for i in range(len(allTasks)):
+        allvalue=allTasks[i][0]
+        if allvalue in projects:
+            for a in range(len(allTasks)):
+                if allTasks[i][0] == completedTasks[a][0]:
+                    perc = round(completedTasks[a][1]/allTasks[i][1]*100,2)
+                    percentcomplete.append(tuple((allTasks[i][0],perc)))
+                    break
+                else:
+                    next
+    
+    goals = db.session.query(Goals).order_by(Goals.name).all()
+    return render_template("productivity/goals.html", user=User, goals=goals, percentcomplete=percentcomplete)
+
+@views.route("productivity/goals/<id>", methods=['GET', 'POST'])
+@login_required
+def goal_single(id):
+    if request.method == 'POST':
+        if request.form.get('complete') == 'on': complete = True 
+        else: complete = False
+        newtask = Tasks(
+            project = None,
+            item = request.form.get('task').title(),
+            checked = complete,
+            userid = request.form.get('thisuserid'),
+            duedate = datetime.datetime.strptime(request.form.get('dueDate'),"%Y-%m-%d"),
+            goalfk = request.form.get('goalfk')
+        )
+        db.session.add(newtask)
+        db.session.commit()
+        return redirect(url_for('views.goal_single', id=id))
+    
+    completedTasks = db.session.query(Tasks.item).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.goalfk == id).filter(Tasks.checked == True).count()
+    allTasks = db.session.query(Tasks.item).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.goalfk == id).count()
+    
+    if allTasks == 0:
+        percentcomplete = 0
+    else:
+        percentcomplete = round((completedTasks/allTasks)*100,2)
+
+    goals = db.session.query(Goals).filter(Goals.userid == flask_login.current_user.id).filter(Goals.id == id).all()
+    tasks = db.session.query(Tasks).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.goalfk == id).order_by(Tasks.checked, Tasks.duedate, Tasks.item).all()
+    return render_template("productivity/goals_single.html", user=User, goals=goals, tasks=tasks, percentcomplete=percentcomplete)
+
+@views.route("productivity/noTOyes/<taskid>/<goalid>")
+@login_required
+def goalnoTOyes(taskid, goalid):
+    
+    task = Tasks.query.filter_by(id=taskid).first()
+    task.checked = True
+    db.session.commit()
+    return redirect(url_for('views.goal_single', id=goalid))
+
+@views.route("productivity/yesTOno/<taskid>/<goalid>")
+@login_required
+def goalyesTOno(taskid, goalid):
+    
+    task = Tasks.query.filter_by(id=taskid).first()
+    task.checked = False
+    db.session.commit()
+    return redirect(url_for('views.goal_single', id=goalid))
+
+@views.route("productivity/deletetask/<taskid>/<goalid>")
+@login_required
+def deletegoal(taskid, goalid):
+    
+    Tasks.query.filter_by(id=taskid).delete()
+    db.session.commit()
+    return redirect(url_for('views.goal_single', id=goalid))
+
 
 @views.route("productivity/projects", methods=['GET', 'POST'])
 @login_required
@@ -539,21 +629,30 @@ def tasks():
     if request.method == 'POST':
         if request.form.get('complete') == 'on': complete = True 
         else: complete = False
+        
+        if request.form.get('project')[0] == "P":
+            project = request.form.get('project')[1:]
+            goalfk = None
+        else:
+            project = None
+            goalfk = request.form.get('project')[1:]
+        
         newtask = Tasks(
-            project = request.form.get('project'),
+            project = project,
             item = request.form.get('task').title(),
             checked = complete,
             userid = request.form.get('thisuserid'),
             duedate = datetime.datetime.strptime(request.form.get('dueDate'),"%Y-%m-%d"),
-            goalfk = None
+            goalfk = goalfk
         )
         db.session.add(newtask)
         db.session.commit()
         
     projects = db.session.query(Projects).filter(Projects.userid == flask_login.current_user.id).order_by(Projects.name).all()
+    goals = db.session.query(Goals).filter(Goals.userid == flask_login.current_user.id).order_by(Goals.name).all()
     complete = db.session.query(Projects.name.label('projectname'), Projects.status.label('projectstatus'), Tasks.checked, Tasks.duedate, Tasks.goalfk, Tasks.id, Tasks.item).join(Projects, Projects.id == Tasks.project).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.checked == 0).order_by(Tasks.duedate, Tasks.project, Tasks.item).all()
     incomplete = db.session.query(Projects.name.label('projectname'), Projects.status.label('projectstatus'), Tasks.checked, Tasks.duedate, Tasks.goalfk, Tasks.id, Tasks.item).join(Projects, Projects.id == Tasks.project).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.checked == 1).order_by(Tasks.project, Tasks.duedate, Tasks.item).all()
-    return render_template("productivity/tasks.html", user=User, projects=projects, complete=complete, incomplete=incomplete)
+    return render_template("productivity/tasks.html", user=User, projects=projects, complete=complete, incomplete=incomplete, goals=goals)
 
 @views.route("productivity/projects/<id>", methods=['GET', 'POST'])
 @login_required
@@ -581,7 +680,7 @@ def project_single(id):
     else:
         percentcomplete = round((completedTasks/allTasks)*100,2)
 
-    projects = db.session.query(Projects.id, Projects.name, Projects.status, Projects.last_reviewed, Projects.when_review, Projects.next_review.strptime("%Y-%m-%d"), Projects.pictureurl, Projects.userid).filter(Projects.userid == flask_login.current_user.id).filter(Projects.id == id).all()
+    projects = db.session.query(Projects.id, Projects.name, Projects.status, Projects.last_reviewed, Projects.when_review, Projects.pictureurl, Projects.userid).filter(Projects.userid == flask_login.current_user.id).filter(Projects.id == id).all()
     tasks = db.session.query(Tasks).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.project == id).order_by(Tasks.checked, Tasks.duedate, Tasks.item).all()
     return render_template("productivity/projects_single.html", user=User, projects=projects, tasks=tasks, percentcomplete=percentcomplete)
 
@@ -683,3 +782,33 @@ def deleteA1C(id):
     A1C.query.filter_by(id=id).delete()
     db.session.commit()
     return redirect(url_for('views.a1c'))
+
+@views.route("/wifidelete/<id>")
+@login_required
+def wifidelete(id):
+    file = db.session.query(Wifi.path).filter_by(id=id).first()
+    if os.path.exists('website/'+file.path):
+        Wifi.query.filter_by(id=id).delete()
+        db.session.commit()
+        os.remove('website/'+file.path)
+    else:
+        print("The file does not exist")
+
+    return redirect(url_for('views.wifi'))
+
+@views.route("/wifi", methods=['GET','POST'])
+@login_required
+def wifi():
+    if request.method == 'POST':
+        path = generate_code(request.form.get('ssid'), request.form.get('password'))
+        newwifi = Wifi(
+            SSID = request.form.get('ssid'),
+            password = request.form.get('password'),
+            path = path,
+            userid = request.form.get('thisuserid')
+        )
+        db.session.add(newwifi)
+        db.session.commit()
+        
+    wifi = db.session.query(Wifi).filter(Wifi.userid == flask_login.current_user.id).order_by(Wifi.update_time).all()
+    return render_template('wifi.html', user=User, wifi=wifi)

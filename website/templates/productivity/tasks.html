@@ -61,8 +61,13 @@
                         <td><input type="checkbox" class="form-check-input"></td>
                         <td><input type="text" name="task" id="task" class="form-control"></td>
                         <td><select name="project" id="project" class="form-select">
+                                <option disabled>Projects</option>
                                 {% for project in projects %}
-                                <option value="{{project.id}}">{{project.name}}</option>
+                                <option value="P{{project.id}}">{{project.name}}</option>
+                                {% endfor %}
+                                <option disabled>Goals</option>
+                                {% for goal in goals %}
+                                <option value="G{{goal.id}}">{{goal.name}}</option>
                                 {% endfor %}
                             </select>
                         </td>

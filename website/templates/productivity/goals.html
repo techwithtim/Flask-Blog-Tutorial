@@ -1,7 +1,7 @@
 {% extends "productivity/prod-div.html" %}
 
 {% block title %}
-{{current_user.username}} Goals
+{{current_user.firstname}}'s Goals
 {% endblock %}
 
 {% block header %}
@@ -9,5 +9,175 @@
 {% endblock %}
 
 {% block menu %}
+<div id="form">
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+        Add New Goal
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Add Goal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/productivity/goals" method="POST">
+                        <label for="name" class="form-label">Name of Goal</label>
+                        <input type="text" name="name" id="name" class="form-control">
+                        <label for="pictureurl" class="form-label">URL of Picture</label>
+                        <input type="text" name="pictureurl" id="pictureurl" class="form-control">
+                        <label for="status" class="form-label">Status</label>
+                        <select name="status" id="status" class="form-select">
+                            <option value="Active">Active</option>
+                            <option value="Complete">Complete</option>
+                            <option value="On Hold">On Hold</option>
+                        </select>
+                        <label for="measurement" class="form-label">How to know when you finish your goal</label>
+                        <input type="text" name="measurement" id="measurement" class="form-control">
+                        <label for="datestart" class="form-label">Start Date</label>
+                        <input type="date" name="datestart" id="datestart" class="form-control">
+                        <label for="dateend" class="form-label">End Date</label>
+                        <input type="date" name="dateend" id="dateend" class="form-control">
+                        <input type="hidden" name='thisuserid' value="{{current_user.id}}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="tabsheets">
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <button class="nav-link active" id="nav-active-tab" data-bs-toggle="tab" data-bs-target="#nav-active"
+                type="button" role="tab" aria-controls="nav-active" aria-selected="true">Active</button>
+            <button class="nav-link" id="nav-complete-tab" data-bs-toggle="tab" data-bs-target="#nav-complete"
+                type="button" role="tab" aria-controls="nav-complete" aria-selected="false">Complete</button>
+            <button class="nav-link" id="nav-onhold-tab" data-bs-toggle="tab" data-bs-target="#nav-onhold" type="button"
+                role="tab" aria-controls="nav-onhold" aria-selected="false">On Hold</button>
+        </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-active" role="tabpanel" aria-labelledby="nav-active-tab">
+            <div id="active">
+                <h1 class="display-1 g4">Active Goals</h1>
+                <div class="row justify-content-between">
+                    {% for goal in goals %}
+                    {% if goal.status == "Active" %}
+                    <div class="col-4 mb-4">
+                        <div class="card border-dark" style="width: 26rem;">
+                            <a href="/productivity/goals/{{goal.id}}"><img src="{{goal.pictureurl}}"
+                                    width="100%" height="275px" class="card-img-top" alt="{{goal.name}}"></a>
+                            <div class="card-body">
+                                <div class="card-header">
+                                    <h5 class="card-title">
+                                        <h2>{{goal.name}}</h2>
+                                    </h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">
+                                        {{goal.status}}
+                                    </h6>
+                                </div>
+                                <div class="card-text">
+                                    {{goal.measurement}}
+                                    <div class="progress" style="height:30px">
+                                        <div id='progressBar{{goal.id}}'
+                                            class="progress-bar"
+                                            role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+                                            style="width: 0%;height: 30px;">
+                                            {% for percent in percentcomplete %}
+                                            {% if goal.id == percent[0] %}
+                                            {{percent[1]}}%
+                                            <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+                                            <script>
+                                                $("#progressBar{{goal.id}}").css("width", "{{percent[1]}}%");
+                                            </script>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    Start Date: {{goal.datestart.strftime("%A, %B %d, %Y")}}<br>
+                                    End Date: {{goal.dateend.strftime("%A, %B %d, %Y")}}<br>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="nav-complete" role="tabpanel" aria-labelledby="nav-complete-tab">
+            <div id="completed">
+                <h1 class="display-1 g4">Completed Goals</h1>
+                <div class="row justify-content-between">
+                    {% for goal in goals %}
+                    {% if goal.status == "Complete" %}
+                    <div class="col-4 mb-4">
+                        <div class="card border-success" style="width: 26rem;">
+                            <a href="/productivity/goals/{{goal.id}}"><img src="{{goal.pictureurl}}"
+                                    width="100%" height="275px" class="card-img-top" alt="{{goal.name}}"></a>
+                            <div class="card-body">
+                                <div class="card-header">
+                                    <h5 class="card-title">
+                                        <h2>{{goal.name}}</h2>
+                                    </h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">
+                                        {{goal.status}}
+                                    </h6>
+                                </div>
+                                {{goal.measurement}}
+                                <div class="card-text">
+                                    Start Date: {{goal.datestart.strftime("%A, %B %d, %Y")}}<br>
+                                    End Date: {{goal.dateend.strftime("%A, %B %d, %Y")}}<br>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="nav-onhold" role="tabpanel" aria-labelledby="nav-onhold-tab">
+            <div id="On-Hold">
+                <h1 class="display-1 g4">On-Hold Goals</h1>
+                <div class="row justify-content-between">
+                    {% for goal in goals %}
+                    {% if goal.status == "On Hold" %}
+                    <div class="col-4 mb-4">
+                        <div class="card border-warning" style="width: 26rem;">
+                            <a href="/productivity/goals/{{goal.id}}"><img src="{{goal.pictureurl}}"
+                                    width="100%" height="275px" class="card-img-top" alt="{{goal.name}}"></a>
+                            <div class="card-body">
+                                <div class="card-header">
+                                    <h5 class="card-title">
+                                        <h2>{{goal.name}}</h2>
+                                    </h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">
+                                        {{goal.status}}
+                                    </h6>
+                                </div>
+                                {{goal.measurement}}
+                                <div class="card-text">
+                                    Start Date: {{goal.datestart.strftime("%A, %B %d, %Y")}}<br>
+                                    End Date: {{goal.dateend.strftime("%A, %B %d, %Y")}}<br>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

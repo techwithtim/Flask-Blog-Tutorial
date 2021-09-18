@@ -218,3 +218,12 @@ class Projects(db.Model):
     date_created = db.Column(db.DateTime(timezone=True), default=func.now())
     #relationships
     tasks = db.relationship('Tasks', backref='projects', passive_deletes=True)
+    
+class Wifi(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    SSID = db.Column(db.String(100))
+    password = db.Column(db.String(100))
+    path = db.Column(db.String(1000))
+    userid = db.Column(db.Integer, nullable=False)
+    update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
+    date_created = db.Column(db.DateTime(timezone=True), default=func.now())
