@@ -812,3 +812,25 @@ def wifi():
         
     wifi = db.session.query(Wifi).filter(Wifi.userid == flask_login.current_user.id).order_by(Wifi.update_time).all()
     return render_template('wifi.html', user=User, wifi=wifi)
+
+# Trips
+@views.route("/trip/trip", methods=['GET','POST'])
+@login_required
+def trip():
+    if request.method == 'POST':
+        pass
+    return render_template('trip/trip.html', user=User)
+
+@views.route("/trip/lodging", methods=['GET','POST'])
+@login_required
+def lodging():
+    if request.method == 'POST':
+        pass
+    return render_template('trip/lodging.html', user=User)
+
+@views.route("/trip/itinerary", methods=['GET','POST'])
+@login_required
+def itinerary():
+    if request.method == 'POST':
+        pass
+    return render_template('trip/itinerary.html', user=User)

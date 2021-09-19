@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block submenu %}
+<div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+    <a href="/trip/trip"><button type="button" class="btn btn-outline-primary">Trips</button></a>
+    <a href="/trip/lodging"><button type="button" class="btn btn-outline-primary">Lodging</button></a>
+    <a href="/trip/itinerary"><button type="button" class="btn btn-outline-primary">Itinerary</button></a>
+</div>
+{% endblock %}
+
+{% block title %}
+{{User.username}} Trip
+{% endblock %}
+
+{% block content %}
+{% endblock %}
