@@ -69,8 +69,11 @@
                     Last Refill: {{ medication.last_refilled.strftime("%m-%d-%Y") }} <br>
                     Next Refill: {{ medication.next_refill.strftime("%m-%d-%Y") }}
                 </div>
-                <a href="/deletingMed/{{medication.id}}" class="btn btn-outline-danger btn-sm" role="button">X</a>
-                <!-- <a href="#" class="card-link">Another link</a> -->
+                <div>
+                    <a href="/deletingMed/{{medication.id}}" class="btn btn-danger" role="button"><i
+                            class="fas fa-trash-alt"></i></a>
+                    <a href="/health/medupdate/{{medication.id}}" class="btn btn-primary" role="button"><i class="fas fa-calendar-plus"></i></a>
+                </div>
             </div>
         </div>
     </div>

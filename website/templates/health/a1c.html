@@ -65,7 +65,6 @@ A1C for {{current_user.firstname}} {{current_user.lastname}}
             <script>
                 var label = JSON.parse('{{labels | tojson | safe}}');
                 var dataset = JSON.parse('{{dataset | tojson | safe}}');
-                var aegdata = JSON.parse('{{aegdata | tojson | safe}}');
 
                     var ctx = document.getElementById('myChart').getContext('2d');
                 var myChart = new Chart(ctx, {
@@ -76,12 +75,6 @@ A1C for {{current_user.firstname}} {{current_user.lastname}}
                             label: 'A1C',
                             data: dataset,
                             borderColor: "#3e95cd",
-                            order: 1,
-                        }, {
-                            label: 'AEG',
-                            data: aegdata,
-                            borderColor: "#8e5ea2",
-                            order: 2,
                         }]
                     },
                     options: {

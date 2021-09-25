@@ -1,0 +1,87 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+SUMMARY:Call to Order Needle Tops
+LOCATION:Dallas Pill Box
+DESCRIPTION:Call Dallas Pill Box to request a refill of Needle Tops to be picked up on 09/05/2021
+DTSTART;VALUE=DATE:20210831
+DTEND;VALUE=DATE:20210901
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Call to Order Gabapentin
+LOCATION:Dallas Pill Box
+DESCRIPTION:Call Dallas Pill Box to request a refill of Gabapentin to be picked up on 09/05/2021
+DTSTART;VALUE=DATE:20210831
+DTEND;VALUE=DATE:20210901
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Call to Order AmLODIPine
+LOCATION:Dallas Pill Box
+DESCRIPTION:Call Dallas Pill Box to request a refill of AmLODIPine to be picked up on 09/05/2021
+DTSTART;VALUE=DATE:20210831
+DTEND;VALUE=DATE:20210901
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Call to Order Levothyroxine
+LOCATION:Dallas Pill Box
+DESCRIPTION:Call Dallas Pill Box to request a refill of Levothyroxine to be picked up on 09/05/2021
+DTSTART;VALUE=DATE:20210831
+DTEND;VALUE=DATE:20210901
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Call to Order Losartan
+LOCATION:Dallas Pill Box
+DESCRIPTION:Call Dallas Pill Box to request a refill of Losartan to be picked up on 09/05/2021
+DTSTART;VALUE=DATE:20210831
+DTEND;VALUE=DATE:20210901
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Call to Order Zetia
+LOCATION:Dallas Pill Box
+DESCRIPTION:Call Dallas Pill Box to request a refill of Zetia to be picked up on 09/05/2021
+DTSTART;VALUE=DATE:20210831
+DTEND;VALUE=DATE:20210901
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Call to Order Sertraline
+LOCATION:Dallas Pill Box
+DESCRIPTION:Call Dallas Pill Box to request a refill of Sertraline to be picked up on 09/05/2021
+DTSTART;VALUE=DATE:20210831
+DTEND;VALUE=DATE:20210901
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Call to Order Omeprazole
+LOCATION:Dallas Pill Box
+DESCRIPTION:Call Dallas Pill Box to request a refill of Omeprazole to be picked up on 09/05/2021
+DTSTART;VALUE=DATE:20210831
+DTEND;VALUE=DATE:20210901
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Call to Order Hydrochlorothiazide
+LOCATION:Dallas Pill Box
+DESCRIPTION:Call Dallas Pill Box to request a refill of Hydrochlorothiazide to be picked up on 09/05/2021
+DTSTART;VALUE=DATE:20210831
+DTEND;VALUE=DATE:20210901
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Call to Order Trulicity
+LOCATION:Dallas Pill Box
+DESCRIPTION:Call Dallas Pill Box to request a refill of Trulicity to be picked up on 09/10/2021
+DTSTART;VALUE=DATE:20210905
+DTEND;VALUE=DATE:20210906
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Call to Order Humulin R U 500
+LOCATION:Dallas Pill Box
+DESCRIPTION:Call Dallas Pill Box to request a refill of Humulin R U 500 to be picked up on 09/10/2021
+DTSTART;VALUE=DATE:20210905
+DTEND;VALUE=DATE:20210906
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Call to Order Glucagon
+LOCATION:Dallas Pill Box
+DESCRIPTION:Call Dallas Pill Box to request a refill of Glucagon to be picked up on 12/12/2021
+DTSTART;VALUE=DATE:20211207
+DTEND;VALUE=DATE:20211208
+END:VEVENT
+END:VCALENDAR

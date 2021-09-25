@@ -1,6 +1,3 @@
-from enum import IntFlag, unique
-from operator import itemgetter
-from re import X
 from . import db
 from flask_login import UserMixin
 from sqlalchemy.sql import func
@@ -212,7 +209,7 @@ class Projects(db.Model):
     last_reviewed=db.Column(db.DateTime)
     when_review=db.Column(db.Integer)
     notionid = db.Column(db.String(50))
-    # next_review = db.Column(db.DateTime)
+    next_review = db.Column(db.DateTime)
     userid = db.Column(db.Integer, nullable=False)
     update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
     date_created = db.Column(db.DateTime(timezone=True), default=func.now())

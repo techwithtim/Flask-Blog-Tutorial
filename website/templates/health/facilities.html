@@ -14,13 +14,13 @@
     {% for facility in facilities %}
     <div class="col-4 mb-4">
         {% if facility.type == "Pharmacy" %}
-        <div class="card border-success" style="width: 26rem;">
+        <div class="card border-success" style="width: 26rem; border: 5px solid">
             {% elif facility.type == "Clinic" %}
-            <div class="card border-primary" style="width: 26rem;">
+            <div class="card border-primary" style="width: 26rem; border: 5px solid"">
                 {% elif facility.type == "Hosptial" %}
-                <div class="card border-warning" style="width: 26rem;">
+                <div class="card border-warning" style="width: 26rem; border: 5px solid"">
                     {% else %}
-                    <div class="card border-dark" style="width: 26rem;">
+                    <div class="card border-dark" style="width: 26rem; border: 5px solid"">
                         {% endif %}
                         <div class="card-body">
                             <h5 class="card-title">
@@ -42,8 +42,8 @@
                                 {{facility.city}}, {{facility.state}} {{facility.zip}}<br>
                                 {{facility.phone}}
                             </div>
-                            <a href="/deletingFacility/{{facility.id}}" class="btn btn-outline-danger btn-sm"
-                                role="button">X</a>
+                            <a href="/deletingFacility/{{facility.id}}" class="btn btn-danger"
+                                role="button"><i class="fas fa-trash-alt"></i></a>
                             <!-- <a href="#" class="card-link">Another link</a> -->
                         </div>
                     </div>

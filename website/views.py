@@ -1,10 +1,11 @@
-from operator import itemgetter
+from operator import itemgetter, or_
 from flask import Blueprint, render_template, request, flash, redirect, url_for, send_file, after_this_request
 from flask_login import login_required, current_user
 from sqlalchemy.orm import session
-from sqlalchemy.sql.expression import join
+from sqlalchemy.sql.expression import false, join
 from sqlalchemy.sql.functions import current_user, session_user
 from werkzeug.datastructures import ContentSecurityPolicy
+from werkzeug.local import F
 from .models import Allergies, Dish, Doctor, Facility, Goals, Medications, Planner, Projects, Steps, Tasks, User, Recipe, A1C, Wifi
 from .notion import get_supplies, get_menu
 from datetime import datetime, timedelta
@@ -12,20 +13,30 @@ from . import db
 from .makedates import makedates
 from .nutrition import get_food_item, nutrition_single
 from subprocess import run, PIPE
-from sqlalchemy.sql import func, desc
+from sqlalchemy.sql import func, desc, or_
 from .vfc_maker import make_vfc
 import datetime, sys, pdfkit, flask_login, os
-from math import ceil
+from math import ceil, nan
 from .wifiqrcode import generate_code
+from .process_medications import getdata
 
 views = Blueprint("views", __name__)
-
 
 @views.route("/")
 @views.route("/home")
 @login_required
 def home():
-    return render_template("home.html", user=User)
+    currentvalue = db.session.query(func.max(A1C.date).label('ld'), A1C.testresult, A1C.userid).filter(A1C.userid == flask_login.current_user.id).order_by(A1C.date).first()
+    if currentvalue.testresult is None:
+        eag=0
+    else:
+        eag = ceil(28.7 * currentvalue.testresult - 46.7)
+    
+    projects = db.session.query(Projects).filter(Projects.userid == flask_login.current_user.id).filter(Projects.next_review <= datetime.datetime.now()).filter(Projects.status != "Complete").all()
+    tasks = db.session.query(Tasks.id, Tasks.duedate, Tasks.checked, Tasks.item, Tasks.project, Tasks.userid, Projects.name.label('nameOfProject')).join(Projects, Projects.id == Tasks.project).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.duedate <= (datetime.datetime.today()+timedelta(days=2))).filter(Tasks.checked==False).order_by(Tasks.duedate.desc(), Tasks.project).all()
+    plans = db.session.query(Planner).filter(Planner.date >= (datetime.datetime.today()- timedelta(days=1))).order_by(Planner.date).limit(8)
+    meds = db.session.query(Medications).filter(Medications.next_refill <= datetime.datetime.now()+timedelta(days=5)).filter(Medications.userid == flask_login.current_user.id).all()
+    return render_template("home.html", user=User, meds=meds, currentvalue=currentvalue, eag=eag, plans=plans, tasks=tasks, projects=projects)
 
 @views.route("/menu", methods=['GET', 'POST'])
 @login_required
@@ -333,6 +344,29 @@ def medications():
     medications = db.session.query(Medications).filter(Medications.userid == flask_login.current_user.id).order_by(Medications.next_refill, Medications.name).all()
     return render_template("health/medications.html", user=User, facilities=facilities, doctors=doctors, pharmacy=pharmacy, medications=medications)
 
+@views.route('/health/medupdate/<id>', methods=['GET', 'POST'])
+@login_required
+def medupdate(id):
+    if request.method == 'POST':
+        print(request.form.get('howoften'))
+        lastrefill = datetime.datetime.strptime(request.form.get('lastordered'),"%Y-%m-%d")
+        med = db.session.query(Medications).filter(Medications.id == id).first()
+        med.name = request.form.get('name')
+        med.dose = request.form.get('dose')
+        med.how_often = request.form.get('howoften')
+        med.reason_for_taking = request.form.get('reason_for_taking')
+        med.last_refilled = lastrefill
+        med.next_refill = lastrefill + datetime.timedelta(days=int(request.form.get('num_filled_days')))
+        med.num_filled_days = request.form.get('num_filled_days')
+        med.doctorfk = request.form.get('doctor')
+        med.pharmacy = request.form.get('rx')
+        db.session.commit()
+        return redirect(url_for('views.medications'))
+    meds = db.session.query(Medications).filter(Medications.id == id).first()
+    pharm = db.session.query(Facility).filter(Facility.userid == flask_login.current_user.id).filter(Facility.type == "Pharmacy").all()
+    doctors = db.session.query(Doctor).filter(Doctor.userid ==flask_login.current_user.id).order_by(Doctor.name).all()
+    return render_template("health/medupdate.html", user=User, meds=meds, pharms=pharm, doctors=doctors)
+    
 @views.route("/health/cpap", methods=['GET','POST'])
 @login_required
 def cpap():
@@ -420,17 +454,11 @@ def a1c():
     
     labels = []
     dataset = []
-    aegdata = []
     for result in results:
         label = result.date.strftime("%m/%y")
         data = result.testresult
-        aeg = round((28.7 * result.testresult - 46.7),0)
         labels.append(label)
-        aegdata.append(aeg)
         dataset.append(data)
-    # labels = json.dumps(labels)
-    # dataset = json.dumps(dataset)
-    # aegdata = json.dumps(aegdata)
 
     
     currentvalue = db.session.query(func.max(A1C.date).label('ld'), A1C.testresult, A1C.userid).filter(A1C.userid == flask_login.current_user.id).order_by(A1C.date).first()
@@ -440,7 +468,7 @@ def a1c():
         eag = ceil(28.7 * currentvalue.testresult - 46.7)
     
     doctors = db.session.query(Doctor).filter(Doctor.userid ==flask_login.current_user.id).order_by(Doctor.name).all()
-    return render_template("/health/a1c.html", user=User, results=results, currentvalue=currentvalue, doctors=doctors, eag=eag, labels=labels, dataset=dataset, aegdata=aegdata)
+    return render_template("/health/a1c.html", user=User, results=results, currentvalue=currentvalue, doctors=doctors, eag=eag, labels=labels, dataset=dataset)
 
 @views.route("/health/doctor/card/<id>", methods=['GET'])
 def makeCard(id): 
@@ -458,7 +486,7 @@ def makeCard(id):
 @login_required
 def doctorsEdit(id):
     if request.method == 'POST':
-        editDr = Doctor.query.filter_by(id=id).first()
+        editDr = db.session.query(Doctor).filter(Doctor.id == id).first()
         editDr.name=request.form.get('drname')
         editDr.facilityfk=request.form.get('facility')
         editDr.userid=request.form.get('thisuserid')
@@ -470,10 +498,11 @@ def doctorsEdit(id):
         editDr.email=request.form.get('email')
         editDr.asst=request.form.get('asst')
         db.session.commit()
-        return render_template(url_for('views.doctors'))
-    # BUG: figure out why this script makes a new record rather than updating the current record in the database.
-    doctors = db.session.query(Doctor.name, Doctor.address, Doctor.city, Doctor.state, Doctor.zip, Doctor.phone, Doctor.email, Doctor.asst, Doctor.userid, Facility.name.label('facility'), Doctor.facilityfk).join(Facility,Facility.id == Doctor.facilityfk).filter(Doctor.userid == flask_login.current_user.id).filter(Doctor.id == id).order_by(Doctor.facilityfk).all()
-    return render_template("health/doctorsEdit.html", user=User, doctors=doctors)
+        return redirect(url_for('views.doctors'))
+        
+    doctors = db.session.query(Doctor).filter(Doctor.id == id).first()
+    facilities = db.session.query(Facility).filter(Facility.userid == flask_login.current_user.id).filter(or_(Facility.type == 'Clinic', Facility.type == 'Hosptial')).all()
+    return render_template("health/doctorsEdit.html", user=User, doctors=doctors, facilities=facilities)
 
 @views.route("/health/medlist", methods=['GET'])
 def medlistPrint():
@@ -599,6 +628,11 @@ def projects():
             userid = request.form.get('thisuserid')
         )
         db.session.add(newProj)
+        db.session.commit()
+    
+    pros = db.session.query(Projects).all()
+    for pro in pros:
+        pro.next_review = pro.last_reviewed + timedelta(days=pro.when_review)
         db.session.commit()
     
     completedTasks = db.session.query(Tasks.project,func.count(Tasks.id).label('count')).filter(Tasks.checked == True).group_by(Tasks.project).all()
@@ -812,25 +846,3 @@ def wifi():
         
     wifi = db.session.query(Wifi).filter(Wifi.userid == flask_login.current_user.id).order_by(Wifi.update_time).all()
     return render_template('wifi.html', user=User, wifi=wifi)
-
-# Trips
-@views.route("/trip/trip", methods=['GET','POST'])
-@login_required
-def trip():
-    if request.method == 'POST':
-        pass
-    return render_template('trip/trip.html', user=User)
-
-@views.route("/trip/lodging", methods=['GET','POST'])
-@login_required
-def lodging():
-    if request.method == 'POST':
-        pass
-    return render_template('trip/lodging.html', user=User)
-
-@views.route("/trip/itinerary", methods=['GET','POST'])
-@login_required
-def itinerary():
-    if request.method == 'POST':
-        pass
-    return render_template('trip/itinerary.html', user=User)

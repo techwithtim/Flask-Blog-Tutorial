@@ -1,0 +1,4 @@
+get data from db
+count the results
+if none, display message
+if some, write ics

@@ -1,7 +1,133 @@
-{% extends "base.html" %} 
+{% extends "base.html" %}
 {% block title %}
-    Home
+Home
 {% endblock %}
 {% block content %}
+<h1 class="display-1 text-center">{{current_user.firstname}}'s Dashboard</h1>
 
+<div class="row">
+    <div class="col-3" id="menu">
+        <h6 class="display-6 text-center">Menu</h6>
+
+        {% for date, plan in plans | groupby('date') %}
+        <!-- List of All Dates and Dishes -->
+        <div class="input-group mb-3">
+            <form action="/plan/single" , method="POST">
+                <button type="submit" class="btn text-start" name="dateselector" id="dateselector"
+                    value="{{date.strftime('%Y-%m-%d')}}">
+                    <h4>{{ date.strftime('%m/%d/%Y') }}</h4>
+                </button>
+            </form>
+        </div>
+        <div class="lead text-start">
+            <ul>
+                {% for plan in plans %}
+                {% if plan.date == date %}
+                <li>{{ plan.item }}</li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="col-5" id="tasks">
+        <div>
+            <h6 class="display-6 text-center">Tasks</h6>
+            <table class="table table-striped">
+                <caption>Only listed are tasks with dates today or prior</caption>
+                <thead>
+                    <th>Task</th>
+                    <th>Due</th>
+                    <th>Project</th>
+                </thead>
+                <tbody>
+                    {% for task in tasks %}
+                    {% if task.duedate >= task.duedate.now() %}<tr class="text-primary">
+                        {% elif task.duedate < task.duedate.now() %}
+                    <tr class="text-danger">{% else %}
+                    <tr>{% endif %}
+                        <td>{{task.item}}</td>
+                        <td>{{task.duedate.strftime("%m/%d/%y")}}</td>
+                        <td>{{task.nameOfProject}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <h6 class="display-6 text-center border-warning" style="border-top: 5px solid">Projects to Review</h6>
+            <table class="table table-striped">
+                <thead>
+                    <th>Project</th>
+                    <th>Review Date</th>
+                </thead>
+                <tbody>
+                    {% for project in projects %}
+                    {% if project.next_review >= project.next_review.now() %}<tr class="text-primary">
+                        {% elif project.next_review < project.next_review.now() %}
+                    <tr class="text-danger">{% else %}
+                    <tr>{% endif %}
+                        <td><a class="text-decoration-none text-body"href="productivity/projects/{{project.id}}">{{project.name}}</a></td>
+                        <td>{{project.next_review.strftime("%m/%d/%y")}}</td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-3" id="health">
+        <h6 class="display-6 text-center">Medications</h6>
+        <div>
+            <table class="table table-striped">
+                <caption class="table-caption">* Due within the next 5 days</caption>
+                <thead>
+                    <th>Medication</th>
+                    <th>Dose</th>
+                    <th>Reason</th>
+                    <th>Date</th>
+                    <th> </th>
+                </thead>
+                <tbody>
+                    {% for med in meds %}
+                    {% if med.next_refill < med.next_refill.now() %}<tr class="text-danger">
+                        {% elif med.next_refill == med.next_refill.now() %}
+                    <tr class="text-primary">{% else %}
+                    <tr>{% endif %}
+                        <td>{{med.name}}</td>
+                        <td>{{med.dose}}</td>
+                        <td>{{med.reason_for_taking}}</td>
+                        <td>{{med.next_refill.strftime("%m/%d/%Y")}}</td>
+                    </tr>
+
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div>
+            <h6 class="display-6 text-center border-warning" style="border-top: 5px solid">Current A1C</h6>
+            <table class="table table-striped">
+                <thead>
+                    <th>Date</th>
+                    <th>A1C</th>
+                    <th>E.A.G</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{currentvalue.ld.strftime("%m/%d/%Y")}}</td>
+                        <td>{{currentvalue.testresult}}</td>
+                        <td>{{eag}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <b></b>
+            <h6 class="display-6 text-center border-warning" style="border-top: 5px solid">C-PAP Supplies</h6></b>
+        </div>
+    </div>
+</div>
 {% endblock %}

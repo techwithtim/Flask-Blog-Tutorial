@@ -1,1 +1,0 @@
-UPDATE projects SET next_review=date(last_reviewed, (when_review || ' day'))

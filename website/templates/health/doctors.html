@@ -37,12 +37,11 @@
                                 class="btn" name="cardmaker">Card</button></a>
                     </div>
                     <div class="col">
-                        <a href="/deletingDoctors/{{doctor.id}}" class="btn btn-outline-danger btn-sm"
-                            role="button">X</a>
-                    </div>
-                    <div class="col">
-                        <a href="/health/doctors/edit/{{doctor.id}}" class="btn btn-outline-success btn"
-                            role="button">Edit</a>
+                        <a href="/deletingDoctors/{{doctor.id}}" class="btn btn-danger"
+                            role="button"><i class="fas fa-trash-alt"></i></a>
+                    
+                        <a href="/health/doctors/edit/{{doctor.id}}" class="btn btn-primary"
+                            role="button"><i class="fas fa-edit"></i></a>
                     </div>
                 </div>
             </div>
@@ -56,7 +55,7 @@
     <input type="text" class="form-control" id="drname" name="drname">
     <div>
         <label for="facility">Facility</label>
-        <select type="text" name="facility" id="facility" list="facility">
+        <select class="form-select" type="text" name="facility" id="facility" list="facility">
             {% for facility in facilities %}
             {% if facility.userid == current_user.id %}
             {% if facility.type != 'Pharmacy' %}

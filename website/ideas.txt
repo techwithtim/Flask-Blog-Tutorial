@@ -5,7 +5,7 @@ IDEA: Create a wallet size report in pdf that can be printed out
 TODO: Place the keys in the database
 IDEA: Make each menu item selectable according to user (menu on for me off for shawn for example)
 
-Working: Goals
+DONE: Goals
 DONE: Home Wifi
 DONE: A1C
 DONE: Project todos

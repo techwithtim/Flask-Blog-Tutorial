@@ -1,0 +1,45 @@
+    {% extends "health-div.html" %}
+
+{% block title %}
+{{current_user.username}} Medications
+{% endblock %}
+
+{% block header %}
+<h1 class="display-1 text-center">Edit {{meds.name}}</h1>
+{% endblock %}
+
+{% block menu %}
+<form action="/health/medications" method='POST'>
+    <input type="submit" name="exportPDF" class='btn btn-warning' value="exportPDF">
+</form>
+<div class="form-floating">
+    <form action="/health/medupdate/{{meds.id}}" , method="POST">
+        <label for="name">Medication Name</label>
+        <input type="text" class="form-control" id="name" name="name" value="{{meds.name}}">
+        <label for="dose">Dose</label>
+        <input type="text" class="form-control" name="dose" id="dose" value="{{meds.dose}}">
+        <label for="howoften">How Often</label>
+        <input type="text" class="form-control" id="howoften" name="howoften" value="{{meds.how_often}}">
+        <label for="num_filled_days">How many days was this filled</label>
+        <input type="text" class="form-control" id="num_filled_days" name="num_filled_days" value="{{meds.num_filled_days}}">
+        <label for="reason_for_taking">Reason for taking</label>
+        <input type="text" class="form-control" id="reason_for_taking" name="reason_for_taking" value="{{meds.reason_for_taking}}">
+        <label for="doctor">Doctor</label>
+        <select class="form-select" name="doctor" id="doctor">
+            {% for doctor in doctors %}
+            <option value="{{doctor.id}}" {{'selected' if doctor.id==meds.doctorfk}} >{{doctor.name}}</option>
+            {% endfor %}
+        </select>
+        <label for="rx">Pharmacy</label>
+        <select class="form-select" name="rx" id="rx">
+            {% for pharm in pharms %}
+            <option value="{{pharm.id}}" {{'selected' if pharm.id==meds.pharmacy|int}} >{{pharm.name}}</option>
+            {% endfor %}
+        </select>
+        <label for="lastordered">Last Ordered</label>
+        <input type="date" class="form-control-lg" id="lastordered" name="lastordered" value="{{meds.last_refilled.strftime('%Y-%m-%d')}}">
+        <input type="hidden" name='thisuserid' value="{{current_user.id}}">
+        <input class="btn btn-success btn-lg" type="submit" name='facSubmit' value="Edit Medication"> <br> <br>
+    </form>
+</div>
+{% endblock %}
