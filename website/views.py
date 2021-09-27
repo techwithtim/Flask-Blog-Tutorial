@@ -6,19 +6,19 @@ from sqlalchemy.sql.expression import false, join
 from sqlalchemy.sql.functions import current_user, session_user
 from werkzeug.datastructures import ContentSecurityPolicy
 from werkzeug.local import F
-from .models import Allergies, Dish, Doctor, Facility, Goals, Medications, Planner, Projects, Steps, Tasks, User, Recipe, A1C, Wifi
-from .notion import get_supplies, get_menu
+from website.models import Allergies, Dish, Doctor, Facility, Goals, Medications, Planner, Projects, Steps, Tasks, User, Recipe, A1C, Wifi
+from website.notion import get_supplies, get_menu
 from datetime import datetime, timedelta
 from . import db
-from .makedates import makedates
-from .nutrition import get_food_item, nutrition_single
+from website.makedates import makedates
+from website.nutrition import get_food_item, nutrition_single
 from subprocess import run, PIPE
 from sqlalchemy.sql import func, desc, or_
-from .vfc_maker import make_vfc
+from website.vfc_maker import make_vfc
 import datetime, sys, pdfkit, flask_login, os
 from math import ceil, nan
-from .wifiqrcode import generate_code
-from .process_medications import getdata
+from website.wifiqrcode import generate_code
+from website.process_medications import getdata
 
 views = Blueprint("views", __name__)
 
