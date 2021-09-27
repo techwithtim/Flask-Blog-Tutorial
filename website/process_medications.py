@@ -1,5 +1,5 @@
 from . import db
-from .models import Medications
+from website.models import Medications
 import datetime
 from flask_login import current_user
 

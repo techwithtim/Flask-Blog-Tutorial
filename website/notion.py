@@ -1,6 +1,6 @@
 import requests, json
 from . import db
-from .models import Dish
+from website.models import Dish
 
 
 def auth(auth_name):
