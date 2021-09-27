@@ -12,4 +12,4 @@ def generate_code(SSID, Password):
     print(fullfile)
 
     qrco.save(fullfile, format='PNG')
-    return full
+    return fullfile

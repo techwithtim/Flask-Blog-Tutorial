@@ -36,6 +36,10 @@ def home():
     tasks = db.session.query(Tasks.id, Tasks.duedate, Tasks.checked, Tasks.item, Tasks.project, Tasks.userid, Projects.name.label('nameOfProject')).join(Projects, Projects.id == Tasks.project).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.duedate <= (datetime.datetime.today()+timedelta(days=2))).filter(Tasks.checked==False).order_by(Tasks.duedate.desc(), Tasks.project).all()
     plans = db.session.query(Planner).filter(Planner.date >= (datetime.datetime.today()- timedelta(days=1))).order_by(Planner.date).limit(8)
     meds = db.session.query(Medications).filter(Medications.next_refill <= datetime.datetime.now()+timedelta(days=5)).filter(Medications.userid == flask_login.current_user.id).all()
+    
+    #TODO: figure out a way to update the last pickup date so the computer can re-caluclate the next pickupdate.
+    #TODO: figure out why the next pick up date is not working in the database
+    #TODO: figure out why the menu does not update when new informaion is added to a plan when the plan is already showing up.
     return render_template("home.html", user=User, meds=meds, currentvalue=currentvalue, eag=eag, plans=plans, tasks=tasks, projects=projects)
 
 @views.route("/menu", methods=['GET', 'POST'])
@@ -110,7 +114,7 @@ def menu_single():
                 .join(Planner, Planner.dishfk == Dish.id)\
                     .filter(func.date(Planner.date) == date)\
                             .all()
-                            
+    #TODO: figure out why when you add an existing receipe to a plan, the page returns blank                  
         dishesForList = db.session.query(Dish).all()
         return render_template("plan_single.html", user=User, recipes=recipes, dishs=dishes, steps=steps, items=items, dishlist=dishesForList)
 
@@ -310,6 +314,19 @@ def facilities():
     doctors = db.session.query(Doctor).filter(Doctor.userid == flask_login.current_user.id).all()
     return render_template("health/facilities.html", user=User, facilities=facilities, doctors=doctors)
 
+@views.route("/health/surgeries", methods=['GET', 'POST'])
+@login_required
+def surgeries():
+    pass
+    return render_template("health/surgeries.html", user=User)
+
+@views.route("/health/hospital", methods=['GET', 'POST'])
+@login_required
+def hospital():
+    pass
+    return render_template("health/hospital.html", user=User)
+
+
 @views.route("/health/medications", methods=['GET', 'POST'])
 @login_required
 # TODO: Make it so the user can know when the medication is due to be refilled.
@@ -375,7 +392,7 @@ def cpap():
         flash("Order Script ran!", category='sucess')
         #BUG: Sort By Date (Currently A String) Want It Done By Date.
         #TODO: Make to where multi users are capable.  Will need to factor in every user has a notion secrete key
-        
+        #TODO: Figure out why this page does not work on the published website and fix it.
         return redirect(url_for('views.cpap'))
     
     supplies = get_supplies()
@@ -653,7 +670,7 @@ def projects():
                     break
                 else:
                     next
-    
+    #TODO: make a way for user to update the reviewed date so it can re-calculate the next review date
     projects = db.session.query(Projects).order_by(Projects.name).all()
     return render_template("productivity/projects.html", user=User, projects=projects, percentcomplete=percentcomplete)
 
@@ -843,6 +860,6 @@ def wifi():
         )
         db.session.add(newwifi)
         db.session.commit()
-        
+    # TODO: Figure out why this does not work on the website version of the program
     wifi = db.session.query(Wifi).filter(Wifi.userid == flask_login.current_user.id).order_by(Wifi.update_time).all()
     return render_template('wifi.html', user=User, wifi=wifi)
