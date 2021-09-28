@@ -1,5 +1,5 @@
 import requests
-from .models import Tasks, Projects
+from website.models import Tasks, Projects
 from . import db
 from json import loads, dumps
 import random

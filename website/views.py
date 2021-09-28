@@ -6,13 +6,13 @@ from sqlalchemy.sql.expression import false, join
 from sqlalchemy.sql.functions import current_user, session_user
 from werkzeug.datastructures import ContentSecurityPolicy
 from werkzeug.local import F
-from website.models import Allergies, Dish, Doctor, Facility, Goals, Medications, Planner, Projects, Steps, Tasks, User, Recipe, A1C, Wifi
+from website.models import Allergies, Dish, Doctor, Facility, Goals, Medications, Planner, Projects, Steps, Surgeries, Tasks, User, Recipe, A1C, Wifi
 from website.notion import get_supplies, get_menu
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from . import db
 from website.makedates import makedates
 from website.nutrition import get_food_item, nutrition_single
-from subprocess import run, PIPE
+from subprocess import SubprocessError, run, PIPE
 from sqlalchemy.sql import func, desc, or_
 from website.vfc_maker import make_vfc
 import datetime, sys, pdfkit, flask_login, os
@@ -317,8 +317,31 @@ def facilities():
 @views.route("/health/surgeries", methods=['GET', 'POST'])
 @login_required
 def surgeries():
-    pass
-    return render_template("health/surgeries.html", user=User)
+    if request.method == 'POST':
+        
+        def calculateAge(startdate):
+            bday = date(1978, 5, 31)
+            age = startdate.year - bday.year
+            return age
+     
+        newsurg = Surgeries(
+            name = request.form.get('name'),
+            startdate= datetime.datetime.strptime(request.form.get('sdate'),"%Y-%m-%d"),
+            enddate= datetime.datetime.strptime(request.form.get('edate'),"%Y-%m-%d"),
+            description= request.form.get('desc'),
+            body_part= request.form.get('bodypart'),
+            age = calculateAge(datetime.datetime.strptime(request.form.get('sdate'),"%Y-%m-%d")),
+            doctorfk= request.form.get('doctor'),
+            facilityfk= request.form.get('facility'),
+            userid= request.form.get('thisuserid')
+        )
+        db.session.add(newsurg)
+        db.session.commit()
+    
+    surgeries = db.session.query(Surgeries).filter(Surgeries.userid == flask_login.current_user.id).order_by(desc(Surgeries.startdate)).all()
+    doctors = db.session.query(Doctor).filter(Doctor.userid == flask_login.current_user.id).order_by(Doctor.name).all()
+    facilities = db.session.query(Facility).filter(Facility.userid == flask_login.current_user.id).filter(Facility.type != "Pharmacy").order_by(Facility.name).all()
+    return render_template("health/surgeries.html", user=User, facilities=facilities, doctors=doctors, surgeries=surgeries)
 
 @views.route("/health/hospital", methods=['GET', 'POST'])
 @login_required
@@ -833,6 +856,13 @@ def deleteA1C(id):
     A1C.query.filter_by(id=id).delete()
     db.session.commit()
     return redirect(url_for('views.a1c'))
+
+@views.route("/health/surgery/delete/<id>")
+@login_required
+def deleteSurg(id):
+    Surgeries.query.filter_by(id=id).delete()
+    db.session.commit()
+    return redirect(url_for('views.surgeries'))
 
 @views.route("/wifidelete/<id>")
 @login_required
