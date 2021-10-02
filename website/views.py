@@ -31,16 +31,18 @@ def home():
         eag=0
     else:
         eag = ceil(28.7 * currentvalue.testresult - 46.7)
-    
+    cntProjects = db.session.query(Projects).filter(Projects.userid == flask_login.current_user.id).filter(Projects.next_review <= datetime.datetime.now()).filter(Projects.status != "Complete").count()
+    cntMeds = db.session.query(Medications).filter(Medications.next_refill <= datetime.datetime.now()+timedelta(days=5)).filter(Medications.userid == flask_login.current_user.id).count()
+    cntTasks = db.session.query(Tasks.id, Tasks.duedate, Tasks.checked, Tasks.item, Tasks.project, Tasks.userid, Projects.name.label('nameOfProject')).join(Projects, Projects.id == Tasks.project).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.duedate <= (datetime.datetime.today()+timedelta(days=2))).filter(Tasks.checked==False).order_by(Tasks.duedate.desc(), Tasks.project).count()
     projects = db.session.query(Projects).filter(Projects.userid == flask_login.current_user.id).filter(Projects.next_review <= datetime.datetime.now()).filter(Projects.status != "Complete").all()
     tasks = db.session.query(Tasks.id, Tasks.duedate, Tasks.checked, Tasks.item, Tasks.project, Tasks.userid, Projects.name.label('nameOfProject')).join(Projects, Projects.id == Tasks.project).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.duedate <= (datetime.datetime.today()+timedelta(days=2))).filter(Tasks.checked==False).order_by(Tasks.duedate.desc(), Tasks.project).all()
-    plans = db.session.query(Planner).filter(Planner.date >= (datetime.datetime.today()- timedelta(days=1))).order_by(Planner.date).limit(8)
+    plans = db.session.query(Planner).filter(Planner.date >= (datetime.datetime.today()- timedelta(days=1))).order_by(Planner.date).limit(10)
     meds = db.session.query(Medications).filter(Medications.next_refill <= datetime.datetime.now()+timedelta(days=5)).filter(Medications.userid == flask_login.current_user.id).all()
     
     #TODO: figure out a way to update the last pickup date so the computer can re-caluclate the next pickupdate.
     #TODO: figure out why the next pick up date is not working in the database
     #TODO: figure out why the menu does not update when new informaion is added to a plan when the plan is already showing up.
-    return render_template("home.html", user=User, meds=meds, currentvalue=currentvalue, eag=eag, plans=plans, tasks=tasks, projects=projects)
+    return render_template("home.html", user=User, meds=meds, currentvalue=currentvalue, eag=eag, plans=plans, tasks=tasks, projects=projects, cntTasks=cntTasks, cntMeds=cntMeds, cntProjects=cntProjects)
 
 @views.route("/menu", methods=['GET', 'POST'])
 @login_required
@@ -771,18 +773,25 @@ def tasks():
 @login_required
 def project_single(id):
     if request.method == 'POST':
-        if request.form.get('complete') == 'on': complete = True 
-        else: complete = False
-        newtask = Tasks(
-            project = request.form.get('project'),
-            item = request.form.get('task').title(),
-            checked = complete,
-            userid = request.form.get('thisuserid'),
-            duedate = datetime.datetime.strptime(request.form.get('dueDate'),"%Y-%m-%d"),
-            goalfk = None
-        )
-        db.session.add(newtask)
-        db.session.commit()
+        if request.form['reviewupdate'] == 'Review Complete':
+            udproject = db.session.query(Projects).filter(Projects.id == id).first()
+            udproject.next_review = datetime.datetime.strptime(request.form.get('date_update'),"%Y-%m-%d") + timedelta(days=int(udproject.when_review))
+            udproject.last_reviewed = datetime.datetime.strptime(request.form.get('date_update'),"%Y-%m-%d")
+            db.session.commit()
+            return redirect(url_for('views.home'))
+        else:
+            if request.form.get('complete') == 'on': complete = True 
+            else: complete = False
+            newtask = Tasks(
+                project = request.form.get('project'),
+                item = request.form.get('task').title(),
+                checked = complete,
+                userid = request.form.get('thisuserid'),
+                duedate = datetime.datetime.strptime(request.form.get('dueDate'),"%Y-%m-%d"),
+                goalfk = None
+            )
+            db.session.add(newtask)
+            db.session.commit()
         return redirect(url_for('views.project_single', id=id))
     
     completedTasks = db.session.query(Tasks.item).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.project == id).filter(Tasks.checked == True).count()
@@ -795,7 +804,7 @@ def project_single(id):
 
     projects = db.session.query(Projects.id, Projects.name, Projects.status, Projects.last_reviewed, Projects.when_review, Projects.pictureurl, Projects.userid).filter(Projects.userid == flask_login.current_user.id).filter(Projects.id == id).all()
     tasks = db.session.query(Tasks).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.project == id).order_by(Tasks.checked, Tasks.duedate, Tasks.item).all()
-    return render_template("productivity/projects_single.html", user=User, projects=projects, tasks=tasks, percentcomplete=percentcomplete)
+    return render_template("productivity/projects_single.html", user=User, projects=projects, tasks=tasks, percentcomplete=percentcomplete, today=datetime.datetime.today())
 
 @views.route("productivity/noTOyes/<taskid>/<projectid>")
 @login_required
