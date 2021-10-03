@@ -1,0 +1,54 @@
+{% extends "health-div.html" %}
+
+{% block title %}
+Update
+{% endblock %}
+
+{% block header %}
+<h1 class="display-1 text-center">Update Hospitalization</h1>
+<form action="{{ url_for('views.hospital_update', id=stay.id) }}" method="POST" class="row g-3">
+    <div class="col-6">
+        <label for="sdate" class="form-label">Start Date</label>
+        <input type="text" class="form-control" name="sdate" id="sdate" value="{{stay.datestart.strftime('%m/%d/%Y')}}">
+    </div>
+    <div class="col-6">
+        <label for="edate" class="form-label">End Date</label>
+        <input type="text" class="form-control" name="edate" id="edate" value="{{stay.dateend.strftime('%m/%d/%Y')}}">
+    </div>
+    <div class="col-md-12">
+        <label for="reason" class="form-label">Reason</label>
+        <input type="text" class="form-control" id="reason" name="reason" value="{{stay.reason}}">
+    </div>
+    <div class="col-md-6">
+        <label for="doctor" class="form-label">Doctor</label>
+        <select name="doctor" id="doctor" class="form-select">
+            {% for doctor in doctors %}
+            {% if stay.doctorfk == doctor.id %}
+            <option selected value="{{doctor.id}}">{{doctor.name}}</option>
+            {% else %}
+            <option value="{{doctor.id}}">{{doctor.name}}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-6">
+        <label for="facility" class="form-label">Facility</label>
+        <select name="facility" id="facility" class="form-select">
+            {% for facility in facilities %}
+            {% if stay.facilityfk == facility.id %}
+            <option selected value="{{facility.id}}">{{facility.name}}</option>
+            {% else %}
+            <option value="{{facility.id}}">{{facility.name}}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-12">
+        <button type="submit" class="btn btn-primary">Update Hospitalization</button>
+    </div>
+</form>
+{% endblock %}
+
+{% block menu %}
+
+{% endblock %}

@@ -6,7 +6,7 @@ from sqlalchemy.sql.expression import false, join
 from sqlalchemy.sql.functions import current_user, session_user
 from werkzeug.datastructures import ContentSecurityPolicy
 from werkzeug.local import F
-from website.models import Allergies, Dish, Doctor, Facility, Goals, Medications, Planner, Projects, Steps, Surgeries, Tasks, User, Recipe, A1C, Wifi
+from website.models import Allergies, Dish, Doctor, Facility, Goals, Hosptial, Medications, Planner, Projects, Steps, Surgeries, Tasks, User, Recipe, A1C, Wifi
 from website.notion import get_supplies, get_menu
 from datetime import datetime, timedelta, date
 from . import db
@@ -346,9 +346,48 @@ def surgeries():
 @views.route("/health/hospital", methods=['GET', 'POST'])
 @login_required
 def hospital():
-    pass
-    return render_template("health/hospital.html", user=User)
+    if request.method == 'POST':
+        newhosp = Hosptial(
+            datestart = datetime.datetime.strptime(request.form.get('sdate'),("%Y-%m-%d")),
+            dateend = datetime.datetime.strptime(request.form.get('edate'),("%Y-%m-%d")),
+            reason = request.form.get('reason'),
+            doctorfk = request.form.get('doctor'),
+            facilityfk = request.form.get('facility'),
+            userid = flask_login.current_user.id
+        )
+        db.session.add(newhosp)
+        db.session.commit()
+    
+    stays = db.session.query(Hosptial).filter(Hosptial.userid == flask_login.current_user.id).order_by(desc(Hosptial.datestart)).all()
+    doctors = db.session.query(Doctor).filter(Doctor.userid == flask_login.current_user.id).order_by(Doctor.facilityfk).all()
+    facilities = db.session.query(Facility).filter(Facility.userid == flask_login.current_user.id).filter(Facility.type == "Hosptial").order_by(Facility.type, Facility.name).all()
+    return render_template("health/hospital.html", user=User, stays=stays, doctors=doctors, facilities=facilities)
 
+@views.route("/health/hospital/delete/<id>", methods=['GET', 'POST'])
+@login_required
+def hospital_delete(id):
+    db.session.query(Hosptial).filter(Hosptial.id == id).delete()
+    db.session.commit()
+    return redirect(url_for('views.hospital'))
+
+@views.route("/health/hospital/<id>", methods=['GET', 'POST'])
+@login_required
+def hospital_update(id):
+    if request.method == 'POST':
+       udstay = db.session.query(Hosptial).filter(Hosptial.id == id).first()
+       udstay.datestart = datetime.datetime.strptime(request.form.get('sdate'),"%m/%d/%Y")
+       udstay.dateend = datetime.datetime.strptime(request.form.get('edate'),"%m/%d/%Y")
+       udstay.reason = request.form.get('reason')
+       udstay.doctorfk = request.form.get('doctor')
+       udstay.facilityfk = request.form.get('facility')
+       udstay.userid = flask_login.current_user.id
+       db.session.commit()
+       return redirect(url_for('views.hospital'))
+                       
+    stay = db.session.query(Hosptial).filter(Hosptial.id == id).first()
+    doctors = db.session.query(Doctor).filter(Doctor.userid == flask_login.current_user.id).order_by(Doctor.facilityfk).all()
+    facilities = db.session.query(Facility).filter(Facility.userid == flask_login.current_user.id).filter(Facility.type == "Hosptial").order_by(Facility.type, Facility.name).all()
+    return render_template('health/hospital_update.html', user=User, stay=stay, doctors=doctors, facilities=facilities)
 
 @views.route("/health/medications", methods=['GET', 'POST'])
 @login_required
