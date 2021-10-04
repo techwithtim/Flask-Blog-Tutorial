@@ -70,9 +70,9 @@ Home
                 </thead>
                 <tbody>
                     {% for med in meds %}
-                    {% if med.next_refill < med.next_refill.now() %}<tr class="text-danger"><td><a class="text-danger"{% else %}
-                    <tr class="text-success"><td><a class="text-success"{% endif %}
-                        <td><a class="text-danger" href="/health/medupdate/{{med.id}}">{{med.name}}</a></td>
+                    {% if med.next_refill.strftime("%m/%d/%Y") >= med.next_refill.now().strftime("%m/%d/%Y") %}
+                    <tr class="text-success"><td><a class="text-success" href="/health/medupdate/{{med.id}}">{% else %}<tr class="text-danger"><td><a class="text-danger" href="/health/medupdate/{{med.id}}">{% endif %}
+                        {{med.name}}</a></td>
                         <td>{{med.dose}}</td>
                         <td>{{med.reason_for_taking}}</td>
                         <td>{{med.next_refill.strftime("%m/%d/%Y")}}</td>

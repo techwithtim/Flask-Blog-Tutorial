@@ -37,10 +37,8 @@ def home():
     projects = db.session.query(Projects).filter(Projects.userid == flask_login.current_user.id).filter(Projects.next_review <= datetime.datetime.now()).filter(Projects.status != "Complete").all()
     tasks = db.session.query(Tasks.id, Tasks.duedate, Tasks.checked, Tasks.item, Tasks.project, Tasks.userid, Projects.name.label('nameOfProject')).join(Projects, Projects.id == Tasks.project).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.duedate <= (datetime.datetime.today()+timedelta(days=2))).filter(Tasks.checked==False).order_by(Tasks.duedate.desc(), Tasks.project).all()
     plans = db.session.query(Planner).filter(Planner.date >= (datetime.datetime.today()- timedelta(days=1))).order_by(Planner.date).limit(10)
-    meds = db.session.query(Medications).filter(Medications.next_refill <= datetime.datetime.now()+timedelta(days=5)).filter(Medications.userid == flask_login.current_user.id).all()
+    meds = db.session.query(Medications).filter(Medications.next_refill <= (datetime.datetime.today()+timedelta(days=5))).filter(Medications.userid == flask_login.current_user.id).order_by(Medications.next_refill).all()
     
-    #TODO: figure out a way to update the last pickup date so the computer can re-caluclate the next pickupdate.
-    #TODO: figure out why the next pick up date is not working in the database
     #TODO: figure out why the menu does not update when new informaion is added to a plan when the plan is already showing up.
     return render_template("home.html", user=User, meds=meds, currentvalue=currentvalue, eag=eag, plans=plans, tasks=tasks, projects=projects, cntTasks=cntTasks, cntMeds=cntMeds, cntProjects=cntProjects)
 
