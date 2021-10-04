@@ -57,8 +57,8 @@ Home
         </div>
         <div id="Meds">
             {% if cntMeds != 0 %}
-            <h6 class="display-6 text-center border-warning" style="border-top: 5px solid">Medications - {{cntMeds}}
-            </h6>
+            <h6 class="display-6 text-center border-warning" style="border-top: 5px solid">Medications - {{cntMeds}}</h6>
+            <a href="{{ url_for('views.medications_reorder') }}"><button class="btn btn-success">Reorder</button></a>
             <table class="table table-striped">
                 <caption class="table-caption">* Due within the next 5 days</caption>
                 <thead>

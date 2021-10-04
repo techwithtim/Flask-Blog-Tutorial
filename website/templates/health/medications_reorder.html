@@ -1,0 +1,79 @@
+{% extends "health-div.html" %}
+
+{% block title %}
+{{current_user.username}} Medications
+{% endblock %}
+
+{% block header %}
+<h1 class="display-1 text-center">Refill Prescriptions for {{current_user.firstname}} {{current_user.lastname}}</h1>
+{% endblock %}
+
+{% block menu %}
+{{ref}}
+<form action="/health/medications/reorder" , method="POST">
+    <input required type="date" name="reorder_date" id="reorder_date"><button type="submit">ReOrder</button>
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Reorder</th>
+                <th>Medication</th>
+                <th>Dose</th>
+                <th>How Often</th>
+                <th>Days Filled</th>
+            </tr>
+            <tr>
+                <th></th>
+                <th></th>
+                <th>Reason</th>
+                <th>Pharmacy</th>
+                <th>Doctor</th>
+        </thead>
+        <tbody>
+            {% for med in medications %}
+            <tr>
+                <input type="hidden" name="id" value="{{med.id}}">
+                <td><select class="form-select" type="text" list="yesno" name="reorder" id="reorder">
+                        <datalist id="yesno">
+                            <option selected value="No">Do Not Reorder</option>
+                            <option value="Yes">Reorder</option>
+                        </datalist></td>
+                <td><input readonly class="form-control" type="text" name="med" id="med" value="{{med.name}}"></td>
+                <td><input class="form-control" type="text" name="dose" id="dose" value="{{med.dose}}"></td>
+                <td><input class="form-control" type="text" name="how_often" id="how_often" value="{{med.how_often}}">
+                </td>
+                <td><input class="form-control" type="number" name="num_filled_days" id="num_filled_days"
+                        value="{{med.num_filled_days}}"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td><input class="form-control" type="text" name="reason_for_taking" id="reason_for_taking"
+                        value="{{med.reason_for_taking}}"></td>
+                <td>
+                    <select class="form-select" name="pharmacy" id="pharmacy">
+                        {% for pharm in pharmacy %}
+                        {% if pharm.id == med.pharmacy %}
+                        <option selected value="{{pharm.id}}">{{pharm.name}}</option>
+                        {% else %}
+                        <option value="{{pharm.id}}">{{pharm.name}}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <select class="form-select" name="doctorfk" id="doctorfk">
+                        {% for doctor in doctors %}
+                        {% if doctor.id == med.doctorfk %}
+                        <option selected value="{{doctor.id}}">{{doctor.name}}</option>
+                        {% else %}
+                        <option value="{{doctor.id}}">{{doctor.name}}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</form>
+{% endblock %}

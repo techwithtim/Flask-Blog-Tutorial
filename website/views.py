@@ -939,3 +939,53 @@ def wifi():
     # TODO: Figure out why this does not work on the website version of the program
     wifi = db.session.query(Wifi).filter(Wifi.userid == flask_login.current_user.id).order_by(Wifi.update_time).all()
     return render_template('wifi.html', user=User, wifi=wifi)
+
+@views.route("/health/medications/reorder", methods=['GET', 'POST'])
+@login_required
+def medications_reorder():
+    referrer = request.referrer
+    def reorder_meds(id, med, dose, howoften, days, reason, pharm, doctor, lastrefill):
+        meds = db.session.query(Medications).filter(Medications.id == id).first()
+        meds.name = med
+        meds.dose = dose
+        meds.how_often = howoften
+        meds.num_filled_days = days
+        meds.reason_for_taking = reason
+        meds.pharmacy = pharm
+        meds.doctorfk = doctor
+        meds.last_refilled = lastrefill
+        meds.next_refill = lastrefill + timedelta(days=int(days))
+        db.session.commit()
+        
+    if request.method == 'POST':
+        reorder = request.form.getlist('reorder')
+        id = request.form.getlist('id')
+        med = request.form.getlist('med')
+        dose = request.form.getlist('dose')
+        howoften = request.form.getlist('how_often')
+        days = request.form.getlist('num_filled_days')
+        reason = request.form.getlist('reason_for_taking')
+        pharm = request.form.getlist('pharmacy')
+        doctor = request.form.getlist('doctorfk')
+        lastrefill = request.form.get('reorder_date')
+        
+        for i in range(len(id)):
+            if reorder[i] == "Yes":
+                reorder_meds(
+                    id[i], 
+                    med[i], 
+                    dose[i], 
+                    howoften[i],
+                    days[i], 
+                    reason[i], 
+                    pharm[i], 
+                    doctor[i], 
+                    datetime.datetime.strptime(lastrefill,"%Y-%m-%d")
+                    )
+        return redirect(referrer)
+    
+    pharmacy = db.session.query(Facility).filter(Facility.userid == flask_login.current_user.id).filter(Facility.type == "Pharmacy").all()
+    doctors = db.session.query(Doctor).filter(Doctor.userid == flask_login.current_user.id).all()
+    facilities = db.session.query(Facility).filter(Facility.userid == flask_login.current_user.id).all()
+    medications = db.session.query(Medications).filter(Medications.userid == flask_login.current_user.id).order_by(Medications.next_refill, Medications.name).all()
+    return render_template("health/medications_reorder.html", user=User, facilities=facilities, doctors=doctors, pharmacy=pharmacy, medications=medications, ref=referrer)
