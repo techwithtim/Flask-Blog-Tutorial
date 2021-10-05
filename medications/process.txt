@@ -1,4 +1,4 @@
-get data from db
+get data from notion
 count the results
 if none, display message
 if some, write ics
