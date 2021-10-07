@@ -30,7 +30,8 @@ def details_ics(med, filename):
 def close_ics(filename):
     with open (filename, 'a') as my_file:
         my_file.write('END:VCALENDAR')
-    return send_file(filename, as_attachment=True)
+        result = send_file(filename, as_attachment=True)
+    return result
         
         
 def make_tasks(med):
