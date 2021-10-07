@@ -467,7 +467,9 @@ def medications_reorder():
 
     if request.method == 'POST':
         if request.form.get('process') == 'PROCESS MEDICATIONS':
-            filename = os.path.dirname(os.path.abspath(__file__))+"/ics.ics"
+            path = os.path.dirname(os.path.abspath(__file__))
+            filename = "ics.ics"
+            fullname = os.path.join(path,filename)
             results = db.session.query(Medications).filter(Medications.process == True).filter(Medications.userid == flask_login.current_user.id).all()
 
             if len(results) == 0:
@@ -475,14 +477,21 @@ def medications_reorder():
                 print(message)
                 redirect(url_for ('views.medications_reorder'), message=message)
             else:
-                make_ics(filename)
+                make_ics(fullname)
                 for result in results:
-                    details_ics(result,filename)
-                close_ics(filename)
+                    details_ics(result,fullname)
+                close_ics(path,filename,fullname)
                 
                 for result in results:
                     make_tasks(result)
                     set_process_to_no(result)
+                print('Done!')
+            @after_this_request
+            def filedelete(response):
+                if os.path.exists(fullname):
+                    os.remove(fullname)
+                return response
+        
         else:
             reorder = request.form.getlist('reorder')
             id = request.form.getlist('id')
@@ -509,7 +518,7 @@ def medications_reorder():
                         datetime.datetime.strptime(lastrefill,"%Y-%m-%d")
                         )
             return redirect(referrer)
-    
+        return send_file(fullname, as_attachment=True)
     pharmacy = db.session.query(Facility).filter(Facility.userid == flask_login.current_user.id).filter(Facility.type == "Pharmacy").all()
     doctors = db.session.query(Doctor).filter(Doctor.userid == flask_login.current_user.id).all()
     facilities = db.session.query(Facility).filter(Facility.userid == flask_login.current_user.id).all()

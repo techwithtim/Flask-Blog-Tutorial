@@ -1,17 +1,17 @@
 from . import db
-from flask import redirect, url_for, send_file
+from flask import redirect, url_for, send_file, send_from_directory
 from website.models import Facility, Medications
 import datetime
 from datetime import timedelta
 from website.models import Projects, Tasks
 from flask_login import current_user
 
-def make_ics(filename):
-    with open(filename, 'w') as my_file:
+def make_ics(fullname):
+    with open(fullname, 'w') as my_file:
         my_file.write('BEGIN:VCALENDAR\nVERSION:2.0\n')
     
-def details_ics(med, filename):
-    with open (filename, 'a') as my_file:
+def details_ics(med, fullname):
+    with open (fullname, 'a') as my_file:
         startdate = datetime.datetime.strftime(med.next_refill,"%Y%m%d")
         enddate = datetime.datetime.strftime(med.next_refill + timedelta(days=1),"%Y%m%d")
         MedName = med.name
@@ -27,11 +27,10 @@ def details_ics(med, filename):
         my_file.write('DTEND;VALUE=DATE:'+ str(enddate) +"\n")
         my_file.write('END:VEVENT\n')
 
-def close_ics(filename):
-    with open (filename, 'a') as my_file:
+def close_ics(path,filename,fullname):
+    with open (fullname, 'a') as my_file:
         my_file.write('END:VCALENDAR')
-        result = send_file(filename, as_attachment=True)
-    return result
+
         
         
 def make_tasks(med):
