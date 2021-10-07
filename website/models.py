@@ -149,6 +149,7 @@ class Medications(db.Model):
     pharmacy = db.Column(db.String(100))
     last_refilled = db.Column(db.DateTime)
     next_refill = db.Column(db.DateTime)
+    process = db.Column(db.Boolean, default=False)
     userid = db.Column(db.Integer, nullable=False)
     update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
     date_created = db.Column(db.DateTime(timezone=True), default=func.now()) 

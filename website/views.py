@@ -18,7 +18,7 @@ from website.vfc_maker import make_vfc
 import datetime, sys, pdfkit, flask_login, os
 from math import ceil, nan
 from website.wifiqrcode import generate_code
-from website.process_medications import getdata
+from website.process_medications import make_ics,close_ics,make_tasks,set_process_to_no,details_ics
 
 views = Blueprint("views", __name__)
 
@@ -461,34 +461,54 @@ def medications_reorder():
         meds.doctorfk = doctor
         meds.last_refilled = lastrefill
         meds.next_refill = lastrefill + timedelta(days=int(days))
+        meds.process = True
         db.session.commit()
         
+
     if request.method == 'POST':
-        reorder = request.form.getlist('reorder')
-        id = request.form.getlist('id')
-        med = request.form.getlist('med')
-        dose = request.form.getlist('dose')
-        howoften = request.form.getlist('how_often')
-        days = request.form.getlist('num_filled_days')
-        reason = request.form.getlist('reason_for_taking')
-        pharm = request.form.getlist('pharmacy')
-        doctor = request.form.getlist('doctorfk')
-        lastrefill = request.form.get('reorder_date')
-        
-        for i in range(len(id)):
-            if reorder[i] == "Yes":
-                reorder_meds(
-                    id[i], 
-                    med[i], 
-                    dose[i], 
-                    howoften[i],
-                    days[i], 
-                    reason[i], 
-                    pharm[i], 
-                    doctor[i], 
-                    datetime.datetime.strptime(lastrefill,"%Y-%m-%d")
-                    )
-        return redirect(referrer)
+        if request.form.get('process') == 'PROCESS MEDICATIONS':
+            results = db.session.query(Medications).filter(Medications.process == True).filter(Medications.userid == flask_login.current_user.id).all()
+
+            if len(results) == 0:
+                message = "No medications found to process.  Please check the process field and re-run this program"
+                print(message)
+                redirect(url_for ('views.medications_reorder'), message=message)
+            else:
+                make_ics()
+                for result in results:
+                    details_ics(result)
+                close_ics()
+                
+                for result in results:
+                    make_tasks(result)
+                    set_process_to_no(result)
+                os.system("start " + 'website/static/call_for_medication.ics')
+        else:
+            reorder = request.form.getlist('reorder')
+            id = request.form.getlist('id')
+            med = request.form.getlist('med')
+            dose = request.form.getlist('dose')
+            howoften = request.form.getlist('how_often')
+            days = request.form.getlist('num_filled_days')
+            reason = request.form.getlist('reason_for_taking')
+            pharm = request.form.getlist('pharmacy')
+            doctor = request.form.getlist('doctorfk')
+            lastrefill = request.form.get('reorder_date')
+            
+            for i in range(len(id)):
+                if reorder[i] == "Yes":
+                    reorder_meds(
+                        id[i], 
+                        med[i], 
+                        dose[i], 
+                        howoften[i],
+                        days[i], 
+                        reason[i], 
+                        pharm[i], 
+                        doctor[i], 
+                        datetime.datetime.strptime(lastrefill,"%Y-%m-%d")
+                        )
+            return redirect(referrer)
     
     pharmacy = db.session.query(Facility).filter(Facility.userid == flask_login.current_user.id).filter(Facility.type == "Pharmacy").all()
     doctors = db.session.query(Doctor).filter(Doctor.userid == flask_login.current_user.id).all()
@@ -875,10 +895,10 @@ def yesTOno(taskid, projectid):
 @views.route("productivity/deletetask/<taskid>/<projectid>")
 @login_required
 def deletetask(taskid, projectid):
-    
-    task = Tasks.query.filter_by(id=taskid).delete()
+    refeerer = request.referrer
+    db.session.query(Tasks).filter(Tasks.id == taskid).delete()
     db.session.commit()
-    return redirect(url_for('views.project_single', id=projectid))
+    return redirect(refeerer)
 
 @views.route("productivity/importNotion")
 @login_required
@@ -900,9 +920,10 @@ def importNotion():
 @views.route("productivity/taskdelete/<taskid>")
 @login_required
 def taskdelete(taskid):
-    Tasks.query.filter_by(id=taskid).delete()
+    refeerer = request.referrer
+    db.session.query(Tasks).filter(Tasks.id == taskid).delete()
     db.session.commit()
-    return redirect(url_for('views.tasks'))
+    return redirect(refeerer)
 
 @views.route("productivity/task_noTOyes/<taskid>")
 @login_required

@@ -83,8 +83,9 @@ Percent Complete
             <td>{{task.item}}</td>
             <td>{{task.projectname}}</td>
             <td>{{task.duedate.strftime("%m/%d/%y")}}</td>
-            <td><a href="{{ url_for('views.deletetask', taskid=task.id, projectid=project.id) }}"><button
-                        class="btn btn-outline-danger">x</button></a></td>
+            <td>
+                <a href="{{ url_for('views.taskdelete', taskid=task.id) }}">
+                <button class="btn btn-danger"><i class="fas fa-trash-alt"></i></button></a></td>
         </tr>
         {% endfor %}
     </tbody>

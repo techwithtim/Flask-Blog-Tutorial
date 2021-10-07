@@ -15,7 +15,7 @@ def auth(auth_name):
     if auth_name == lastAuthName:
         key = lastKey
     else:
-        with open("key.txt") as file:
+        with open("medications/key.txt") as file:
             data = file.read()
             keys = json.loads(data)
         key = keys[auth_name]

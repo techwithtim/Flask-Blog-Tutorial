@@ -9,9 +9,11 @@
 {% endblock %}
 
 {% block menu %}
-{{ref}}
 <form action="/health/medications/reorder" , method="POST">
-    <input required type="date" name="reorder_date" id="reorder_date"><button type="submit">ReOrder</button>
+    <input type="date" name="reorder_date" id="reorder_date"><button type="submit" name="process" value="ReOrder">ReOrder</button>
+    <div>
+        <button type="submit" name="process" id="process" value="PROCESS MEDICATIONS" class="btn btn-primary">PROCESS MEDICATIONS</button>
+    </div>
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
@@ -22,7 +24,7 @@
                 <th>Days Filled</th>
             </tr>
             <tr>
-                <th></th>
+                <th>Process?</th>
                 <th></th>
                 <th>Reason</th>
                 <th>Pharmacy</th>
@@ -45,8 +47,16 @@
                         value="{{med.num_filled_days}}"></td>
             </tr>
             <tr>
-                <td></td>
-                <td></td>
+                <td>
+                    <div class="form-check form-switch">
+                        {% if med.process == True %}<input class="form-check-input" type="checkbox" id="process" name="process" checked>
+                        {% else %}<input class="form-check-input" type="checkbox" id="process" name="process">
+                        {% endif %}
+                        <label class="form-check-label" for="process">Process this medication</label>
+                    </div>
+                </td>
+                <td> <input type="text" name="lastrefill" id="lastrefill" value="{{med.last_refilled}}" disabled class="text-muted">
+                </td>
                 <td><input class="form-control" type="text" name="reason_for_taking" id="reason_for_taking"
                         value="{{med.reason_for_taking}}"></td>
                 <td>
