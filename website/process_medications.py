@@ -1,5 +1,5 @@
 from . import db
-from flask import redirect, url_for
+from flask import redirect, url_for, send_file
 from website.models import Facility, Medications
 import datetime
 from datetime import timedelta
@@ -30,6 +30,7 @@ def details_ics(med, filename):
 def close_ics(filename):
     with open (filename, 'a') as my_file:
         my_file.write('END:VCALENDAR')
+    return send_file(filename, as_attachment=True)
         
         
 def make_tasks(med):

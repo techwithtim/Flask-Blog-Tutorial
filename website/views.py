@@ -467,7 +467,7 @@ def medications_reorder():
 
     if request.method == 'POST':
         if request.form.get('process') == 'PROCESS MEDICATIONS':
-            filename = os.path.dirname(os.path.abspath(__file__))+"ics.ics"
+            filename = os.path.dirname(os.path.abspath(__file__))+"/ics.ics"
             results = db.session.query(Medications).filter(Medications.process == True).filter(Medications.userid == flask_login.current_user.id).all()
 
             if len(results) == 0:
@@ -483,8 +483,6 @@ def medications_reorder():
                 for result in results:
                     make_tasks(result)
                     set_process_to_no(result)
-                
-                send_file(filename, as_attachment=True)
         else:
             reorder = request.form.getlist('reorder')
             id = request.form.getlist('id')
