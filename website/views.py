@@ -69,12 +69,13 @@ def menu():
     return render_template("menu.html", user=User, dishes=dishlist, plans=plans, items=items, ref=ref)
 
 
-@views.route("/plan/single", methods=['GET', 'POST'])
+@views.route("/plan/single/<date>", methods=['GET', 'POST'])
 @login_required
-def menu_single():
+def menu_single(date):
+    # FIXME: why it does not return when saving
     if request.method == 'POST':
         if request.form.get('AddDishToPlanner') == "AddDishToPlanner":
-            
+            ref = request.referrer
             plan = Planner(
                 date = datetime.datetime.strptime(request.form.get('datefield'),"%Y-%m-%d %H:%M:%S"),
                 # date = request.form.get('datefield'),
@@ -82,11 +83,9 @@ def menu_single():
                 dishfk = request.form.get('dishid')
             )
             db.session.add(plan)
-            db.session.commit()
-        
-        
-        date = request.form.get('dateselector')
-        
+            db.session.commit() 
+            return redirect(url_for('views.menu_single',date=ref[-10:]))
+                
         recipes = db.session.query(\
             Recipe.carb_fiber, Recipe.carb_total, Recipe.catagory, Recipe.dishfk, Recipe.ing, Recipe.qty, Recipe.measurement, Recipe.notes)\
                 .join(Dish, Dish.id == Recipe.dishfk)\
@@ -1020,3 +1019,7 @@ def wifi():
     wifi = db.session.query(Wifi).filter(Wifi.userid == flask_login.current_user.id).order_by(Wifi.update_time).all()
     return render_template('wifi.html', user=User, wifi=wifi)
 
+@views.route("/vehicle", methods=['GET','POST'])
+@login_required
+def vehicle():
+    return render_template('vehicles/vehicles.html', user=User)

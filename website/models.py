@@ -1,3 +1,4 @@
+from enum import unique
 from . import db
 from flask_login import UserMixin
 from sqlalchemy.sql import func
@@ -226,3 +227,24 @@ class Wifi(db.Model):
     userid = db.Column(db.Integer, nullable=False)
     update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
     date_created = db.Column(db.DateTime(timezone=True), default=func.now())
+    
+class Vehicles(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(75), unique=True)
+    year = db.Column(db.Integer)
+    make = db.Column(db.String(75))
+    model = db.Column(db.String(75))
+    color = db.Column(db.String(25))
+    purchase_date = db.Column(db.DateTime)
+    sell_date = db.Column(db.DateTime)
+    reasonforsale = db.Column(db.String(75))
+    saleamount = db.Column(db.Float)
+    licenseplate = db.Column(db.String(20), unique=True)
+    purchaseprice = db.Column(db.Float)
+    purchasefrom = db.Column(db.String(75))
+    vinnumber = db.Column(db.String(25), unique=True)
+    tagsexpire = db.Column(db.DateTime)
+    pictureURL = db.Column(db.String(500))
+    update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
+    date_created = db.Column(db.DateTime(timezone=True), default=func.now())
+    

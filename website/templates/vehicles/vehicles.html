@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% endblock %}
+
+{% block style %}
+{% endblock %}
+
+{% block submenu %}
+{% endblock %}
+
+{% block content %}
+<h4 class="display-4">Vehicles</h4>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Add New Vehicle
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add New Vehicle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/vehicle" method="POST" class="row g-3">
+                    <div class="col-6">
+                        <label class="form-label" for="name">Name</label>
+                        <input class="form-control" type="text" name="name" id="name">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label" for="picurl">Picture URL</label>
+                        <input class="form-control" type="text" name="picurl" id="picurl">
+                    </div>
+                    <div class="col-2">
+                        <label class="form-label" for="year">Year</label>
+                        <input class="form-control" type="number" name="year" id="year">
+                    </div>
+                    <div class="col-3">
+                        <label class="form-label" for="make">Make</label>
+                        <input class="form-control" type="text" name="make" id="make">
+                    </div>
+                    <div class="col-3">
+                        <label class="form-label" for="model">Model</label>
+                        <input class="form-control" type="text" name="model" id="model">
+                    </div>
+                    <div class="col-2">
+                        <label class="form-label" for="trim">Trim</label>
+                        <input class="form-control" type="text" name="trim" id="trim">
+                    </div>
+                    <div class="col-2">
+                        <label class="form-label" for="color">Color</label>
+                        <input class="form-control" type="text" name="color" id="color">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" for="licplate">License Plate</label>
+                        <input class="form-control" type="text" name="licplate" id="licplate">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" for="tagsexp">Tags Expire</label>
+                        <input class="form-control" type="text" name="tagsexp" id="tagsexp">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" for="vin">VIN Number</label>
+                        <input class="form-control" type="text" name="vin" id="vin">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" for="pdate">Purchase Date</label>
+                        <input class="form-control" type="date" name="pdate" id="pdate">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" for="purplace">Place of Purchase</label>
+                        <input class="form-control" type="text" name="purplace" id="purplace">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" for="puramt">Purchase Amount</label>
+                        <input class="form-control" type="number" name="puramt" id="puramt">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" for="sdate">Sale Date</label>
+                        <input class="form-control" type="date" name="sdate" id="sdate">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" for="reason">Sale Reason</label>
+                        <input class="form-control" type="text" name="reason" id="reason">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" for="saleamt">Sale Amount</label>
+                        <input class="form-control" type="number" name="saleamt" id="saleamt">
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

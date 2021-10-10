@@ -96,7 +96,7 @@ Home
                 <tbody>
                     {% for date, plan in plans | groupby('date') %}
                     <tr>
-                        <form action="/plan/single" , method="POST">
+                        <form action="/plan/single/{{date.strftime('%Y-%m-%d')}}" , method="POST">
                             <td><button type="submit" class="btn" name="dateselector" id="dateselector" value="{{date.strftime('%Y-%m-%d')}}">{{ date.strftime('%A %b %d, %Y') }}</button></td>
                         </form>
                         <td>
