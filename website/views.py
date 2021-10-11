@@ -6,7 +6,7 @@ from sqlalchemy.sql.expression import false, join
 from sqlalchemy.sql.functions import current_user, session_user
 from werkzeug.datastructures import ContentSecurityPolicy
 from werkzeug.local import F
-from website.models import Allergies, Dish, Doctor, Facility, Goals, Hosptial, Medications, Planner, Projects, Steps, Surgeries, Tasks, User, Recipe, A1C, Wifi
+from website.models import Allergies, Dish, Doctor, Facility, Goals, Hosptial, Medications, Planner, Projects, Steps, Surgeries, Tasks, User, Recipe, A1C, Wifi, Vehicles
 from website.notion import get_supplies, get_menu
 from datetime import datetime, timedelta, date
 from . import db
@@ -1019,7 +1019,3 @@ def wifi():
     wifi = db.session.query(Wifi).filter(Wifi.userid == flask_login.current_user.id).order_by(Wifi.update_time).all()
     return render_template('wifi.html', user=User, wifi=wifi)
 
-@views.route("/vehicle", methods=['GET','POST'])
-@login_required
-def vehicle():
-    return render_template('vehicles/vehicles.html', user=User)

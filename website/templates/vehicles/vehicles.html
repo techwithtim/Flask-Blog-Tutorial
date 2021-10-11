@@ -7,15 +7,19 @@
 {% endblock %}
 
 {% block submenu %}
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Add New Vehicle
+</button>
 {% endblock %}
 
 {% block content %}
 <h4 class="display-4">Vehicles</h4>
 
-<!-- Button trigger modal -->
+<!-- Button trigger modal
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
     Add New Vehicle
-</button>
+</button> -->
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -26,14 +30,21 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="/vehicle" method="POST" class="row g-3">
-                    <div class="col-6">
+                <form action="/vehicle/" method="POST" class="row g-3">
+                    <div class="col-4">
                         <label class="form-label" for="name">Name</label>
                         <input class="form-control" type="text" name="name" id="name">
                     </div>
-                    <div class="col-6">
+                    <div class="col-4">
                         <label class="form-label" for="picurl">Picture URL</label>
                         <input class="form-control" type="text" name="picurl" id="picurl">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" for="name">Currently Owned?</label>
+                        <select class="form-select" name="curown" id="curown"">
+                            <option selected value="True">Yes</option>
+                            <option value="False">No</option>
+                        </select>
                     </div>
                     <div class="col-2">
                         <label class="form-label" for="year">Year</label>
@@ -77,7 +88,7 @@
                     </div>
                     <div class="col-4">
                         <label class="form-label" for="puramt">Purchase Amount</label>
-                        <input class="form-control" type="number" name="puramt" id="puramt">
+                        <input class="form-control" type="number" name="puramt" id="puramt" default=0>
                     </div>
                     <div class="col-4">
                         <label class="form-label" for="sdate">Sale Date</label>
@@ -89,15 +100,83 @@
                     </div>
                     <div class="col-4">
                         <label class="form-label" for="saleamt">Sale Amount</label>
-                        <input class="form-control" type="number" name="saleamt" id="saleamt">
+                        <input class="form-control" type="number" name="saleamt" id="saleamt" default=0>
                     </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="submit" class="btn btn-primary">Add Vehicle</button>
             </div>
             </form>
         </div>
     </div>
 </div>
+
+<!-- table of Currently Owned cars -->
+<h6 class="display-6">Currently Owned Vehicles</h6>
+<table class="table table-hover table-striped">
+    <thead>
+        <th>Pic</th>
+        <th>Vehicle</th>
+        <th></th>
+        <th></th>
+    </thead>
+    <tbody>
+        {% for veh in vehs %}
+        {% if veh.curown == True %}
+        <tr>
+            <td style="width: 220px;"><a href="/vehicle/{{veh.id}}">
+                    <picture><img src="{{veh.pictureURL}}" alt="Picture of Vehicle" width="210px" height="140px">
+                    </picture>
+                </a></td>
+            <td>
+                {{veh.color}}
+                {{veh.year}}
+                {{veh.make}}
+                {{veh.model}}
+                {{veh.trim}}
+            </td>
+            <td><a href="{{url_for('vehicle.vehsingle', id=veh.id)}}"><button class="btn btn-lg btn-primary"><i
+                            class="fas fa-edit"></i></button></a></td>
+            <td><a href="{{url_for('vehicle.vehdelete', id=veh.id)}}"><button class="btn btn-lg btn-danger"><i
+                            class="fas fa-trash-alt"></i></button></a></td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- table of PREVIOUSLY Owned cars -->
+<h6 class="display-6">Previously Owned Vehicles</h6>
+<table class="table table-hover table-striped">
+    <thead>
+        <th>Pic</th>
+        <th>Vehicle</th>
+        <th></th>
+        <th></th>
+    </thead>
+    <tbody>
+        {% for veh in vehs %}
+        {% if veh.curown == False %}
+        <tr>
+            <td style="width: 220px;"><a href="/vehicle/{{veh.id}}">
+                    <picture><img src="{{veh.pictureURL}}" alt="Picture of Vehicle" width="210px" height="140px">
+                    </picture>
+                </a></td>
+            <td>
+                {{veh.color}}
+                {{veh.year}}
+                {{veh.make}}
+                {{veh.model}}
+                {{veh.trim}}
+            </td>
+            <td><a href="{{url_for('vehicle.vehsingle', id=veh.id)}}"><button class="btn btn-lg btn-primary"><i
+                            class="fas fa-edit"></i></button></a></td>
+            <td><a href="{{url_for('vehicle.vehdelete', id=veh.id)}}"><button class="btn btn-lg btn-danger"><i
+                            class="fas fa-trash-alt"></i></button></a></td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}
