@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://kit.fontawesome.com/999ca2bb93.js" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <title>{% block title %}{% endblock %}</title>
+  {% block style %}{% endblock %}
+</head>
+
+<body>
+  <!-- OLD -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown"
+        aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
+        <ul class="navbar-nav">
+          <a class="nav-item nav-link" href="/home">Home</a>
+          {% if user.is_authenticated %}
+          <!-- health -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="/health" id="navbarDarkDropdownMenuLink" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              Health
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+              <li><a class="dropdown-item" href="/health">Health</a></li>
+              <li><a class="dropdown-item" href="/health/doctors"><i class="fas fa-user-nurse"></i> Doctors</a></li>
+              <li><a class="dropdown-item" href="/health/facilities"><i class="fas fa-h-square"></i> Facilities</a></li>
+              <li><a class="dropdown-item" href="/health/medications"><i class="fas fa-pills"></i> Medications</a></li>
+              <li><a class="dropdown-item" href="/health/medlist"><i class="fas fa-notes-medical"></i> Medication
+                  List</a></li>
+              <li><a class="dropdown-item" href="/health/hospital"><i class="fas fa-h-square"></i> Hospitalizations</a>
+              </li>
+              <li><a class="dropdown-item" href="/health/surgeries"><i class="fas fa-pump-medical"></i> Surgeries</a>
+              </li>
+              <li><a class="dropdown-item" href=/health/a1c> <i class="fas fa-tint"></i> A1C Results</a></li>
+              <li><a class="dropdown-item" href="/health/cpap"><i class="fas fa-lungs"></i> CPAP Supplies</a></li>
+            </ul>
+          </li>
+          <!-- Guill menu -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="/menu" id="navbarDarkDropdownMenuLink" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              Guill Menu
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+              <li><a class="dropdown-item" href="/menu">Planner</a></li>
+              <li><a class="dropdown-item" href="/menu/recipe">Recipe</a></li>
+              <li><a class="dropdown-item" href="/menu/shopping">Shopping List</a></li>
+              <li><a class="dropdown-item" href="/menu/recipe/new">Add a Recipe</a></li>
+            </ul>
+          </li>
+          <!-- Productivity -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="/productivity/productivity" id="navbarDarkDropdownMenuLink"
+              role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Productivity
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+              <li><a class="nav-item nav-link" href="/productivity/goals">Goals</a></li>
+              <li><a class="nav-item nav-link" href="/productivity/tasks">Tasks</a></li>
+              <li><a class="nav-item nav-link" href="/productivity/projects">Projects</a></li>
+              <li><a class="nav-item nav-link" href="/wifi"><i class="fas fa-wifi"></i> Wifi</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              Personal
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+              <li><a class="nav-item nav-link" href="/vehicle">Vehicles</a></li>
+            </ul>
+          </li>
+          <a class="nav-item nav-link" href="/logout">Logout</a>
+          {% else %}
+          <a class="nav-item nav-link" href="/login">Login</a>
+          <a class="nav-item nav-link" href="/sign-up">Sign Up</a>
+          {% endif %}
+      </div>
+    </div>
+    </div>
+  </nav>
+  {% block submenu %}
+  {% endblock %}
+  {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %} {% for category, message in messages %} {% if category ==
+    'error' %}
+  <div class="alert alert-danger alter-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  {% else %}
+  <div class="alert alert-success alter-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  {% endif %} {% endfor %} {% endif %} {% endwith %}
+  <div class="container">{% block content %}{% endblock %}</div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+  </script>
+
+
+</body>
+
+</html>

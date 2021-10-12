@@ -6,7 +6,7 @@ from sqlalchemy.sql.expression import false, join
 from sqlalchemy.sql.functions import current_user, session_user
 from werkzeug.datastructures import ContentSecurityPolicy
 from werkzeug.local import F
-from website.models import Allergies, Dish, Doctor, Facility, Goals, Hosptial, Medications, Planner, Projects, Steps, Surgeries, Tasks, User, Recipe, A1C, Wifi, Vehicles
+from website.models import Allergies, Dish, Doctor, Facility, Goals, Hosptial, Medications, Planner, Projects, Steps, Surgeries, Tasks, User, Recipe, A1C, Wifi, States
 from website.notion import get_supplies, get_menu
 from datetime import datetime, timedelta, date
 from . import db
@@ -1019,3 +1019,25 @@ def wifi():
     wifi = db.session.query(Wifi).filter(Wifi.userid == flask_login.current_user.id).order_by(Wifi.update_time).all()
     return render_template('wifi.html', user=User, wifi=wifi)
 
+@views.route("/profile", methods=['GET','POST'])
+@login_required
+def profile():
+    if request.method == 'POST':
+        profile = db.session.query(User).filter(User.id == flask_login.current_user.id).first()
+        profile.firstname = request.form.get('firstname')
+        profile.lastname = request.form.get('lastname')
+        profile.address = request.form.get('address')
+        profile.city = request.form.get('city')
+        profile.state = request.form.get('state')
+        profile.zip = request.form.get('zip')
+        profile.phone = request.form.get('phone')
+        profile.email = request.form.get('email')
+        profile.username = request.form.get('un')
+        profile.password = request.form.get('pw')
+        profile.avatar = request.form.get('avatar')
+        db.session.commit()
+        return redirect(url_for("views.profile"))
+        
+    states = db.session.query(States).all()
+    profile = db.session.query(User).filter(User.id == flask_login.current_user.id).first()
+    return render_template('profile.html', user=User, profile=profile, states=states)

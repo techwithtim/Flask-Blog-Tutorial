@@ -11,6 +11,12 @@ class User(db.Model, UserMixin):
     lastname = db.Column(db.String(150))
     email = db.Column(db.String(150), unique=True)
     dob = db.Column(db.DateTime)
+    address=db.Column(db.String(100))
+    city=db.Column(db.String(50))
+    state=db.Column(db.String(2))
+    zip=db.Column(db.String(10))
+    phone=db.Column(db.String(20))
+    avatar = db.Column(db.String(100))
     username = db.Column(db.String(150), unique=True)
     password = db.Column(db.String(150))
     date_created = db.Column(db.DateTime(timezone=True), default=func.now())
@@ -250,3 +256,7 @@ class Vehicles(db.Model):
     update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
     date_created = db.Column(db.DateTime(timezone=True), default=func.now())
     
+class States(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    state = db.Column(db.String(50))
+    abr = db.Column(db.String(2))

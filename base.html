@@ -23,42 +23,48 @@
   {% if user.is_authenticated %}
   <div class="sidebar">
     <div class="sidebar_content">
-      <div class="flex-shrink-0 p-3 bg-dark" style="width: 280px;">
-        <a href="/" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
-          <svg class="bi me-2" width="30" height="24"><use xlink:href="#bootstrap"/></svg>
-          <span class="fs-5 fw-semibold text-white">My Life</span>
+      <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
+        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+          <svg class="bi me-2" width="40" height="32">
+            <use xlink:href="#bootstrap" /></svg>
+          <span class="fs-4">My Life</span>
         </a>
-        <ul class="list-unstyled ps-0">
-          <li class="mb-1">
-            <button class="btn btn-outline-light btn-toggle align-items-center rounded collapsed text-white" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">
+        <hr>
+        <ul class="nav nav-pills flex-column mb-auto">
+          <li class="nav-item">
+            <a href="/home" class="nav-link active" aria-current="page">
+              <svg class="bi me-2" width="16" height="16">
+                <use xlink:href="#home" /></svg>
               Home
-            </button>
-            <div class="collapse show" id="home-collapse">
-              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ">
-                <!-- <li><a href="#" class="link-light rounded">Overview</a></li>
-                <li><a href="#" class="link-light rounded">Updates</a></li>
-                <li><a href="#" class="link-light rounded">Reports</a></li> -->
-              </ul>
-            </div>
+            </a>
           </li>
-          <li class="mb-1">
-            <button class="btn btn-outline-light btn-toggle align-items-center rounded collapsed text-white" data-bs-toggle="collapse" data-bs-target="#health-collapse" aria-expanded="true">
-              Health
-            </button>
-            <div class="collapse show" id="health-collapse">
-              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ">
-                <li><a href="/health/facilities" class="link-light rounded">Facilities</a></li>
-                <li><a href="/health/doctors" class="link-light rounded">Doctors</a></li>
-                <li><a href="/health/medications" class="link-light rounded">Medications</a></li>
-                <li><a href="/health//medlist" class="link-light rounded">Medication List</a></li>
-                <li><a href="/health/hospital" class="link-light rounded">Hospitalizations</a></li>
-                <li><a href="/health/allergies" class="link-light rounded">Allergies</a></li>
-                <li><a href="/health/surgeries" class="link-light rounded">Surgeries</a></li>
-                <li><a href="/health/a1c" class="link-light rounded">A1C</a></li>
-                <li><a href="/health/cpap" class="link-light rounded">CPAP Supplies</a></li>
-                <li><a href="https://mychart.salemhealth.org/mychart/Authentication/Login?" target="_blank" class="link-light rounded">Salem Health MyChart</a></li>
-              </ul>
-            </div>
+          <li>
+            <a href="/health" class="nav-link text-white">
+              <svg class="bi me-2" width="16" height="16">
+                <use xlink:href="#speedometer2" /></svg>
+              Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-link text-white">
+              <svg class="bi me-2" width="16" height="16">
+                <use xlink:href="#table" /></svg>
+              Orders
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-link text-white">
+              <svg class="bi me-2" width="16" height="16">
+                <use xlink:href="#grid" /></svg>
+              Products
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-link text-white">
+              <svg class="bi me-2" width="16" height="16">
+                <use xlink:href="#people-circle" /></svg>
+              Customers
+            </a>
           </li>
         </ul>
       </div>
