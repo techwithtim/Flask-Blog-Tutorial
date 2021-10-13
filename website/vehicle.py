@@ -1,22 +1,11 @@
-from operator import itemgetter, or_
-from flask import Blueprint, render_template, request, flash, redirect, url_for, send_file, after_this_request
+from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required, current_user
 from sqlalchemy.orm import session
 from sqlalchemy.sql.expression import false, join
-from sqlalchemy.sql.functions import current_user, session_user
-from werkzeug.datastructures import ContentSecurityPolicy
-from werkzeug.local import F
-from website.models import Allergies, Dish, Doctor, Facility, Goals, Hosptial, Medications, Planner, Projects, Steps, Surgeries, Tasks, User, Recipe, A1C, Vehicles, Wifi
-from website.notion import get_supplies, get_menu
+from website.models import User, Vehicles
 from datetime import datetime, timedelta, date
 from . import db
-from subprocess import SubprocessError, run, PIPE
-from sqlalchemy.sql import func, desc, or_
-from website.vfc_maker import make_vfc
-import datetime, sys, pdfkit, flask_login, os
-from math import ceil, nan
-from website.wifiqrcode import generate_code
-from website.process_medications import make_ics,close_ics,make_tasks,set_process_to_no,details_ics
+from sqlalchemy.sql import desc
 
 vehicle = Blueprint("vehicle", __name__)
 

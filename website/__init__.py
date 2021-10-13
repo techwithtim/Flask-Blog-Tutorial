@@ -20,11 +20,12 @@ def create_app():
     from website.views import views
     from website.auth import auth
     from website.vehicle import vehicle
+    from website.health import health
 
     app.register_blueprint(views, url_prefix="/")
     app.register_blueprint(auth, url_prefix="/")
     app.register_blueprint(vehicle, url_prefix="/vehicle")
-
+    app.register_blueprint(health, url_prefix="/health")
 
     from website.models import User
 
