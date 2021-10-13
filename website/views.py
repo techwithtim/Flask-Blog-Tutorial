@@ -287,7 +287,7 @@ def doctors():
         db.session.add(newdr)
         db.session.commit() 
     
-    doctors = db.session.query(Doctor).filter(Doctor.userid == flask_login.current_user.id).order_by(Doctor.facilityfk).all()
+    doctors = db.session.query(Doctor).filter(Doctor.userid == flask_login.current_user.id).order_by(Doctor.facilityfk, Doctor.name).all()
     facilities = db.session.query(Facility).filter(Facility.userid == flask_login.current_user.id).all()
     return render_template("health/doctors.html", user=User, doctors=doctors, facilities=facilities)
 
@@ -312,6 +312,25 @@ def facilities():
     facilities = db.session.query(Facility).filter(Facility.userid == flask_login.current_user.id).order_by(Facility.type, Facility.name).all()
     doctors = db.session.query(Doctor).filter(Doctor.userid == flask_login.current_user.id).all()
     return render_template("health/facilities.html", user=User, facilities=facilities, doctors=doctors)
+
+@views.route("/health/edit_facilities/<id>", methods=['GET', 'POST'])
+@login_required
+def editfacilities(id):
+    facility = db.session.query(Facility).filter(Facility.id == id).first()
+    if request.method == 'POST':
+        facility.name = request.form.get('name')
+        facility.address=request.form.get('addy')
+        facility.city=request.form.get('city')
+        facility.state=request.form.get('state')
+        facility.zip=request.form.get('zip')
+        facility.phone=request.form.get('phone')
+        facility.type = request.form.get('type')
+        facility.userid = request.form.get('thisuserid')
+        db.session.commit()
+        return redirect(url_for('views.facilities'))
+        
+    return render_template("health/editfacilities.html", user=User, facility=facility)
+
 
 @views.route("/health/surgeries", methods=['GET', 'POST'])
 @login_required

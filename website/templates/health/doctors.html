@@ -6,80 +6,107 @@
 
 {% block header %}
 <h1 class="display-1 text-center">Doctors for {{current_user.firstname}} {{current_user.lastname}}</h1>
-<!-- <h4 class="display-4 text-center">Planner</h4> -->
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary col-4" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Add A Doctor
+</button>
 {% endblock %}
 
 {% block menu %}
-<div class="row justify-content-between">
-    {% for doctor in doctors %}
-    <div class="col-xs-4 col-sm-4 col-lg-4 mb-4">
-        <div class="card" style="width: 100%;">
-            <div class="card-body">
-                <div class="card-header">
-                    <h5 class="card-title">
-                        {{doctor.name}}
-                    </h5>
-                    <h6 class="card-subtitle mb-2 text-muted">
-                        {% for facility in facilities %}
-                        {% if facility.id == doctor.facilityfk %}
-                        {{facility.name}}
-                        {% endif %}
-                        {% endfor %}
-                    </h6>
-                </div>
-                <div class="card-text">
-                    {{doctor.address}} {{doctor.city}}, {{doctor.state}} {{doctor.zip}}<br>
-                    {{doctor.phone}} | {{doctor.email}}<br>
-                </div>
-                <div class="card-footer align-content-between">
-                    <div class="col">
-                        <a href="/health/doctor/card/{{doctor.id}}"><i class="fa fa-address-card"></i><button
-                                class="btn" name="cardmaker">Card</button></a>
-                    </div>
-                    <div class="col">
-                        <a href="/deletingDoctors/{{doctor.id}}" class="btn btn-danger"
-                            role="button"><i class="fas fa-trash-alt"></i></a>
-                    
-                        <a href="/health/doctors/edit/{{doctor.id}}" class="btn btn-primary"
-                            role="button"><i class="fas fa-edit"></i></a>
-                    </div>
-                </div>
+<table class="table table-hover table-striped">
+    <thead>
+        <th>Dr Name</th>
+        <th>Facility</th>
+        <th>Address</th>
+        <th>Phone</th>
+        <th>Card</th>
+        <th></th>
+        <th></th>
+    </thead>
+    <tbody>
+        {% for doctor in doctors %}
+        <tr>
+            <td><a href="/health/doctors/edit/{{doctor.id}}" class="btn">{{doctor.name}}</a></td>
+            <td>{% for facility in facilities %}{% if facility.id == doctor.facilityfk %}{{facility.name}}{% endif %}{% endfor %}
+            </td>
+            <td>{{doctor.address}}<br>{{doctor.city}}, {{doctor.state}} {{doctor.zip}}</td>
+            <td><a href="tel:+1{{doctor.phone}}" class="btn text-decoration-none">{{doctor.phone}}</a></td>
+            <td><a href="/health/doctor/card/{{doctor.id}}" class="btn btn-info"><i class="fa fa-address-card"></i></a>
+            </td>
+            <td><a href="/health/doctors/edit/{{doctor.id}}" class="btn btn-primary" role="button"><i
+                        class="fas fa-edit"></i></a></td>
+            <td><a href="/deletingDoctors/{{doctor.id}}" class="btn btn-danger" role="button"><i
+                        class="fas fa-trash-alt"></i></a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add A Doctor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <div class="modal-body">
+                <form action="/health/doctors" , method="POST" class="row g-2">
+                    <div class="col-6">
+                        <label for="drname">Doctor's Name</label>
+                        <input type="text" class="form-control" id="drname" name="drname">
+                    </div>
+                    <div class="col-6">
+                        <label for="facility">Facility</label>
+                        <select class="form-select" type="text" name="facility" id="facility" list="facility">
+                            {% for facility in facilities %}
+                            {% if facility.userid == current_user.id %}
+                            {% if facility.type != 'Pharmacy' %}
+                            <option value="{{facility.id}}">{{facility.name}}</option>
+                            {% endif %}
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-5">
+                    <label for="address">Address</label>
+                    <input type="text" class="form-control" id="address" name="address">
+                </div>
+                <div class="col-3">
+                    <label for="city">City</label>
+                    <input type="text" class="form-control" id="city" name="city">
+                </div>
+                <div class="col-2">
+                    <label for="state">State</label>
+                    <input type="text" class="form-control" id="state" name="state">
+                </div>
+                <div class="col-2">
+                    <label for="zip">Zip Code</label>
+                    <input type="text" class="form-control" id="zip" name="zip">
+                </div>
+                <div class="col-4">
+                    <label for="phone">Phone Number</label>
+                    <input type="text" class="form-control" id="phone" name="phone">
+                </div>
+                <div class="col-4">
+                    <label for="email">E-mail Address</label>
+                    <input type="text" class="form-control" id="email" name="email">
+                </div>
+                <div class="col-4">
+                    <label for="asst">Assistants Name</label>
+                    <input type="text" class="form-control" id="asst" name="asst">
+                    <input type="hidden" name='thisuserid' value="{{current_user.id}}">
+                    </div>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-secondary col-4" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary col-4">Save changes</button>
+                </div>
+            </form>
         </div>
     </div>
-{% endfor %}
+</div>
 
 
-<form action="/health/doctors" , method="POST">
-    <label for="drname">Doctor's Name</label>
-    <input type="text" class="form-control" id="drname" name="drname">
-    <div>
-        <label for="facility">Facility</label>
-        <select class="form-select" type="text" name="facility" id="facility" list="facility">
-            {% for facility in facilities %}
-            {% if facility.userid == current_user.id %}
-            {% if facility.type != 'Pharmacy' %}
-            <option value="{{facility.id}}">{{facility.name}}</option>
-            {% endif %}
-            {% endif %}
-            {% endfor %}
-        </select>
-    </div>
-    <label for="address">Address</label>
-    <input type="text" class="form-control" id="address" name="address">
-    <label for="city">City</label>
-    <input type="text" class="form-control" id="city" name="city">
-    <label for="state">State</label>
-    <input type="text" class="form-control" id="state" name="state">
-    <label for="zip">Zip Code</label>
-    <input type="text" class="form-control" id="zip" name="zip">
-    <label for="phone">Phone Number</label>
-    <input type="text" class="form-control" id="phone" name="phone">
-    <label for="email">E-mail Address</label>
-    <input type="text" class="form-control" id="email" name="email">
-    <label for="asst">Assistants Name</label>
-    <input type="text" class="form-control" id="asst" name="asst">
-    <input type="hidden" name='thisuserid' value="{{current_user.id}}">
-    <input type="submit" name='docSubmit' value="Add Doctor">
-</form>
+
 {% endblock %}

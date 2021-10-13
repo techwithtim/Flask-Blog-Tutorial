@@ -10,31 +10,51 @@
 {% endblock %}
 
 {% block menu %}
-<form action="/health/doctors/edit/{{doctors.id}}" method="POST">
-    <label for="drname">Doctor's Name</label>
-    <input type="text" class="form-control" id="drname" name="drname" value="{{doctors.name}}">
-    <label for="facility">Facility's Name</label>
-    <select class="form-select" name="facility" id="facility">
-        {% for fac in facilities %}
-        <option value="{{fac.id}}" {{ 'selected' if fac.id == doctors.facilityfk|int }}>{{fac.name}}</option>
-        {% endfor %}
-    </select>
-    <label for="address">Address</label>
-    <input type="text" class="form-control" id="address" name="address" value="{{doctors.address}}">
-    <label for="city">City</label>
-    <input type="text" class="form-control" id="city" name="city" value="{{doctors.city}}">
-    <label for="state">State</label>
-    <input type="text" class="form-control" id="state" name="state" value="{{doctors.state}}">
-    <label for="zip">Zip Code</label>
-    <input type="text" class="form-control" id="zip" name="zip" value="{{doctors.zip}}">
-    <label for="phone">Phone Number</label>
-    <input type="text" class="form-control" id="phone" name="phone" value="{{doctors.phone}}">
-    <label for="email">E-mail Address</label>
-    <input type="text" class="form-control" id="email" name="email" value="{{doctors.email}}">
-    <label for="asst">Assistants Name</label>
-    <input type="text" class="form-control" id="asst" name="asst" value="{{doctors.asst}}">
-    <input type="hidden" name='thisuserid' value="{{current_user.id}}">
-    <input type="hidden" name='facility' value="{{doctors.facilityfk}}">
-    <input type="submit" name='docSubmit' value="Edit Doctor">
+<form action="/health/doctors/edit/{{doctors.id}}" method="POST" class="row g-3">
+    <div class="col-6">
+        <label for="drname">Doctor's Name</label>
+        <input type="text" class="form-control" id="drname" name="drname" value="{{doctors.name}}">
+    </div>
+    <div class="col-6">
+        <label for="facility">Facility's Name</label>
+        <select class="form-select" name="facility" id="facility">
+            {% for fac in facilities %}
+            <option value="{{fac.id}}" {{ 'selected' if fac.id == doctors.facilityfk|int }}>{{fac.name}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-5">
+        <label for="address">Address</label>
+        <input type="text" class="form-control" id="address" name="address" value="{{doctors.address}}">
+    </div>
+    <div class="col-3">
+        <label for="city">City</label>
+        <input type="text" class="form-control" id="city" name="city" value="{{doctors.city}}">
+    </div>
+    <div class="col-2">
+        <label for="state">State</label>
+        <input type="text" class="form-control" id="state" name="state" value="{{doctors.state}}">
+    </div>
+    <div class="col-2">
+        <label for="zip">Zip Code</label>
+        <input type="text" class="form-control" id="zip" name="zip" value="{{doctors.zip}}">
+    </div>
+    <div class="col-4">
+        <label for="phone">Phone Number</label>
+        <input type="text" class="form-control" id="phone" name="phone" value="{{doctors.phone}}">
+    </div>
+    <div class="col-4">
+        <label for="email">E-mail Address</label>
+        <input type="text" class="form-control" id="email" name="email" value="{{doctors.email}}">
+    </div>
+    <div class="col-4">
+        <label for="asst">Assistants Name</label>
+        <input type="text" class="form-control" id="asst" name="asst" value="{{doctors.asst}}">
+        <input type="hidden" name='thisuserid' value="{{current_user.id}}">
+        <input type="hidden" name='facility' value="{{doctors.facilityfk}}">
+    </div>
+    <div class="col-4">
+        <input type="submit" name='docSubmit' value="Edit Doctor">
+    </div>
 </form>
 {% endblock %}
