@@ -144,7 +144,7 @@ def hospital_delete(id):
     db.session.commit()
     return redirect(url_for('views.hospital'))
 
-@health.route("/health/hospital/<id>", methods=['GET', 'POST'])
+@health.route("/hospital/<id>", methods=['GET', 'POST'])
 @login_required
 def hospital_update(id):
     if request.method == 'POST':
@@ -197,7 +197,7 @@ def medications():
     medications = db.session.query(Medications).filter(Medications.userid == flask_login.current_user.id).order_by(Medications.next_refill, Medications.name).all()
     return render_template("health/medications.html", user=User, facilities=facilities, doctors=doctors, pharmacy=pharmacy, medications=medications)
 
-@health.route('/health/medupdate/<id>', methods=['GET', 'POST'])
+@health.route('/medupdate/<id>', methods=['GET', 'POST'])
 @login_required
 def medupdate(id):
     if request.method == 'POST':
@@ -220,7 +220,7 @@ def medupdate(id):
     doctors = db.session.query(Doctor).filter(Doctor.userid ==flask_login.current_user.id).order_by(Doctor.name).all()
     return render_template("health/medupdate.html", user=User, meds=meds, pharms=pharm, doctors=doctors)
 
-@health.route("/health/medications/reorder", methods=['GET', 'POST'])
+@health.route("/medications/reorder", methods=['GET', 'POST'])
 @login_required
 def medications_reorder():
     referrer = request.referrer
@@ -299,7 +299,7 @@ def medications_reorder():
     medications = db.session.query(Medications).filter(Medications.userid == flask_login.current_user.id).order_by(Medications.next_refill, Medications.name).all()
     return render_template("health/medications_reorder.html", user=User, facilities=facilities, doctors=doctors, pharmacy=pharmacy, medications=medications, ref=referrer)
 
-@health.route("/health/cpap", methods=['GET','POST'])
+@health.route("/cpap", methods=['GET','POST'])
 @login_required
 def cpap():
     if request.method == "POST":
@@ -346,7 +346,7 @@ def deleteDoctors(id):
     db.session.commit()
     return redirect(url_for('views.doctors'))
 
-@health.route("/health/allergies", methods=['GET', 'POST'])
+@health.route("/allergies", methods=['GET', 'POST'])
 @login_required
 def allergies():
     if request.method == 'POST':
@@ -369,7 +369,7 @@ def deletingAllergy(id):
     db.session.commit()
     return redirect(url_for('views.allergies'))
 
-@health.route("/health/a1c", methods=['GET', 'POST'])
+@health.route("/a1c", methods=['GET', 'POST'])
 @login_required
 def a1c():
     if request.method == "POST":
@@ -402,7 +402,7 @@ def a1c():
     doctors = db.session.query(Doctor).filter(Doctor.userid ==flask_login.current_user.id).order_by(Doctor.name).all()
     return render_template("/health/a1c.html", user=User, results=results, currentvalue=currentvalue, doctors=doctors, eag=eag, labels=labels, dataset=dataset)
 
-@health.route("/health/doctor/card/<id>", methods=['GET'])
+@health.route("/doctor/card/<id>", methods=['GET'])
 def makeCard(id): 
     doctorinfo = db.session.query(Doctor.name, Doctor.address, Doctor.city, Doctor.state, Doctor.zip, Doctor.phone, Doctor.email, Facility.name.label('company')).filter(Doctor.id == id).join(Facility,Facility.id == Doctor.facilityfk).first()
     filename = make_vfc(doctorinfo)
@@ -414,7 +414,7 @@ def makeCard(id):
         return response
     return send_file(filename, attachment_filename=filename)
     
-@health.route("/health/doctors/edit/<id>", methods=['GET', 'POST'])
+@health.route("/doctors/edit/<id>", methods=['GET', 'POST'])
 @login_required
 def doctorsEdit(id):
     if request.method == 'POST':
@@ -436,7 +436,7 @@ def doctorsEdit(id):
     facilities = db.session.query(Facility).filter(Facility.userid == flask_login.current_user.id).filter(or_(Facility.type == 'Clinic', Facility.type == 'Hosptial')).all()
     return render_template("health/doctorsEdit.html", user=User, doctors=doctors, facilities=facilities)
 
-@health.route("/health/medlist", methods=['GET'])
+@health.route("/medlist", methods=['GET'])
 def medlistPrint():
     medications = db.session.query(Medications).filter(Medications.userid == flask_login.current_user.id).order_by(Medications.reason_for_taking,Medications.name).all()
     doctors = db.session.query(Doctor).filter(Doctor.userid == flask_login.current_user.id).order_by(Doctor.name).all()
