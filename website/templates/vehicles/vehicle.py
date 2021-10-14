@@ -4,7 +4,8 @@ from sqlalchemy.orm import session
 from sqlalchemy.sql.expression import false, join
 from website.models import User, Vehicles
 from datetime import datetime, timedelta, date
-from . import db
+from website import db
+
 from sqlalchemy.sql import desc
 
 vehicle = Blueprint("vehicle", __name__)

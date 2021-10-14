@@ -1,4 +1,5 @@
-from . import db
+from website import db
+
 from flask import redirect, url_for, send_file, send_from_directory
 from website.models import Facility, Medications
 import datetime

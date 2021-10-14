@@ -17,15 +17,22 @@ def create_app():
     
     Migrate(app,db)
 
-    from website.views import views
+    from website.templates.views.views import views
     from website.auth import auth
-    from website.vehicle import vehicle
-    from website.health import health
+    from website.templates.menu.menu import menu
+    from website.templates.vehicles.vehicle import vehicle
+    from website.templates.health.health import health
+    from website.templates.productivity.productivity import prod
+    from website.templates.personal.personal import personal
 
     app.register_blueprint(views, url_prefix="/")
     app.register_blueprint(auth, url_prefix="/")
+    app.register_blueprint(menu, url_prefix="/menu")
     app.register_blueprint(vehicle, url_prefix="/vehicle")
     app.register_blueprint(health, url_prefix="/health")
+    app.register_blueprint(prod, url_prefix="/productivity")
+    app.register_blueprint(personal, url_prefix="/personal")
+
 
     from website.models import User
 

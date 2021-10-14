@@ -1,4 +1,4 @@
-from . import db
+from website import db
 from website.models import Planner
 from datetime import datetime, timedelta
 

@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block menu %}
-<a href="{{url_for('views.importNotion')}}"><button class="btn btn-primary">Import</button></a>
+<a href="{{url_for('prod.importNotion')}}"><button class="btn btn-primary">Import</button></a>
 
 <nav>
     <div class="nav nav-tabs" id="nav-tab" role="tablist">
@@ -33,14 +33,14 @@
             <tbody>
                 {% for task in incomplete %}
                 <tr>
-                    <td><a href="{{ url_for('views.task_yesTOno', taskid=task.id) }}"><button name="markdone"
+                    <td><a href="{{ url_for('prod.task_yesTOno', taskid=task.id) }}"><button name="markdone"
                                 class="btn btn-warning">Undone</button></a></td>
                     <td>{{task.item}}</td>
                     <td>{{task.projectname}}</td>
                     <td>{{task.duedate.strftime("%m/%d/%y")}}</td>
                     <td><a href="#"><button class="btn btn-outline-primary"><i class="far fa-edit"></i></button></a>
                     </td>
-                    <td><a href="{{ url_for('views.taskdelete', taskid=task.id) }}"><button
+                    <td><a href="{{ url_for('prod.taskdelete', taskid=task.id) }}"><button
                                 class="btn btn-outline-danger">X</button></a></td>
                 </tr>
                 {% endfor %}
@@ -57,7 +57,7 @@
                     <th>Due Date</th>
                 </tr>
                 <tr>
-                    <form action="/productivity/tasks" class="table-dark" method="POST">
+                    <form action="{{url_for('prod.tasks')}}" class="table-dark" method="POST">
                         <td><input type="checkbox" class="form-check-input"></td>
                         <td><input type="text" name="task" id="task" class="form-control"></td>
                         <td><select name="project" id="project" class="form-select">
@@ -86,14 +86,14 @@
                     {% else %}
                 <tr>
                     {% endif %}
-                    <td><a href="{{ url_for('views.task_noTOyes', taskid=task.id) }}"><button name="markdone"
+                    <td><a href="{{ url_for('prod.task_noTOyes', taskid=task.id) }}"><button name="markdone"
                                 class="btn btn-success">Complete</button></a></td>
                     <td>{{task.item}}</td>
                     <td>{{task.projectname}}</td>
                     <td>{{task.duedate.strftime("%m/%d/%y")}}</td>
-                    <td><a href="{{ url_for('views.taskupdate', taskid=task.id) }}"><button type="button"
+                    <td><a href="{{ url_for('prod.taskupdate', taskid=task.id) }}"><button type="button"
                                 class="btn btn-primary"><i class="far fa-edit"></i></button></a></td>
-                    <td><a href="{{ url_for('views.taskdelete', taskid=task.id) }}"><button class="btn btn-danger"><i
+                    <td><a href="{{ url_for('prod.taskdelete', taskid=task.id) }}"><button class="btn btn-danger"><i
                                     class="fas fa-trash-alt"></i></button></a></td>
                 </tr>
                 {% endfor %}

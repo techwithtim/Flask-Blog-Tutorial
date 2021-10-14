@@ -1,6 +1,7 @@
 import requests
 from website.models import Tasks, Projects
-from . import db
+from website import db
+
 from json import loads, dumps
 import random
 

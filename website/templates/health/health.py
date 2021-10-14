@@ -8,7 +8,8 @@ from werkzeug.datastructures import ContentSecurityPolicy
 from website.models import *
 from website.notion import get_supplies
 from datetime import datetime, timedelta, date
-from . import db
+from website import db
+
 from subprocess import SubprocessError, run, PIPE
 from sqlalchemy.sql import func, desc, or_
 from website.vfc_maker import make_vfc
@@ -83,7 +84,7 @@ def editfacilities(id):
         facility.type = request.form.get('type')
         facility.userid = request.form.get('thisuserid')
         db.session.commit()
-        return redirect(url_for('views.facilities'))
+        return redirect(url_for('health.facilities'))
         
     return render_template("health/editfacilities.html", user=User, facility=facility)
 
@@ -94,7 +95,7 @@ def surgeries():
     if request.method == 'POST':
         
         def calculateAge(startdate):
-            bday = date(1978, 5, 31)
+            bday = flask_login.current_user.dob
             age = startdate.year - bday.year
             return age
      
@@ -142,7 +143,7 @@ def hospital():
 def hospital_delete(id):
     db.session.query(Hosptial).filter(Hosptial.id == id).delete()
     db.session.commit()
-    return redirect(url_for('views.hospital'))
+    return redirect(url_for('health.hospital'))
 
 @health.route("/hospital/<id>", methods=['GET', 'POST'])
 @login_required
@@ -156,7 +157,7 @@ def hospital_update(id):
        udstay.facilityfk = request.form.get('facility')
        udstay.userid = flask_login.current_user.id
        db.session.commit()
-       return redirect(url_for('views.hospital'))
+       return redirect(url_for('health.hospital'))
                        
     stay = db.session.query(Hosptial).filter(Hosptial.id == id).first()
     doctors = db.session.query(Doctor).filter(Doctor.userid == flask_login.current_user.id).order_by(Doctor.facilityfk).all()
@@ -170,8 +171,8 @@ def hospital_update(id):
 def medications():
     if request.method == 'POST':
         # if request.form['exportPDF'] == 'exportPDF':
-        #     pdfkit.from_url("http://127.0.0.1:5000"+url_for('views.medlistPrint'), 'medlist-'+flask_login.current_user.firstname+' '+flask_login.current_user.lastname+'.pdf')
-        #     render_template(url_for('views.medications'))
+        #     pdfkit.from_url("http://127.0.0.1:5000"+url_for('health.medlistPrint'), 'medlist-'+flask_login.current_user.firstname+' '+flask_login.current_user.lastname+'.pdf')
+        #     render_template(url_for('health.medications'))
         
         lastrefill = datetime.datetime.strptime(request.form.get('lastordered'),"%Y-%m-%d")
         numfilleddays=request.form.get('num_filled_days')
@@ -214,7 +215,7 @@ def medupdate(id):
         med.doctorfk = request.form.get('doctor')
         med.pharmacy = request.form.get('rx')
         db.session.commit()
-        return redirect(url_for('views.medications'))
+        return redirect(url_for('health.medications'))
     meds = db.session.query(Medications).filter(Medications.id == id).first()
     pharm = db.session.query(Facility).filter(Facility.userid == flask_login.current_user.id).filter(Facility.type == "Pharmacy").all()
     doctors = db.session.query(Doctor).filter(Doctor.userid ==flask_login.current_user.id).order_by(Doctor.name).all()
@@ -249,7 +250,7 @@ def medications_reorder():
             if len(results) == 0:
                 message = "No medications found to process.  Please check the process field and re-run this program"
                 print(message)
-                redirect(url_for ('views.medications_reorder'), message=message)
+                redirect(url_for ('health.medications_reorder'), message=message)
             else:
                 make_ics(fullname)
                 for result in results:
@@ -308,7 +309,7 @@ def cpap():
         #BUG: Sort By Date (Currently A String) Want It Done By Date.
         #TODO: Make to where multi users are capable.  Will need to factor in every user has a notion secrete key
         #TODO: Figure out why this page does not work on the published website and fix it.
-        return redirect(url_for('views.cpap'))
+        return redirect(url_for('health.cpap'))
     
     supplies = get_supplies()
     cpapsupplies = []
@@ -330,21 +331,21 @@ def cpap():
 def deleteMed(id):
     Medications.query.filter_by(id=id).delete()
     db.session.commit()
-    return redirect(url_for('views.medications'))
+    return redirect(url_for('health.medications'))
 
 @health.route("/deletingFacility/<id>")
 @login_required
 def deleteFacility(id):
     Facility.query.filter_by(id=id).delete()
     db.session.commit()
-    return redirect(url_for('views.facilities'))
+    return redirect(url_for('health.facilities'))
 
 @health.route("/deletingDoctors/<id>")
 @login_required
 def deleteDoctors(id):
     Doctor.query.filter_by(id=id).delete()
     db.session.commit()
-    return redirect(url_for('views.doctors'))
+    return redirect(url_for('health.doctors'))
 
 @health.route("/allergies", methods=['GET', 'POST'])
 @login_required
@@ -367,7 +368,7 @@ def allergies():
 def deletingAllergy(id):
     Allergies.query.filter_by(id=id).delete()
     db.session.commit()
-    return redirect(url_for('views.allergies'))
+    return redirect(url_for('health.allergies'))
 
 @health.route("/a1c", methods=['GET', 'POST'])
 @login_required
@@ -430,7 +431,7 @@ def doctorsEdit(id):
         editDr.email=request.form.get('email')
         editDr.asst=request.form.get('asst')
         db.session.commit()
-        return redirect(url_for('views.doctors'))
+        return redirect(url_for('health.doctors'))
         
     doctors = db.session.query(Doctor).filter(Doctor.id == id).first()
     facilities = db.session.query(Facility).filter(Facility.userid == flask_login.current_user.id).filter(or_(Facility.type == 'Clinic', Facility.type == 'Hosptial')).all()
@@ -442,3 +443,16 @@ def medlistPrint():
     doctors = db.session.query(Doctor).filter(Doctor.userid == flask_login.current_user.id).order_by(Doctor.name).all()
     return render_template("health/medicationlist.html", user=User, medications=medications, doctors=doctors)
 
+@health.route("/a1c/delete/<id>")
+@login_required
+def deleteA1C(id):
+    A1C.query.filter_by(id=id).delete()
+    db.session.commit()
+    return redirect(url_for('health.a1c'))
+
+@health.route("/surgery/delete/<id>")
+@login_required
+def deleteSurg(id):
+    Surgeries.query.filter_by(id=id).delete()
+    db.session.commit()
+    return redirect(url_for('health.surgeries'))

@@ -30,7 +30,7 @@
         </a>
         <ul class="list-unstyled ps-0">
           <li class="mb-1">
-            <button class="btn btn-outline-light btn-toggle align-items-center rounded collapsed text-white" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">
+            <button class="btn btn-outline-light btn-toggle align-items-center rounded collapsed text-info" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">
               Home
             </button>
             <div class="collapse show" id="home-collapse">
@@ -42,7 +42,7 @@
             </div>
           </li>
           <li class="mb-1">
-            <button class="btn btn-outline-light btn-toggle align-items-center rounded collapsed text-white" data-bs-toggle="collapse" data-bs-target="#health-collapse" aria-expanded="true">
+            <button class="btn btn-outline-light btn-toggle align-items-center rounded collapsed text-info" data-bs-toggle="collapse" data-bs-target="#health-collapse" aria-expanded="true">
               Health
             </button>
             <div class="collapse show" id="health-collapse">
@@ -60,6 +60,29 @@
               </ul>
             </div>
           </li>
+          <li class="mb-1">
+            <button class="btn btn-outline-light btn-toggle align-items-center rounded collapsed text-info" data-bs-toggle="collapse" data-bs-target="#prod-collapse" aria-expanded="true">
+              Productivity
+            </button>
+            <div class="collapse show" id="prod-collapse">
+              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ">
+                <li><a href="/productivity/goals" class="link-light rounded">Goals</a></li>
+                <li><a href="/productivity/projects" class="link-light rounded">Projects</a></li>
+                <li><a href="/productivity/tasks" class="link-light rounded">Tasks</a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="mb-1">
+            <button class="btn btn-outline-light btn-toggle align-items-center rounded collapsed text-info" data-bs-toggle="collapse" data-bs-target="#personal-collapse" aria-expanded="true">
+              Personal
+            </button>
+            <div class="collapse show" id="personal-collapse">
+              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ">
+                <li><a href="/vehicle/vehicle" class="link-light rounded">Cars</a></li>
+                <li><a href="/personal/wifi" class="link-light rounded">Wifi</a></li>
+              </ul>
+            </div>
+          </li>
         </ul>
       </div>
     </div>
@@ -73,8 +96,6 @@
           <strong>{{current_user.username}}</strong>
         </a>
         <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-          <!-- <li><a class="dropdown-item" href="#">New project...</a></li> -->
-          <!-- <li><a class="dropdown-item" href="#">Settings</a></li> -->
           <li><a class="dropdown-item" href="/profile">Profile</a></li>
           <li>
             <hr class="dropdown-divider">

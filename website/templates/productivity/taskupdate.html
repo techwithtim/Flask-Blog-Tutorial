@@ -11,7 +11,7 @@ Edit Task
 {% block menu %}
 {% for task in task %}
 <form action="/productivity/taskupdate/{{task.id}}" method="POST">
-    <a href="{{ url_for('views.task_noTOyes', taskid=task.id) }}"><button name="markdone"
+    <a href="{{ url_for('prod.task_noTOyes', taskid=task.id) }}"><button name="markdone"
             class="btn btn-success">Complete</button></a>
     <label for="item">Name of Task</label>
     <input type="text" name="name" id="name" value="{{task.item}}">

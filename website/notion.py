@@ -1,5 +1,6 @@
 import requests, json
-from . import db
+from website import db
+
 from website.models import Dish
 
 

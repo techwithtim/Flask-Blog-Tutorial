@@ -53,7 +53,7 @@ Percent Complete
             <th>Due Date</th>
         </tr>
         <tr>
-            <form action="/productivity/projects/{{project.id}}" class="table-dark" method="POST">
+            <form action="{{url_for(prod.projects), id=project.id}}" class="table-dark" method="POST">
                 <td><input type="checkbox" name="complete" id="complete" class="form-check-input"></td>
                 <td><input type="text" name="task" id="task" class="form-control"></td>
                 <td><select name="project" id="project" class="form-select">
@@ -73,10 +73,10 @@ Percent Complete
         <tr>
             <td>
                 {% if task.checked %}
-                <a href="{{ url_for('views.yesTOno', taskid=task.id, projectid=project.id) }}"><button name="markdone"
+                <a href="{{ url_for('prod.yesTOno', taskid=task.id, projectid=project.id) }}"><button name="markdone"
                         class="btn btn-warning">Undone</button></a>
                 {% else %}
-                <a href="{{ url_for('views.noTOyes', taskid=task.id, projectid=project.id) }}"><button name="markdone"
+                <a href="{{ url_for('prod.noTOyes', taskid=task.id, projectid=project.id) }}"><button name="markdone"
                         class="btn btn-success">Complete</button></a>
                 {% endif %}
             </td>
@@ -84,7 +84,7 @@ Percent Complete
             <td>{{task.projectname}}</td>
             <td>{{task.duedate.strftime("%m/%d/%y")}}</td>
             <td>
-                <a href="{{ url_for('views.taskdelete', taskid=task.id) }}">
+                <a href="{{ url_for('prod.taskdelete', taskid=task.id) }}">
                 <button class="btn btn-danger"><i class="fas fa-trash-alt"></i></button></a></td>
         </tr>
         {% endfor %}

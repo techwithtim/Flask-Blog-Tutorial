@@ -46,3 +46,12 @@ use the following commands in order in the terminal:
 #### *Planner*
 #### *Reciepts*
 #### *Shopping List*
+<br><br><br>
+
+# THINGS TO DO
+<ul><li>[ ] Make a page that has archive plan information.  a place you can look back at different weeks and see what you had</li>
+<li>[ ] Code Snippits</li>
+<li>[ ] Text the person when the medication is due to be refilled.</li>
+<li>[ ] Create a wallet size report in pdf that can be printed out</li>
+<li>[ ] Place the keys in the database</li>
+<li>[ ] Make each menu item selectable according to user (menu on for me off for shawn for example)</li>
