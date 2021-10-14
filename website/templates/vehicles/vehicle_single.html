@@ -19,7 +19,7 @@
     <img src="{{veh.pictureURL}}" alt="Picture of Vehicle" width="30%" height="15%"
         class="rounded img-fluid border-dark">
 </div>
-<form action="{{url_for('vehicle.vehsingle), id=veh.id}}" method="POST" class="row g-0">
+<form action='{{url_for("vehicle.vehsingle", id=veh.id)}}' method="POST" class="row g-0">
     <div class="col-6">
         <label class="form-label" for="name">Currently Owned?</label>
         <select class="form-select" name="curown" id="curown" value="{{veh.curown}}">
@@ -58,7 +58,7 @@
     <div class="col-4">
         <label class="form-label" for="tagsexp">Tags Expire</label>
         <input class="form-control" type="month" name="tagsexp" id="tagsexp"
-            value="{{veh.tagsexpire}}">
+            value='{{veh.tagsexpire.strftime("%Y-%m")}}'>
     </div>
     <div class="col-4">
         <label class="form-label" for="vin">VIN Number</label>
@@ -66,8 +66,8 @@
     </div>
     <div class="col-4">
         <label class="form-label" for="pdate">Purchase Date</label>
-        <input class="form-control" type="text" name="pdate" id="pdate"
-            value="{{veh.purchase_date.strftime('%m/%d/%Y')}}">
+        <input class="form-control" type="date" name="pdate" id="pdate"
+            value='{{veh.purchase_date.strftime("%Y-%m-%d")}}'>
     </div>
     <div class="col-4">
         <label class="form-label" for="purplace">Place of Purchase</label>
@@ -79,7 +79,7 @@
     </div>
     <div class="col-4">
         <label class="form-label" for="sdate">Sale Date</label>
-        <input class="form-control" type="text" name="sdate" id="sdate" value="{{veh.sell_date.strftime('%m/%d/%Y')}}">
+        <input class="form-control" type="date" name="sdate" id="sdate" value='{{veh.sell_date.strftime("%Y-%m-%d")}}'>
     </div>
     <div class="col-4">
         <label class="form-label" for="reason">Sale Reason</label>
@@ -91,6 +91,5 @@
     </div>
     <button type="submit" class="btn btn-primary">Edit Vehicle</button>
 </form>
-</div>
 
 {% endblock %}

@@ -42,6 +42,18 @@
             </div>
           </li>
           <li class="mb-1">
+            <button class="btn btn-outline-light btn-toggle align-items-center rounded collapsed text-info" data-bs-toggle="collapse" data-bs-target="#personal-collapse" aria-expanded="true">
+              Menu
+            </button>
+            <div class="collapse show" id="personal-collapse">
+              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ">
+                <li><a href="/menu" class="link-light rounded">Menu</a></li>
+                <li><a href="/menu/recipe" class="link-light rounded">Recipe</a></li>
+                <li><a href="/menu/shopping" class="link-light rounded">Shopping List</a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="mb-1">
             <button class="btn btn-outline-light btn-toggle align-items-center rounded collapsed text-info" data-bs-toggle="collapse" data-bs-target="#health-collapse" aria-expanded="true">
               Health
             </button>
@@ -97,9 +109,8 @@
         </a>
         <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
           <li><a class="dropdown-item" href="/profile">Profile</a></li>
-          <li>
-            <hr class="dropdown-divider">
-          </li>
+          <li><a class="dropdown-item" href="/settings">Settings</a></li>
+          <li><hr class="dropdown-divider"></li>
           <li><a class="dropdown-item" href="/logout">Sign out</a></li>
         </ul>
         {% else %}

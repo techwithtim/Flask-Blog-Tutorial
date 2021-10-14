@@ -67,17 +67,17 @@ def vehsingle(id):
         if request.form.get('pdate') == '':
             pdate = datetime.datetime.now()
         else:
-            pdate = datetime.datetime.strptime(request.form.get('pdate'), "%m/%d/%Y")
+            pdate = datetime.datetime.strptime(request.form.get('pdate'), "%Y-%m-%d")
         
         if request.form.get('sdate') == '':
             sdate = datetime.datetime.now()
         else:
-            sdate = datetime.datetime.strptime(request.form.get('sdate'), "%m/%d/%Y")
+            sdate = datetime.datetime.strptime(request.form.get('sdate'), "%Y-%m-%d")
             
         if request.form.get('tagsexp') == '':
             tagsexp = datetime.datetime(3000, 1, 1)
         else:
-            tagsexp = datetime.datetime.strptime(request.form.get('tagsexp'), "%m/%d/%Y")
+            tagsexp = datetime.datetime.strptime(request.form.get('tagsexp'), "%Y-%m")
             
         ud = db.session.query(Vehicles).filter(Vehicles.id == id).first()
         ud.name = request.form.get('name')
@@ -98,6 +98,7 @@ def vehsingle(id):
         ud.pictureURL = request.form.get('picurl')
         ud.curown = int(request.form.get('curown'))
         db.session.commit()
+        return redirect(url_for('vehicle.vehHome'))
     
     from dateutil import relativedelta
     veh = db.session.query(Vehicles).filter(Vehicles.id == id).first()

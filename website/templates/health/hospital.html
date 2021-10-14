@@ -1,4 +1,4 @@
-{% extends "health-div.html" %}
+{% extends "health/health-div.html" %}
 
 {% block title %}
 {{current_user.username}} Hospitalizations
@@ -19,7 +19,7 @@
     <tbody>
         {% for stay in stays %}
         <tr>
-            <td><a href="{{ url_for('views.hospital_update', id=stay.id) }}">{{stay.datestart.strftime("%m/%d/%y")}} -
+            <td><a href="{{ url_for('health.hospital_update', id=stay.id) }}">{{stay.datestart.strftime("%m/%d/%y")}} -
                     {{stay.dateend.strftime("%m/%d/%y")}}</a></td>
             <td>{{stay.dateend - stay.datestart}}</td>
             <td>{{stay.reason}}</td>

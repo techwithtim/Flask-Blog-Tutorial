@@ -6,8 +6,7 @@ from website import db
 from website.makedates import makedates
 from website.nutrition import get_food_item, nutrition_single
 from sqlalchemy.sql import func
-import datetime, pdfkit, flask_login
-from math import ceil
+import datetime, pdfkit
 
 menu = Blueprint("menu", __name__)
 
@@ -15,12 +14,10 @@ menu = Blueprint("menu", __name__)
 @menu.route("/", methods=['GET', 'POST'])
 @login_required
 def menuHome():
-    #see if there are more than 60 dates from today and if not make them
     records = db.session.query(func.count(Planner.id).label('totalcount')).filter(Planner.date >= datetime.datetime.today()).all()
     maxdate = db.session.query(func.max(Planner.date).label('max_date')).first()
     if records[0][0] <= 60:
         makedates(datetime.datetime.strftime(maxdate.max_date,"%Y-%m-%d"))
-    # makedates(howmany=1, startdate='2021-01-01')
     if request.method == 'POST':
         plan = Planner(
             date = datetime.datetime.strptime(request.form.get('datefield'),"%Y-%m-%d %H:%M:%S"),
@@ -36,7 +33,7 @@ def menuHome():
     items = Recipe.query.order_by(Recipe.dishfk).all()
     ref = db.session.query(Planner.id, Planner.date).group_by(Planner.date).order_by(Planner.date)
     
-    return render_template("menu.html", user=User, dishes=dishlist, plans=plans, items=items, ref=ref)
+    return render_template("menu/menu.html", user=User, dishes=dishlist, plans=plans, items=items, ref=ref)
 
 
 @menu.route("/plan/single/<date>", methods=['GET', 'POST'])
@@ -54,7 +51,7 @@ def menu_single(date):
             )
             db.session.add(plan)
             db.session.commit() 
-            return redirect(url_for('views.menu_single',date=ref[-10:]))
+            return redirect(url_for('menu.menu_single',date=ref[-10:]))
                 
         recipes = db.session.query(\
             Recipe.carb_fiber, Recipe.carb_total, Recipe.catagory, Recipe.dishfk, Recipe.ing, Recipe.qty, Recipe.measurement, Recipe.notes)\
@@ -85,7 +82,7 @@ def menu_single(date):
                             .all()
     #TODO: figure out why when you add an existing receipe to a plan, the page returns blank                  
         dishesForList = db.session.query(Dish).all()
-        return render_template("plan_single.html", user=User, recipes=recipes, dishs=dishes, steps=steps, items=items, dishlist=dishesForList)
+        return render_template("menu/plan_single.html", user=User, recipes=recipes, dishs=dishes, steps=steps, items=items, dishlist=dishesForList)
 
 # Recipe Functions
 @menu.route("/recipe", methods=['GET', 'POST'])
@@ -94,7 +91,7 @@ def recipe():
     dishes = Dish.query.order_by(Dish.name).all()
     recipes = Recipe.query.all()
     steps = Steps.query.all()
-    return render_template("recipe.html", user=User, dishes=dishes, recipes=recipes, steps=steps)
+    return render_template("menu/recipe.html", user=User, dishes=dishes, recipes=recipes, steps=steps)
 
 
 @menu.route("/recipe/<id>", methods=['GET', 'POST'])
@@ -157,28 +154,28 @@ def recipe_single(id):
     
     list_of_catagories = ['Beverages', 'Bread/Bakery', 'Canned/Jarred Goods', 'Dairy', 'Dry/Baking Goods', 'Frozen Foods', 'Meat', 'Produce', 'Cleaners', 'Paper Goods', 'Personal Care', 'Other']
     
-    return render_template("recipe-single.html", user=User, dish=dish, recipes=ings, nutrition=allnutrition, steps=steps, catagories=list_of_catagories)
+    return render_template("menu/recipe-single.html", user=User, dish=dish, recipes=ings, nutrition=allnutrition, steps=steps, catagories=list_of_catagories)
 
 @menu.route("/deletingIng/<recID>/<dishID>")
 @login_required
 def deleteIng(recID,dishID):
     Recipe.query.filter_by(id=recID).delete()
     db.session.commit()
-    return recipe_single(dishID)
+    return redirect(url_for('menu.recipe_single', id=dishID))
 
 @menu.route("/deletingStep/<stepID>/<dishID>")
 @login_required
 def deleteStep(stepID,dishID):
     Steps.query.filter_by(id=stepID).delete()
     db.session.commit()
-    return redirect(url_for('views.recipe_single', id=dishID))
+    return redirect(url_for('menu.recipe_single', id=dishID))
 
 @menu.route("/deletingPlan/<id>")
 @login_required
 def deletePlan(id):
     Planner.query.filter_by(id=id).delete()
     db.session.commit()
-    return redirect(url_for('views.menu'))
+    return redirect(url_for('menu.menuHome'))
 
 
 @menu.route("/recipe/<id>/update", methods=['POST'])
@@ -193,7 +190,7 @@ def recipe_update(id):
         update.cookTime = request.form.get("cooktime")
         update.cookTemp = request.form.get("cookTemp")  
         db.session.commit()
-    return redirect(url_for('views.recipe_single', id=id))
+    return redirect(url_for('menu.recipe_single', id=id))
 
 
 @menu.route("/recipe/new", methods=['GET', 'POST'])
@@ -213,9 +210,9 @@ def recipe_new():
         db.session.commit()
         
         id = Dish.query.filter_by(name=request.form.get('dishName')).first()
-        return redirect(url_for('views.recipe_single', id=id))
+        return redirect(url_for('menu.recipe_single', id=id))
     
-    return render_template("new.html", user=User)
+    return render_template("menu/new.html", user=User)
 
 
 @menu.route("/shopping", methods=['GET', 'POST'])
@@ -226,4 +223,4 @@ def shopping():
             pdfkit.from_url("http://127.0.0.1:5000"+url_for('views.shopping'), 'shopping.pdf')
     items = db.session.query(Recipe.ing, Recipe.catagory, Recipe.dishfk, func.count(Recipe.ing).label('IngCount')).filter(Recipe.dishfk == Planner.dishfk).group_by(Recipe.ing).order_by(Recipe.ing).all()
     counts = db.session.query(Recipe.catagory, func.count(Recipe.catagory)).filter(Recipe.dishfk == Planner.dishfk).group_by(Recipe.catagory).all()
-    return render_template("shopping.html", user=User, items=items, counts=counts)#, dishes=dishlist, plans=plans)
+    return render_template("menu/shopping.html", user=User, items=items, counts=counts)#, dishes=dishlist, plans=plans)

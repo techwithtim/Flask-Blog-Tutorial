@@ -24,6 +24,7 @@ def create_app():
     from website.templates.health.health import health
     from website.templates.productivity.productivity import prod
     from website.templates.personal.personal import personal
+    from website.templates.settings.settings import settings
 
     app.register_blueprint(views, url_prefix="/")
     app.register_blueprint(auth, url_prefix="/")
@@ -31,7 +32,9 @@ def create_app():
     app.register_blueprint(vehicle, url_prefix="/vehicle")
     app.register_blueprint(health, url_prefix="/health")
     app.register_blueprint(prod, url_prefix="/productivity")
-    app.register_blueprint(personal, url_prefix="/personal")
+    app.register_blueprint(personal, url_prefix="/personal")    
+    app.register_blueprint(settings, url_prefix="/settings")
+
 
 
     from website.models import User
