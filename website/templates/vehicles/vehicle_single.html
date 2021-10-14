@@ -19,7 +19,7 @@
     <img src="{{veh.pictureURL}}" alt="Picture of Vehicle" width="30%" height="15%"
         class="rounded img-fluid border-dark">
 </div>
-<form action="/vehicle/{{veh.id}}" method="POST" class="row g-0">
+<form action="{{url_for('vehicle.vehsingle), id=veh.id}}" method="POST" class="row g-0">
     <div class="col-6">
         <label class="form-label" for="name">Currently Owned?</label>
         <select class="form-select" name="curown" id="curown" value="{{veh.curown}}">
@@ -57,8 +57,8 @@
     </div>
     <div class="col-4">
         <label class="form-label" for="tagsexp">Tags Expire</label>
-        <input class="form-control" type="text" name="tagsexp" id="tagsexp"
-            value="{{veh.tagsexpire.strftime('%m/%d/%Y')}}">
+        <input class="form-control" type="month" name="tagsexp" id="tagsexp"
+            value="{{veh.tagsexpire}}">
     </div>
     <div class="col-4">
         <label class="form-label" for="vin">VIN Number</label>

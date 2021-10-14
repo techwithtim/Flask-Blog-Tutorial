@@ -30,7 +30,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="/vehicle/" method="POST" class="row g-3">
+                <form action="{{url_for('vehicle.vehHome')}}" method="POST" class="row g-3">
                     <div class="col-4">
                         <label class="form-label" for="name">Name</label>
                         <input class="form-control" type="text" name="name" id="name">
@@ -42,8 +42,8 @@
                     <div class="col-4">
                         <label class="form-label" for="name">Currently Owned?</label>
                         <select class="form-select" name="curown" id="curown"">
-                            <option selected value="True">Yes</option>
-                            <option value="False">No</option>
+                            <option selected value=1>Yes</option>
+                            <option value=0>No</option>
                         </select>
                     </div>
                     <div class="col-2">
@@ -72,7 +72,7 @@
                     </div>
                     <div class="col-4">
                         <label class="form-label" for="tagsexp">Tags Expire</label>
-                        <input class="form-control" type="text" name="tagsexp" id="tagsexp">
+                        <input class="form-control" type="month" name="tagsexp" id="tagsexp">
                     </div>
                     <div class="col-4">
                         <label class="form-label" for="vin">VIN Number</label>
@@ -134,7 +134,12 @@
                 {{veh.year}}
                 {{veh.make}}
                 {{veh.model}}
-                {{veh.trim}}
+                {{veh.trim}} <br>
+                Owned for {% if veh.id in owned %}{{owned[veh.id]}}{% endif %} <br>
+                Vin: {{veh.vinnumber}} <br>
+                License Plate: {{veh.licenseplate}} <br>
+                Tags Expire: {{veh.tagsexpire.strftime('%B %Y')}}
+
             </td>
             <td><a href="{{url_for('vehicle.vehsingle', id=veh.id)}}"><button class="btn btn-lg btn-primary"><i
                             class="fas fa-edit"></i></button></a></td>

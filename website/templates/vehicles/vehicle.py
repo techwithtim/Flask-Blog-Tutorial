@@ -1,16 +1,13 @@
 from flask import Blueprint, render_template, request, redirect, url_for
-from flask_login import login_required, current_user
-from sqlalchemy.orm import session
-from sqlalchemy.sql.expression import false, join
-from website.models import User, Vehicles
-from datetime import datetime, timedelta, date
+from flask_login import login_required
+from website.models import *
+import datetime
 from website import db
-
 from sqlalchemy.sql import desc
 
 vehicle = Blueprint("vehicle", __name__)
 
-@vehicle.route("/", methods=['GET','POST'])
+@vehicle.route("/vehicle", methods=['GET','POST'])
 @login_required
 def vehHome():
     if request.method == 'POST':
@@ -27,7 +24,7 @@ def vehHome():
         if request.form.get('tagsexp') == '':
             tagsexp = datetime.datetime(3000, 1, 1)
         else:
-            tagsexp = datetime.datetime.strptime(request.form.get('tagsexp'), "%Y-%m-%d")
+            tagsexp = datetime.datetime.strptime(request.form.get('tagsexp'), "%Y-%m")
         
         newveh = Vehicles(
             name = request.form.get('name'),
@@ -50,8 +47,17 @@ def vehHome():
         )
         db.session.add(newveh)
         db.session.commit()
+    # TODO: LEFT OFF - figuring why getting error % unexpected
+    from dateutil import relativedelta
+    currvehs = db.session.query(Vehicles).filter(Vehicles.curown == True).all()
+    ownedList = {}
+    for currveh in currvehs:
+        diff = relativedelta.relativedelta(currveh.sell_date, currveh.purchase_date)
+        owned = f'{diff.years} years {diff.months} months {diff.days} days'
+        ownedList[currveh.id] = owned
+    
     vehs = db.session.query(Vehicles).order_by(desc(Vehicles.purchase_date)).all()
-    return render_template('vehicles/vehicles.html', user=User, vehs=vehs)
+    return render_template('vehicles/vehicles.html', user=User, vehs=vehs, owned=ownedList)
 
 @vehicle.route("/<id>", methods=['GET','POST'])
 @login_required
