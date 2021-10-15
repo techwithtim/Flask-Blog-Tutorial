@@ -1,20 +1,18 @@
-from operator import itemgetter, or_
+from operator import or_
 from flask import Blueprint, render_template, request, flash, redirect, url_for, send_file, after_this_request
-from flask_login import login_required, current_user
-from sqlalchemy.orm import session
-from sqlalchemy.sql.expression import false, join
-from sqlalchemy.sql.functions import current_user, session_user
-from werkzeug.datastructures import ContentSecurityPolicy
+from flask_login import login_required
+
 from website.models import *
 from website.notion import get_supplies
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta
+from dateutil import relativedelta
 from website import db
 
-from subprocess import SubprocessError, run, PIPE
+from subprocess import run, PIPE
 from sqlalchemy.sql import func, desc, or_
 from website.vfc_maker import make_vfc
-import datetime, sys, pdfkit, flask_login, os
-from math import ceil, nan
+import datetime, sys, flask_login, os
+from math import ceil
 from website.process_medications import *
 
 health = Blueprint("health", __name__)
@@ -102,7 +100,6 @@ def surgeries():
         newsurg = Surgeries(
             name = request.form.get('name'),
             startdate= datetime.datetime.strptime(request.form.get('sdate'),"%Y-%m-%d"),
-            enddate= datetime.datetime.strptime(request.form.get('edate'),"%Y-%m-%d"),
             description= request.form.get('desc'),
             body_part= request.form.get('bodypart'),
             age = calculateAge(datetime.datetime.strptime(request.form.get('sdate'),"%Y-%m-%d")),
@@ -134,9 +131,25 @@ def hospital():
         db.session.commit()
     
     stays = db.session.query(Hosptial).filter(Hosptial.userid == flask_login.current_user.id).order_by(desc(Hosptial.datestart)).all()
+    LOS = []
+    for stay in stays:
+        delta = relativedelta.relativedelta(stay.dateend, stay.datestart)
+        if delta.months >= 1:
+            length = f'{delta.months} months, \n{delta.weeks} weeks, \n{delta.days-(delta.weeks*7)} days'
+        elif delta.months == 0 and delta.weeks >= 1:
+            length = f'{delta.weeks} weeks, {delta.days-(delta.weeks*7)} days'
+        elif delta.months == 0 and delta.weeks == 0:
+            length = f'{delta.days} days'
+        else: length = 'error'
+        little = {}
+        little['id'] = stay.id
+        little['stay'] = length
+        LOS.append(little)
+        
+        
     doctors = db.session.query(Doctor).filter(Doctor.userid == flask_login.current_user.id).order_by(Doctor.facilityfk).all()
     facilities = db.session.query(Facility).filter(Facility.userid == flask_login.current_user.id).filter(Facility.type == "Hosptial").order_by(Facility.type, Facility.name).all()
-    return render_template("health/hospital.html", user=User, stays=stays, doctors=doctors, facilities=facilities)
+    return render_template("health/hospital.html", user=User, stays=stays, doctors=doctors, facilities=facilities, los=LOS)
 
 @health.route("/hospital/delete/<id>", methods=['GET', 'POST'])
 @login_required
@@ -456,3 +469,17 @@ def deleteSurg(id):
     Surgeries.query.filter_by(id=id).delete()
     db.session.commit()
     return redirect(url_for('health.surgeries'))
+
+@health.route("/allergy/<id>", methods=["GET","POST"])
+@login_required
+def allergy_edit(id):
+    if request.method == 'POST':
+        item = db.session.query(Allergies).filter_by(id=id).first()
+        item.name = request.form.get('name')
+        item.reaction = request.form.get('reaction')
+        item.dateadded = datetime.datetime.strptime(request.form.get('dateadded'),"%Y-%m-%d")
+        db.session.commit()
+        return redirect(url_for('health.allergies'))
+    
+    allergy = db.session.query(Allergies).filter_by(id=id).first()
+    return render_template('health/allergies_edit.html', user=User, allergy=allergy )

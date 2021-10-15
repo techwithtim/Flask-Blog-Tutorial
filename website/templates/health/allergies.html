@@ -4,43 +4,45 @@
 {{current_user.username}} Allergic Medications
 {% endblock %}
 
-{% block header %}
+{% block content %}
 <h1 class="display-1 text-danger text-center">Allergy List for {{current_user.firstname}} {{current_user.lastname}}</h1>
-<!-- <h4 class="display-4 text-center">Planner</h4> -->
-{% endblock %}
-
-{% block menu %}
-<div class="row justify-content-between">
-    {% for allergy in allergies %}
-    <div class="col-4 mb-4">
-        <div class="card border-danger" style="width: 26rem;">
-            <div class="card-body">
-                <h5 class="text-danger">
-                    {{allergy.name}}
-                </h5>
-                <div class="card-text">
-                    {{allergy.reaction}} <br>
-                    {{allergy.dateadded.strftime("%m-%d-%Y")}}
-                    </div>
-                <a href="/deletingAllergy/{{allergy.id}}" class="btn btn-outline-danger btn-sm" role="button">X</a>
-                <!-- <a href="#" class="card-link">Another link</a> -->
-            </div>
-        </div>
-    </div>
-    {% endfor %}
-</div>
-
-
-<div class="form-floating">
-    <form action="/health/allergies" , method="POST">
+<form action="/health/allergies" , method="POST" class="row g-3">
+    <div class="col-3">
         <label for="name">Name of Allergy</label>
         <input type="text" class="form-control" id="name" name="name">
+    </div>
+    <div class="col-3">
         <label for="reaction">Reaction</label>
         <input type="text" class="form-control" name="reaction" id="reaction">
+    </div>
+    <div class="col-3">
         <label for="dateadded">Date Added as Allergy</label>
         <input type="date" class="form-control" id="dateadded" name="dateadded">
+    </div>
+    <div class="col-3">
         <input type="hidden" name='thisuserid' value="{{current_user.id}}">
-        <input type="submit" name='allergySubmit' value="Add Allergy">
-    </form>
-</div>
+        <input type="submit" class="btn btn-primary" name='allergySubmit' value="Add Allergy">
+    </div>
+</form>
+<table class="table table-responsive table-hover">
+    <thead>
+        <th>Name of Medication</th>
+        <th>Reaction</th>
+        <th>Date Discovered</th>
+        <th></th>
+        <th></th>
+    </thead>
+    <tbody>
+        {% for allergy in allergies %}
+        <tr>
+            <td><a href="/health/allergy/{{allergy.id}}" class="btn text-danger">{{allergy.name}}</a></td>
+            <td>{{allergy.reaction}}</td>
+            <td>{{allergy.dateadded.strftime("%m-%d-%Y")}}</td>
+            <td></td>
+            <td><a href="/health/deletingAllergy/{{allergy.id}}" class="btn btn-danger" role="button"><i
+                        class="fas fa-trash-alt"></i></a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}

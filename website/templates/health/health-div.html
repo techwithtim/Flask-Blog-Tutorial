@@ -9,33 +9,13 @@
     <a href="/health/allergies"><button type="button" class="btn">Allergies</button></a>
     <a href="/health/medications"><button type="button" class="btn">Medications</button></a>
     <a href="/health/medlist"><button type="button" class="btn">Medication List</button></a>
-
-    <!-- <div class="btn-group" role="group">
-        <button id="btnGroupDrop1" type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown"
-            aria-expanded="false">
-            Dropdown
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-            <li><a class="dropdown-item" href="#">Dropdown link</a></li>
-            <li><a class="dropdown-item" href="#">Dropdown link</a></li>
-        </ul>
-    </div> -->
 </div>
 {% endblock %}
 
 {% block title %}
-{{User.username}} Health Information
+{{current_user.username}} Health Information
 {% endblock %}
 
 {% block content %}
-{% block header %}
-
 {% endblock %}
 
-{% block menu %}
-{% endblock%}
-
-
-
-
-{% endblock %}

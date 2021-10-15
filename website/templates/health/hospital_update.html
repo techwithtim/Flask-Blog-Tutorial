@@ -4,9 +4,9 @@
 Update
 {% endblock %}
 
-{% block header %}
+{% block content %}
 <h1 class="display-1 text-center">Update Hospitalization</h1>
-<form action="{{ url_for('views.hospital_update', id=stay.id) }}" method="POST" class="row g-3">
+<form action="{{ url_for('health.hospital_update', id=stay.id) }}" method="POST" class="row g-3">
     <div class="col-6">
         <label for="sdate" class="form-label">Start Date</label>
         <input type="text" class="form-control" name="sdate" id="sdate" value="{{stay.datestart.strftime('%m/%d/%Y')}}">
@@ -47,8 +47,4 @@ Update
         <button type="submit" class="btn btn-primary">Update Hospitalization</button>
     </div>
 </form>
-{% endblock %}
-
-{% block menu %}
-
 {% endblock %}

@@ -25,27 +25,26 @@
     <div class="sidebar_content">
       <div class="flex-shrink-0 p-3 bg-dark" style="width: 280px;">
         <a href="/" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
-          <svg class="bi me-2" width="30" height="24"><use xlink:href="#bootstrap"/></svg>
+          <svg class="bi me-2" width="30" height="24">
+            <use xlink:href="#bootstrap" /></svg>
           <span class="fs-5 fw-semibold text-white">My Life</span>
         </a>
         <ul class="list-unstyled ps-0">
           <li class="mb-1">
-            <button class="btn btn-outline-light btn-toggle align-items-center rounded collapsed text-info" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">
+            <button class="btn btn-outline-light btn-toggle align-items-center rounded collapsed text-info"
+              data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">
               Home
             </button>
-            <div class="collapse show" id="home-collapse">
-              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ">
-                <!-- <li><a href="#" class="link-light rounded">Overview</a></li>
-                <li><a href="#" class="link-light rounded">Updates</a></li>
-                <li><a href="#" class="link-light rounded">Reports</a></li> -->
-              </ul>
+            <div class="collapse" id="home-collapse">
+              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small "></ul>
             </div>
           </li>
           <li class="mb-1">
-            <button class="btn btn-outline-light btn-toggle align-items-center rounded collapsed text-info" data-bs-toggle="collapse" data-bs-target="#personal-collapse" aria-expanded="true">
+            <button class="btn btn-outline-light btn-toggle align-items-center rounded collapsed text-info"
+              data-bs-toggle="collapse" data-bs-target="#menu-collapse" aria-expanded="true">
               Menu
             </button>
-            <div class="collapse show" id="personal-collapse">
+            <div class="collapse" id="menu-collapse">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ">
                 <li><a href="/menu" class="link-light rounded">Menu</a></li>
                 <li><a href="/menu/recipe" class="link-light rounded">Recipe</a></li>
@@ -54,10 +53,11 @@
             </div>
           </li>
           <li class="mb-1">
-            <button class="btn btn-outline-light btn-toggle align-items-center rounded collapsed text-info" data-bs-toggle="collapse" data-bs-target="#health-collapse" aria-expanded="true">
+            <button class="btn btn-outline-light btn-toggle align-items-center rounded collapsed text-info"
+              data-bs-toggle="collapse" data-bs-target="#health-collapse" aria-expanded="true">
               Health
             </button>
-            <div class="collapse show" id="health-collapse">
+            <div class="collapse" id="health-collapse">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ">
                 <li><a href="/health/facilities" class="link-light rounded">Facilities</a></li>
                 <li><a href="/health/doctors" class="link-light rounded">Doctors</a></li>
@@ -68,15 +68,17 @@
                 <li><a href="/health/surgeries" class="link-light rounded">Surgeries</a></li>
                 <li><a href="/health/a1c" class="link-light rounded">A1C</a></li>
                 <li><a href="/health/cpap" class="link-light rounded">CPAP Supplies</a></li>
-                <li><a href="https://mychart.salemhealth.org/mychart/Authentication/Login?" target="_blank" class="link-light rounded">Salem Health MyChart</a></li>
+                <li><a href="https://mychart.salemhealth.org/mychart/Authentication/Login?" target="_blank"
+                    class="link-light rounded">Salem Health MyChart</a></li>
               </ul>
             </div>
           </li>
           <li class="mb-1">
-            <button class="btn btn-outline-light btn-toggle align-items-center rounded collapsed text-info" data-bs-toggle="collapse" data-bs-target="#prod-collapse" aria-expanded="true">
+            <button class="btn btn-outline-light btn-toggle align-items-center rounded collapsed text-info"
+              data-bs-toggle="collapse" data-bs-target="#prod-collapse" aria-expanded="true">
               Productivity
             </button>
-            <div class="collapse show" id="prod-collapse">
+            <div class="collapse" id="prod-collapse">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ">
                 <li><a href="/productivity/goals" class="link-light rounded">Goals</a></li>
                 <li><a href="/productivity/projects" class="link-light rounded">Projects</a></li>
@@ -85,10 +87,11 @@
             </div>
           </li>
           <li class="mb-1">
-            <button class="btn btn-outline-light btn-toggle align-items-center rounded collapsed text-info" data-bs-toggle="collapse" data-bs-target="#personal-collapse" aria-expanded="true">
+            <button class="btn btn-outline-light btn-toggle align-items-center rounded collapsed text-info"
+              data-bs-toggle="collapse" data-bs-target="#personal-collapse" aria-expanded="true">
               Personal
             </button>
-            <div class="collapse show" id="personal-collapse">
+            <div class="collapse" id="personal-collapse">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ">
                 <li><a href="/vehicle/vehicle" class="link-light rounded">Cars</a></li>
                 <li><a href="/personal/wifi" class="link-light rounded">Wifi</a></li>
@@ -110,7 +113,9 @@
         <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
           <li><a class="dropdown-item" href="/profile">Profile</a></li>
           <li><a class="dropdown-item" href="/settings">Settings</a></li>
-          <li><hr class="dropdown-divider"></li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
           <li><a class="dropdown-item" href="/logout">Sign out</a></li>
         </ul>
         {% else %}
@@ -120,18 +125,19 @@
       </div>
     </div>
   </div>
-  <main id="main">
-    {% block submenu %}{% endblock %}
-    <div class="d-flex flex-column flex-shrink-0 p-3 bg-light">
-      {% block content %}{% endblock %}
+  <div class="d-flex flex-column flex-shrink-0 p-3 bg-light">
+    <div id="submenu" class="main">
+      {% block submenu %}{% endblock %}
     </div>
+    <main class="main">
+      {% block content %}
+      {% endblock %}
+  </div>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
   </script>
-
-
 </body>
 
 </html>

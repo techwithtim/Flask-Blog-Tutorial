@@ -4,7 +4,7 @@
 {{current_user.username}} Hospitalizations
 {% endblock %}
 
-{% block header %}
+{% block content %}
 <h1 class="display-1 text-center">Hospitalizations for {{current_user.firstname}} {{current_user.lastname}}</h1>
 
 <table class="table table-bordered">
@@ -17,11 +17,18 @@
         <th></th>
     </thead>
     <tbody>
+        
         {% for stay in stays %}
         <tr>
-            <td><a href="{{ url_for('health.hospital_update', id=stay.id) }}">{{stay.datestart.strftime("%m/%d/%y")}} -
+            <td><a href="{{ url_for('health.hospital_update', id=stay.id) }}" class="btn">{{stay.datestart.strftime("%m/%d/%y")}} -
                     {{stay.dateend.strftime("%m/%d/%y")}}</a></td>
-            <td>{{stay.dateend - stay.datestart}}</td>
+            <td>
+                {% for lgh in los %}
+                {% if lgh['id'] == stay.id %}
+                {{lgh['stay']}}
+                {% endif %}
+                {% endfor %}
+            </td>
             <td>{{stay.reason}}</td>
             <td>
                 {% for doctor in doctors  %}
@@ -96,8 +103,4 @@
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block menu %}
-
 {% endblock %}

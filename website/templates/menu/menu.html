@@ -15,7 +15,7 @@ Guill Menu
     <!-- List of All Dates and Dishes -->
     <div class="input-group mb-3">
         <h4>{{ date.strftime('%A, %B %d, %Y') }}</h4>
-        <form action="/plan/single/{{date.strftime('%Y-%m-%d')}}" , method="POST">
+        <form action="/menu/{{date.strftime('%Y-%m-%d')}}" , method="POST">
             <button type="submit" class="btn btn-outline-primary" name="dateselector" id="dateselector" value="{{date.strftime('%Y-%m-%d')}}">Go</button>
         </form>
     </div>

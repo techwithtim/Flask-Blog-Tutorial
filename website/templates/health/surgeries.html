@@ -4,13 +4,12 @@
 {{current_user.username}} Surgeries
 {% endblock %}
 
-{% block header %}
+{% block content %}
 <h1 class="display-1 text-center">Surgeries for {{current_user.firstname}} {{current_user.lastname}}</h1>
 <table class="table table-info">
     <thead>
         <th>Name</th>
         <th>Start Date</th>
-        <th>End Date</th>
         <th>Description</th>
         <th>Body Part</th>
         <th>Doctor</th>
@@ -25,9 +24,6 @@
                 </td>
                 <td>
                     <input type="date" class="form-control" name="sdate" id="sdate">
-                </td>
-                <td>
-                    <input type="date" class="form-control" name="edate" id="edate">
                 </td>
                 <td>
                     <input type="text" class="form-control" name="desc" id="desc">
@@ -62,11 +58,9 @@
 <!-- EXISTING DATA IN DB -->
 <table class="table table-bordered">
     <thead>
-        <th>Name</th>
         <th>Start Date</th>
-        <th>End Date</th>
-        <th>Description</th>
         <th>Age</th>
+        <th>Description</th>
         <th>Body Part</th>
         <th>Doctor</th>
         <th>Facility</th>
@@ -75,11 +69,9 @@
     <tbody>
         {% for surg in surgeries %}
         <tr>
-            <td>{{surg.name}}</td>
             <td>{{surg.startdate.strftime("%m/%d/%Y")}}</td>
-            <td>{{surg.enddate.strftime("%m/%d/%Y")}}</td>
-            <td>{{surg.description}}</td>
             <td>{{surg.age}}</td>
+            <td>{{surg.description}}</td>
             <td>{{surg.body_part}}</td>
             {% for doctor in doctors %}
             {% if surg.doctorfk == doctor.id %}
@@ -97,8 +89,4 @@
         {% endfor %}
     </tbody>
 </table>
-{% endblock %}
-
-{% block menu %}
-
 {% endblock %}

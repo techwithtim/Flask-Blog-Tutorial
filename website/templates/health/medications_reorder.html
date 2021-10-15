@@ -8,7 +8,7 @@
 <h1 class="display-1 text-center">Refill Prescriptions for {{current_user.firstname}} {{current_user.lastname}}</h1>
 {% endblock %}
 
-{% block menu %}
+{% block content %}
 <form action="/health/medications/reorder" , method="POST">
     <input type="date" name="reorder_date" id="reorder_date"><button type="submit" name="process" value="ReOrder">ReOrder</button>
     <div>

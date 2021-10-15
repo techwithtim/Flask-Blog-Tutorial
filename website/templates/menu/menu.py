@@ -36,7 +36,7 @@ def menuHome():
     return render_template("menu/menu.html", user=User, dishes=dishlist, plans=plans, items=items, ref=ref)
 
 
-@menu.route("/plan/single/<date>", methods=['GET', 'POST'])
+@menu.route("/<date>", methods=['GET', 'POST'])
 @login_required
 def menu_single(date):
     # FIXME: why it does not return when saving
@@ -51,13 +51,14 @@ def menu_single(date):
             )
             db.session.add(plan)
             db.session.commit() 
-            return redirect(url_for('menu.menu_single',date=ref[-10:]))
+            ## FIXME: when entering a date manually, it does not return anything
+            return redirect(url_for('menu.plan_single',date=ref[-10:]))
                 
         recipes = db.session.query(\
             Recipe.carb_fiber, Recipe.carb_total, Recipe.catagory, Recipe.dishfk, Recipe.ing, Recipe.qty, Recipe.measurement, Recipe.notes)\
                 .join(Dish, Dish.id == Recipe.dishfk)\
                     .join(Planner, Planner.dishfk == Recipe.dishfk)\
-                        .filter(func.date(Planner.date) == date)\
+                        .filter(func.date(Planner.date) == func.date(date))\
                             .order_by(Recipe.date_created)\
                                 .all()
         
@@ -66,19 +67,19 @@ def menu_single(date):
             Steps.step_num, Steps.step_text, Steps.dishfk)\
                 .join(Dish, Dish.id == Steps.dishfk)\
                     .join(Planner, Planner.dishfk == Steps.dishfk)\
-                        .filter(func.date(Planner.date) == date)\
+                        .filter(func.date(Planner.date) == func.date(date))\
                             .all()
                                 
         items = db.session.query(\
             Planner.date, Planner.dishfk, Planner.id, Planner.dishfk, Planner.item, Dish.pictureURL)\
                 .join(Dish, Dish.id == Planner.dishfk)\
-                    .filter(func.date(Planner.date) == date)\
+                    .filter(func.date(Planner.date) == func.date(date))\
                         .all()
                         
         dishes = db.session.query(\
             Dish.id, Dish.cookTemp, Dish.cookTime, Dish.numServings, Dish.prepTime, Dish.servingSize)\
                 .join(Planner, Planner.dishfk == Dish.id)\
-                    .filter(func.date(Planner.date) == date)\
+                    .filter(func.date(Planner.date) == func.date(date))\
                             .all()
     #TODO: figure out why when you add an existing receipe to a plan, the page returns blank                  
         dishesForList = db.session.query(Dish).all()

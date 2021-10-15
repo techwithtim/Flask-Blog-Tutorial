@@ -4,12 +4,9 @@
 A1C for {{current_user.firstname}} {{current_user.lastname}}
 {% endblock %}
 
-{% block header %}
+{% block content %}
 <h2 class="display-2 text-danger text-center">Current A1C: {{currentvalue.testresult}}%</h2>
 <h6 class="display-6 text-center">Avg blood glucose: {{eag}}</h6>
-{% endblock %}
-
-{% block menu %}
 
 <div class="form-floating">
     <form action="/health/a1c" , method="POST">

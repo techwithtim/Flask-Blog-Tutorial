@@ -1,67 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'health/health-div.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+{% block style %}
+<style>
+    .header {
+        position: fixed;
+        top: 0;
+    }
 
-    <style>
-        .header {
-            position: fixed;
-            top: 0;
-        }
+    .footer {
+        position: fixed;
+        bottom: 0;
+    }
+</style>
+{% endblock %}
+{% block submenu %}
+{% endblock %}
+{% block content %}
+<div class="header">
+    <H4>{{current_user.firstname}} {{current_user.lastname}} Medications</H4>
+    <h6>DOB: {{current_user.dob.strftime("%m/%d/%y") }}</h6>
+</div>
+<br> <br> <br>
+<div class="content">
+    <table class="table table-striped table-sm">
+        <thead>
+            <th>Medication</th>
+            <th>Doctor</th>
+            <th>Dose</th>
+            <th>When</th>
+            <th>Reason</th>
+            <th>Last Refilled</th>
+        </thead>
+        <tbody>
+            {% for medication in medications %}
+            <tr>
+                <td>{{medication.name}}</td>
+                <td>{% for doctor in doctors %}{% if doctor.id == medication.doctorfk %}{{doctor.name}}{% endif %}{% endfor %}
+                </td>
+                <td>{{medication.dose}}</td>
+                <td>{{medication.how_often}}</td>
+                <td>{{medication.reason_for_taking}}</td>
+                <td>{{medication.last_refilled.strftime("%m-%d-%Y")}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="footer">
+    <h6>As of <script>
+            document.write(new Date().toLocaleDateString());
+        </script>
+    </h6>
 
-        .footer {
-            position: fixed;
-            bottom: 0;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="header">
-        <H4>{{current_user.firstname}} {{current_user.lastname}} Medications</H4>
-        <h6>DOB: {{current_user.dob.strftime("%m/%d/%y") }}</h6>
-    </div>
-    <br> <br> <br>
-    <div class="content">
-        <table class="table table-striped table-sm">
-            <thead>
-                <th>Medication</th>
-                <th>Doctor</th>
-                <th>Dose</th>
-                <th>When</th>
-                <th>Reason</th>
-                <th>Last Refilled</th>
-            </thead>
-            <tbody>
-                {% for medication in medications %}
-                <tr>
-                    <td>{{medication.name}}</td>
-                    <td>{% for doctor in doctors %}{% if doctor.id == medication.doctorfk %}{{doctor.name}}{% endif %}{% endfor %}
-                    </td>
-                    <td>{{medication.dose}}</td>
-                    <td>{{medication.how_often}}</td>
-                    <td>{{medication.reason_for_taking}}</td>
-                    <td>{{ medication.last_refilled.strftime("%m-%d-%Y") }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div class="footer">
-        <h6>As of <script>
-                document.write(new Date().toLocaleDateString());
-            </script>
-        </h6>
-
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous">
-    </script>
-</body>
-
-</html>
+</div>
+{% endblock %}

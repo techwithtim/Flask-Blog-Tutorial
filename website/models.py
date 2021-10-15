@@ -136,7 +136,6 @@ class Surgeries(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name=db.Column(db.String(100), nullable=False)
     startdate=db.Column(db.Date, nullable=False)
-    enddate=db.Column(db.Date)
     description=db.Column(db.String(500))
     body_part=db.Column(db.String(50))
     age=db.Column(db.Integer)
