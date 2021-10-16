@@ -1,28 +1,78 @@
-{% extends "base.html" %} {% block title %}Login{% endblock %} {% block content
-%}
-<form method="POST">
-  <h3 align="center">Login</h3>
-  <div class="form-group">
-    <label for="email">Email Address</label>
-    <input
-      type="text"
-      id="email"
-      name="email"
-      class="form-control"
-      placeholder="Enter Email"
-    />
-    <label for="password">Password</label>
-    <input
-      type="password"
-      id="password"
-      name="password"
-      class="form-control"
-      placeholder="Enter Password"
-    />
-    <br />
-    <div align="center">
-      <button class="btn btn-primary" type="submit">Login</button>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" type="text/css" href="{{url_for('static', filename = 'css/bootstrap.css')}}">
+  <link rel="stylesheet" type="text/css" href="{{url_for('static', filename = 'css/sidebars.css')}}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"
+    integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous">
+  </script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"
+    integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous">
+  </script>
+  <script src="https://kit.fontawesome.com/999ca2bb93.js" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+  <title>Login</title>
+</head>
+
+<body>
+  <!-- NEW -->
+  <div class="sidebar">
+    <div class="sidebar_content">
+      <div class="flex-shrink-0 p-3 bg-dark" style="width: 280px;">
+        <a href="/" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
+          <svg class="bi me-2" width="30" height="24">
+            <use xlink:href="#bootstrap" /></svg>
+          <span class="fs-5 fw-semibold text-white">My Life</span>
+        </a>
+        <ul class="list-unstyled ps-0">
+          <li class="mb-1">
+            <button class="btn btn-outline-light btn-toggle align-items-center rounded collapsed text-info"
+              data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">
+              Home
+            </button>
+            <div class="collapse show" id="home-collapse">
+              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ">
+                <li><a class="link-light rounded" href="/login">Login</a></li>
+                <li><a class="link-light rounded" href="/sign-up">Sign Up</a></li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
-</form>
-{% endblock %}
+  <div class="d-flex flex-column flex-shrink-0 p-3 bg-light">
+    <main class="main">
+      <form method="POST">
+        <h3 align="center">Login</h3>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="text" id="email" name="email" class="form-control" placeholder="Enter Email" />
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" class="form-control" placeholder="Enter Password" />
+          <br />
+          <div align="center">
+            <button class="btn btn-primary" type="submit">Login</button>
+          </div>
+        </div>
+      </form>
+
+  </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+  </script>
+</body>
+
+</html>
