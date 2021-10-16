@@ -160,9 +160,9 @@ def projects():
     projects = db.session.query(Projects).order_by(Projects.name).all()
     return render_template("productivity/projects.html", user=User, projects=projects, percentcomplete=percentcomplete)
 
-@prod.route("/tasks", methods=['GET', 'POST'])
+@prod.route("/tasks/<int:page_num>", methods=['GET', 'POST'])
 @login_required
-def tasks():
+def tasks(page_num):
     if request.method == 'POST':
         if request.form.get('complete') == 'on': complete = True 
         else: complete = False
@@ -187,8 +187,8 @@ def tasks():
         
     projects = db.session.query(Projects).filter(Projects.userid == flask_login.current_user.id).order_by(Projects.name).all()
     goals = db.session.query(Goals).filter(Goals.userid == flask_login.current_user.id).order_by(Goals.name).all()
-    complete = db.session.query(Projects.name.label('projectname'), Projects.status.label('projectstatus'), Tasks.checked, Tasks.duedate, Tasks.goalfk, Tasks.id, Tasks.item).join(Projects, Projects.id == Tasks.project).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.checked == 0).order_by(Tasks.duedate, Tasks.project, Tasks.item).all()
-    incomplete = db.session.query(Projects.name.label('projectname'), Projects.status.label('projectstatus'), Tasks.checked, Tasks.duedate, Tasks.goalfk, Tasks.id, Tasks.item).join(Projects, Projects.id == Tasks.project).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.checked == 1).order_by(Tasks.project, Tasks.duedate, Tasks.item).all()
+    incomplete = db.session.query(Projects.name.label('projectname'), Projects.status.label('projectstatus'), Tasks.checked, Tasks.duedate, Tasks.goalfk, Tasks.id, Tasks.item).join(Projects, Projects.id == Tasks.project).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.checked == 0).order_by(Tasks.duedate, Tasks.project, Tasks.item).paginate(per_page=5, page=page_num, error_out=True)
+    complete = db.session.query(Projects.name.label('projectname'), Projects.status.label('projectstatus'), Tasks.checked, Tasks.duedate, Tasks.goalfk, Tasks.id, Tasks.item).join(Projects, Projects.id == Tasks.project).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.checked == 1).order_by(Tasks.project, Tasks.duedate, Tasks.item).paginate(per_page=10, page=page_num, error_out=True)
     return render_template("/productivity/tasks.html", user=User, projects=projects, complete=complete, incomplete=incomplete, goals=goals)
 
 @prod.route("/projects/<id>", methods=['GET', 'POST'])

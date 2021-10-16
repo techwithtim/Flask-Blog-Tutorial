@@ -255,7 +255,9 @@ class Vehicles(db.Model):
     curown = db.Column(db.Boolean)
     update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
     date_created = db.Column(db.DateTime(timezone=True), default=func.now())
-    
+    #Relationships
+    service = db.relationship('Service', backref='vehicles', lazy="dynamic", passive_deletes=True)
+
 class States(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     state = db.Column(db.String(50))
@@ -363,3 +365,15 @@ class Settings(db.Model):
     other_extra5_url  = db.Column(db.String(200))
     update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
     date_created = db.Column(db.DateTime(timezone=True), default=func.now())
+    
+class Service(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    service = db.Column(db.String(75))
+    place = db.Column(db.String(75))
+    cost = db.Column(db.Float)
+    mileage = db.Column(db.Integer)
+    date = db.Column(db.Date)
+    update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
+    date_created = db.Column(db.DateTime(timezone=True), default=func.now())
+    # forign keys
+    vehiclefk = db.Column(db.Integer, db.ForeignKey('vehicles.id', ondelete="CASCADE"), nullable=True)

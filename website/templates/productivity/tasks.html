@@ -31,7 +31,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for task in incomplete %}
+                {% for task in complete.items %}
                 <tr>
                     <td><a href="{{ url_for('prod.task_yesTOno', taskid=task.id) }}"><button name="markdone"
                                 class="btn btn-warning">Undone</button></a></td>
@@ -46,6 +46,20 @@
                 {% endfor %}
             </tbody>
         </table>
+        <nav aria-label="Task InComplete Pageinate">
+            <ul class="pagination justify-content-start">
+                {% for page in incomplete.iter_pages(left_edge=3, right_edge=3, left_current=3, right_current=3) %}
+                <li class="page-item">
+                    {% if page %}
+                    <a class="page-link" href="{{ url_for('prod.tasks', page_num=page) }}">{{ page }}</a>
+                    {% else %}
+                    <p class="page-link">...</p>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </nav>
+
     </div>
     <div class="tab-pane fade show active" id="nav-notcomplete" role="tabpanel" aria-labelledby="nav-notcomplete-tab">
         <table class="table table-hover">
@@ -56,8 +70,10 @@
                     <th>Project</th>
                     <th>Due Date</th>
                 </tr>
+            </thead>
+            <tbody>
                 <tr>
-                    <form action="{{url_for('prod.tasks')}}" class="table-dark" method="POST">
+                    <form action="{{url_for('prod.tasks', page_num=1)}}" class="table-dark" method="POST">
                         <td><input type="checkbox" class="form-check-input"></td>
                         <td><input type="text" name="task" id="task" class="form-control"></td>
                         <td><select name="project" id="project" class="form-select">
@@ -76,9 +92,11 @@
                         <td><input type="submit" value="submit"></td>
                     </form>
                 </tr>
-            </thead>
+            </tbody>
+        </table>
+        <table class="table table-hover">
             <tbody>
-                {% for task in complete %}
+                {% for task in incomplete.items %}
                 {% if task.duedate.strftime("%m/%d/%Y") < task.duedate.now().strftime("%m/%d/%Y") %}
                 <tr class="text-danger">
                     {% elif task.duedate.strftime("%m/%d/%y") == task.duedate.now().strftime("%m/%d/%y") %}
@@ -99,6 +117,20 @@
                 {% endfor %}
             </tbody>
         </table>
+        <nav aria-label="Task Complete Pageinate">
+            <ul class="pagination justify-content-start">
+                {% for page in complete.iter_pages(left_edge=3, right_edge=3, left_current=3, right_current=3) %}
+                <li class="page-item">
+                    {% if page %}
+                    <a class="page-link" href="{{ url_for('prod.tasks', page_num=page) }}">{{ page }}</a>
+                    {% else %}
+                    <p class="page-link">...</p>
+                    {% endif %}
+                </li>
+                {% endfor %}
+
+            </ul>
+        </nav>
     </div>
 </div>
 

@@ -63,42 +63,54 @@ def vehHome():
 @login_required
 def vehsingle(id):
     if request.method =="POST":
-        
-        if request.form.get('pdate') == '':
-            pdate = datetime.datetime.now()
+        if request.form['submit'] == 'Add Service':
+            newserv = Service(
+                service = request.form.get('service'),
+                place = request.form.get('place'),
+                cost = request.form.get('cost'),
+                mileage = request.form.get('mileage'),
+                date = datetime.datetime.strptime(request.form.get('date'),"%Y-%m-%d"),
+                vehiclefk = request.form.get('vehid')
+            )
+            db.session.add(newserv)
+            db.session.commit()
+            return redirect(url_for('vehicle.vehsingle', id=id))
         else:
-            pdate = datetime.datetime.strptime(request.form.get('pdate'), "%Y-%m-%d")
-        
-        if request.form.get('sdate') == '':
-            sdate = datetime.datetime.now()
-        else:
-            sdate = datetime.datetime.strptime(request.form.get('sdate'), "%Y-%m-%d")
+            if request.form.get('pdate') == '':
+                pdate = datetime.datetime.now()
+            else:
+                pdate = datetime.datetime.strptime(request.form.get('pdate'), "%Y-%m-%d")
             
-        if request.form.get('tagsexp') == '':
-            tagsexp = datetime.datetime(3000, 1, 1)
-        else:
-            tagsexp = datetime.datetime.strptime(request.form.get('tagsexp'), "%Y-%m")
-            
-        ud = db.session.query(Vehicles).filter(Vehicles.id == id).first()
-        ud.name = request.form.get('name')
-        ud.year = request.form.get('year')
-        ud.make = request.form.get('make')
-        ud.model = request.form.get('model')
-        ud.trim = request.form.get('trim')
-        ud.color = request.form.get('color')
-        ud.purchase_date = pdate
-        ud.sell_date = sdate
-        ud.reasonforsale = request.form.get('reason')
-        ud.saleamount = request.form.get('saleamt')
-        ud.licenseplate = request.form.get('licplate')
-        ud.purchaseprice = request.form.get('puramt')
-        ud.purchasefrom = request.form.get('purplace')
-        ud.vinnumber = request.form.get('vin')
-        ud.tagsexpire = tagsexp
-        ud.pictureURL = request.form.get('picurl')
-        ud.curown = int(request.form.get('curown'))
-        db.session.commit()
-        return redirect(url_for('vehicle.vehHome'))
+            if request.form.get('sdate') == '':
+                sdate = datetime.datetime.now()
+            else:
+                sdate = datetime.datetime.strptime(request.form.get('sdate'), "%Y-%m-%d")
+                
+            if request.form.get('tagsexp') == '':
+                tagsexp = datetime.datetime(3000, 1, 1)
+            else:
+                tagsexp = datetime.datetime.strptime(request.form.get('tagsexp'), "%Y-%m")
+                
+            ud = db.session.query(Vehicles).filter(Vehicles.id == id).first()
+            ud.name = request.form.get('name')
+            ud.year = request.form.get('year')
+            ud.make = request.form.get('make')
+            ud.model = request.form.get('model')
+            ud.trim = request.form.get('trim')
+            ud.color = request.form.get('color')
+            ud.purchase_date = pdate
+            ud.sell_date = sdate
+            ud.reasonforsale = request.form.get('reason')
+            ud.saleamount = request.form.get('saleamt')
+            ud.licenseplate = request.form.get('licplate')
+            ud.purchaseprice = request.form.get('puramt')
+            ud.purchasefrom = request.form.get('purplace')
+            ud.vinnumber = request.form.get('vin')
+            ud.tagsexpire = tagsexp
+            ud.pictureURL = request.form.get('picurl')
+            ud.curown = int(request.form.get('curown'))
+            db.session.commit()
+            return redirect(url_for('vehicle.vehHome'))
     
     from dateutil import relativedelta
     veh = db.session.query(Vehicles).filter(Vehicles.id == id).first()
@@ -106,7 +118,8 @@ def vehsingle(id):
     diff = relativedelta.relativedelta(veh.sell_date, veh.purchase_date)
 
     owned = f'{diff.years} years {diff.months} months {diff.days} days'
-    return render_template('vehicles/vehicle_single.html', user=User, veh=veh, owned=owned)
+    services = db.session.query(Service).filter(Service.vehiclefk == id).order_by(desc(Service.date),Service.cost).all()
+    return render_template('vehicles/vehicle_single.html', user=User, veh=veh, owned=owned, services=services)
 
 @vehicle.route("/delete/<id>", methods=['GET','POST'])
 @login_required
