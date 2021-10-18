@@ -379,3 +379,32 @@ class Service(db.Model):
     date_created = db.Column(db.DateTime(timezone=True), default=func.now())
     # forign keys
     vehiclefk = db.Column(db.Integer, db.ForeignKey('vehicles.id', ondelete="CASCADE"), nullable=True)
+    
+class CodeSnips(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    catagory = db.Column(db.Text)
+    subcatagory = db.Column(db.Text)
+    name = db.Column(db.Text)
+    description = db.Column(db.Text)
+    notes = db.Column(db.Text)
+    code = db.Column(db.Text)
+    link1 = db.Column(db.Text)
+    link2 = db.Column(db.Text)
+    link3 = db.Column(db.Text)
+    link4 = db.Column(db.Text)
+    link5 = db.Column(db.Text)
+    update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
+    date_created = db.Column(db.DateTime(timezone=True), default=func.now())
+    
+class HousingHistory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    movein = db.Column(db.Date)
+    moveout = db.Column(db.Date)
+    address = db.Column(db.Text)
+    city = db.Column(db.Text)
+    state = db.Column(db.Text)
+    zip = db.Column(db.Text)
+    userid = db.Column(db.Integer)
+    update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
+    date_created = db.Column(db.DateTime(timezone=True), default=func.now())
+    

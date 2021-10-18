@@ -19,7 +19,7 @@ def create_app():
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     db.init_app(app)
     
-    Migrate(app,db)
+    Migrate(app,db, render_as_batch=True)
 
     from website.templates.views.views import views
     from website.auth import auth

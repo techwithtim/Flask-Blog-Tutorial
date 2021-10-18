@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}
+Code Snipits
+{% endblock %}
+
+{% block style %}
+<style>
+    pre{
+        background-color: black;
+        font-family: monospace, monospace;
+        color: aliceblue;
+        border: 1px solid #999;
+        display: block;
+        word-wrap: normal;
+        padding-right: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block submenu %}
+{% endblock %}
+
+{% block content %}
+<pre>
+    <code>
+        the cow goes moo
+        the cow goes moo
+        then the farmer comes up and wacks it on the head and thats how we get <strong>hamburger</strong>
+    </code>
+</pre>
+{% endblock %}

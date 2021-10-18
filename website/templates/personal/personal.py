@@ -2,6 +2,10 @@ from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required
 from website.models import *
 from website import db
+from sqlalchemy.sql import desc
+from dateutil import relativedelta
+
+
 
 import flask_login, os
 from website.wifiqrcode import generate_code
@@ -38,3 +42,69 @@ def wifi():
     # TODO: Figure out why this does not work on the website version of the program
     wifi = db.session.query(Wifi).filter(Wifi.userid == flask_login.current_user.id).order_by(Wifi.update_time).all()
     return render_template('/personal/wifi.html', user=User, wifi=wifi)
+
+@personal.route("/code", methods=['GET','POST'])
+@login_required
+def code():
+    return render_template("personal/codesnip.html", user=User)
+
+@personal.route("/housinghistory", methods=['GET','POST'])
+@login_required
+def housinghistory():
+    if request.method == "POST":
+        newhh = HousingHistory(
+            address = request.form.get('address'),
+            city = request.form.get('city'),
+            state = request.form.get('state'),
+            zip = request.form.get('zip'),
+            movein = datetime.datetime.strptime(request.form.get('start'),"%Y-%m"),
+            moveout = datetime.datetime.strptime(request.form.get('end'),"%Y-%m"),
+            userid = request.form.get('thisuserid')
+        )
+        db.session.add(newhh)
+        db.session.commit()
+    
+    lived = db.session.query(HousingHistory).filter(HousingHistory.userid == flask_login.current_user.id).order_by(desc(HousingHistory.movein)).all()
+    LOS = []
+    for stay in lived:
+        delta = relativedelta.relativedelta(stay.moveout, stay.movein)
+        if delta.years >= 1:
+            length = f'{delta.years} years, {delta.months} months'
+        elif delta.years == 0 and delta.months == 1:
+            length = f'{delta.months} month'
+        elif delta.years == 0 and delta.months > 1:
+            length = f'{delta.months} months'
+        else: length = 'error'
+        little = {}
+        little['id'] = stay.id
+        little['stay'] = length
+        LOS.append(little)    
+    
+    states = db.session.query(States).all()
+    housing = db.session.query(HousingHistory).filter(HousingHistory.userid == flask_login.current_user.id).order_by(desc(HousingHistory.movein)).all()
+    return render_template("personal/housinghistory.html", user=User, housing=housing, states=states, los=LOS)
+
+@personal.route("/housinghistory/<id>", methods=['GET','POST'])
+@login_required
+def edithousing(id):
+    if request.method == "POST":
+        house = db.session.query(HousingHistory).filter_by(id=id).first()
+        house.movein = datetime.datetime.strptime(request.form.get('start'),"%Y-%m")
+        house.moveout = datetime.datetime.strptime(request.form.get('end'),"%Y-%m")
+        house.address = request.form.get('address')
+        house.city = request.form.get('city')
+        house.state = request.form.get('state')
+        house.zip = request.form.get('zip')
+        db.session.commit()
+        return redirect(url_for('personal.housinghistory'))
+    
+    states = db.session.query(States).all()
+    house = db.session.query(HousingHistory).filter_by(id=id).first()
+    return render_template('personal/house_single.html', user=User, house=house, states=states)
+
+@personal.route("/housinghistory/delete/<id>", methods=['GET'])
+@login_required
+def deletehouse(id):
+    db.session.query(HousingHistory).filter_by(id=id).delete()
+    db.session.commit()
+    return redirect(url_for('personal.housinghistory'))
