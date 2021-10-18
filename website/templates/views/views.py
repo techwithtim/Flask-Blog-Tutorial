@@ -60,7 +60,7 @@ def profile():
         db.session.commit()
         
         pic.seek(0) 
-        pic.save(os.path.join('website','static','images', filename))
+        pic.save(os.path.join(url_for('static'),'images', filename))
         return redirect(url_for("views.profile"))
         
     states = db.session.query(States).all()
