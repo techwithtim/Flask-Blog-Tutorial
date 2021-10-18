@@ -53,7 +53,7 @@ Percent Complete
             <th>Due Date</th>
         </tr>
         <tr>
-            <form action="{{url_for(prod.projects), id=project.id}}" class="table-dark" method="POST">
+            <form action="{{url_for('prod.projects', id=project.id)}}" class="table-dark" method="POST">
                 <td><input type="checkbox" name="complete" id="complete" class="form-check-input"></td>
                 <td><input type="text" name="task" id="task" class="form-control"></td>
                 <td><select name="project" id="project" class="form-select">

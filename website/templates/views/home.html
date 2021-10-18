@@ -19,8 +19,10 @@ Home
                 </thead>
                 <tbody>
                     {% for task in tasks %}
-                    {% if task.duedate.strftime('%Y-%m-%d') == task.duedate.now().strftime('%Y-%m-%d') %}<tr class="text-primary">
-                        {% else %} <tr class="text-danger">{% endif %}
+                    {% if task.duedate.strftime('%Y-%m-%d') == task.duedate.now().strftime('%Y-%m-%d') %}<tr
+                        class="text-primary">
+                        {% else %}
+                    <tr class="text-danger">{% endif %}
                         <td>{{task.item}}</td>
                         <td>{{task.duedate.strftime("%m/%d/%y")}}</td>
                         <td>{{task.nameOfProject}}</td>
@@ -57,7 +59,8 @@ Home
         </div>
         <div id="Meds">
             {% if cntMeds != 0 %}
-            <h6 class="display-6 text-center border-warning" style="border-top: 5px solid">Medications - {{cntMeds}}</h6>
+            <h6 class="display-6 text-center border-warning" style="border-top: 5px solid">Medications - {{cntMeds}}
+            </h6>
             <a href="{{ url_for('health.medications_reorder') }}"><button class="btn btn-success">Reorder</button></a>
             <table class="table table-striped">
                 <caption class="table-caption">* Due within the next 5 days</caption>
@@ -71,8 +74,11 @@ Home
                 <tbody>
                     {% for med in meds %}
                     {% if med.next_refill.strftime("%m/%d/%Y") >= med.next_refill.now().strftime("%m/%d/%Y") %}
-                    <tr class="text-success"><td><a class="text-success" href="/health/medupdate/{{med.id}}">{% else %}<tr class="text-danger"><td><a class="text-danger" href="/health/medupdate/{{med.id}}">{% endif %}
-                        {{med.name}}</a></td>
+                    <tr class="text-success">
+                        <td><a class="text-success" href="/health/medupdate/{{med.id}}">{% else %}
+                    <tr class="text-danger">
+                        <td><a class="text-danger" href="/health/medupdate/{{med.id}}">{% endif %}
+                                {{med.name}}</a></td>
                         <td>{{med.dose}}</td>
                         <td>{{med.reason_for_taking}}</td>
                         <td>{{med.next_refill.strftime("%m/%d/%Y")}}</td>
@@ -97,7 +103,9 @@ Home
                     {% for date, plan in plans | groupby('date') %}
                     <tr>
                         <form action="/plan/single/{{date.strftime('%Y-%m-%d')}}" , method="POST">
-                            <td><button type="submit" class="btn" name="dateselector" id="dateselector" value="{{date.strftime('%Y-%m-%d')}}">{{ date.strftime('%A %b %d, %Y') }}</button></td>
+                            <td><button type="submit" class="btn" name="dateselector" id="dateselector"
+                                    value="{{date.strftime('%Y-%m-%d')}}">{{ date.strftime('%A %b %d, %Y') }}</button>
+                            </td>
                         </form>
                         <td>
                             <ul class="list-group">
@@ -114,6 +122,7 @@ Home
             </table>
         </div>
         <div id="A1C">
+            {% if cntA1C != 0 %}
             <h6 class="display-6 text-center border-warning" style="border-top: 5px solid">Current A1C</h6>
             <table class="table table-striped">
                 <thead>
@@ -129,9 +138,12 @@ Home
                     </tr>
                 </tbody>
             </table>
+            {% endif %}
         </div>
         <div id="CPAP">
+            {% if current_user.id == 1 %}
             <h6 class="display-6 text-center border-warning" style="border-top: 5px solid">C-PAP Supplies</h6></b>
+            {% endif %}
         </div>
     </div>
 </div>

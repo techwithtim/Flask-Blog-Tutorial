@@ -74,7 +74,7 @@ def goal_single(id):
         )
         db.session.add(newtask)
         db.session.commit()
-        return redirect(url_for('health.goal_single', id=id))
+        return redirect(url_for('prod.goal_single', id=id))
     
     completedTasks = db.session.query(Tasks.item).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.goalfk == id).filter(Tasks.checked == True).count()
     allTasks = db.session.query(Tasks.item).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.goalfk == id).count()
@@ -86,7 +86,7 @@ def goal_single(id):
 
     goals = db.session.query(Goals).filter(Goals.userid == flask_login.current_user.id).filter(Goals.id == id).all()
     tasks = db.session.query(Tasks).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.goalfk == id).order_by(Tasks.checked, Tasks.duedate, Tasks.item).all()
-    return render_template("/goals_single.html", user=User, goals=goals, tasks=tasks, percentcomplete=percentcomplete)
+    return render_template("productivity/goals_single.html", user=User, goals=goals, tasks=tasks, percentcomplete=percentcomplete)
 
 @prod.route("/noTOyes/<taskid>/<goalid>")
 @login_required
@@ -95,7 +95,7 @@ def goalnoTOyes(taskid, goalid):
     task = Tasks.query.filter_by(id=taskid).first()
     task.checked = True
     db.session.commit()
-    return redirect(url_for('health.goal_single', id=goalid))
+    return redirect(url_for('prod.goal_single', id=goalid))
 
 @prod.route("/yesTOno/<taskid>/<goalid>")
 @login_required
@@ -104,7 +104,7 @@ def goalyesTOno(taskid, goalid):
     task = Tasks.query.filter_by(id=taskid).first()
     task.checked = False
     db.session.commit()
-    return redirect(url_for('health.goal_single', id=goalid))
+    return redirect(url_for('prod.goal_single', id=goalid))
 
 @prod.route("/deletetask/<taskid>/<goalid>")
 @login_required
@@ -112,7 +112,7 @@ def deletegoal(taskid, goalid):
     
     Tasks.query.filter_by(id=taskid).delete()
     db.session.commit()
-    return redirect(url_for('health.goal_single', id=goalid))
+    return redirect(url_for('prod.goal_single', id=goalid))
 
 
 @prod.route("/projects", methods=['GET', 'POST'])
@@ -200,7 +200,7 @@ def project_single(id):
             udproject.next_review = datetime.datetime.strptime(request.form.get('date_update'),"%Y-%m-%d") + timedelta(days=int(udproject.when_review))
             udproject.last_reviewed = datetime.datetime.strptime(request.form.get('date_update'),"%Y-%m-%d")
             db.session.commit()
-            return redirect(url_for('health.home'))
+            return redirect(url_for('views.home'))
         else:
             if request.form.get('complete') == 'on': complete = True 
             else: complete = False
@@ -214,7 +214,7 @@ def project_single(id):
             )
             db.session.add(newtask)
             db.session.commit()
-        return redirect(url_for('health.project_single', id=id))
+        return redirect(url_for('prod.project_single', id=id))
     
     completedTasks = db.session.query(Tasks.item).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.project == id).filter(Tasks.checked == True).count()
     allTasks = db.session.query(Tasks.item).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.project == id).count()
@@ -226,7 +226,7 @@ def project_single(id):
 
     projects = db.session.query(Projects.id, Projects.name, Projects.status, Projects.last_reviewed, Projects.when_review, Projects.pictureurl, Projects.userid).filter(Projects.userid == flask_login.current_user.id).filter(Projects.id == id).all()
     tasks = db.session.query(Tasks).filter(Tasks.userid == flask_login.current_user.id).filter(Tasks.project == id).order_by(Tasks.checked, Tasks.duedate, Tasks.item).all()
-    return render_template("/projects_single.html", user=User, projects=projects, tasks=tasks, percentcomplete=percentcomplete, today=datetime.datetime.today())
+    return render_template("productivity/projects_single.html", user=User, projects=projects, tasks=tasks, percentcomplete=percentcomplete, today=datetime.datetime.today())
 
 @prod.route("/noTOyes/<taskid>/<projectid>")
 @login_required
@@ -235,7 +235,7 @@ def noTOyes(taskid, projectid):
     task = Tasks.query.filter_by(id=taskid).first()
     task.checked = True
     db.session.commit()
-    return redirect(url_for('health.project_single', id=projectid))
+    return redirect(url_for('prod.project_single', id=projectid))
 
 @prod.route("/yesTOno/<taskid>/<projectid>")
 @login_required
@@ -244,7 +244,7 @@ def yesTOno(taskid, projectid):
     task = Tasks.query.filter_by(id=taskid).first()
     task.checked = False
     db.session.commit()
-    return redirect(url_for('health.project_single', id=projectid))
+    return redirect(url_for('prod.project_single', id=projectid))
 
 @prod.route("/deletetask/<taskid>/<projectid>")
 @login_required
@@ -257,7 +257,7 @@ def deletetask(taskid, projectid):
 @prod.route("/importNotion")
 @login_required
 def importNotion():
-    from .taskinport import get_tasks, getNextTasks, parsejsonMakeTask, notionidupdate
+    from website.taskinport import get_tasks, getNextTasks, parsejsonMakeTask, notionidupdate
     
     notionidupdate()
     

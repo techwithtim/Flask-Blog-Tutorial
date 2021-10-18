@@ -1,8 +1,12 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
+import flask_login
+from werkzeug.datastructures import ContentSecurityPolicy
 from website import db
-from website.models import User
-from flask_login import login_user, logout_user, login_required, current_user
+from website.models import *
+from flask_login import login_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
+import os
 
 auth = Blueprint("auth", __name__)
 
@@ -24,17 +28,21 @@ def login():
         else:
             flash('Email does not exist.', category='error')
 
-    return render_template("login.html", user=current_user)
+    return render_template("login.html", user=User)
 
 
 @auth.route("/sign-up", methods=['GET', 'POST'])
 def sign_up():
     if request.method == 'POST':
+        pic = request.files['avatar']
+        mime = pic.mimetype
+        filename = secure_filename(pic.filename)
+        
         email = request.form.get("email")
         username = request.form.get("username")
         password1 = request.form.get("password1")
         password2 = request.form.get("password2")
-
+        
         email_exists = User.query.filter_by(email=email).first()
         username_exists = User.query.filter_by(username=username).first()
 
@@ -51,15 +59,41 @@ def sign_up():
         elif len(email) < 4:
             flash("Email is invalid.", category='error')
         else:
-            new_user = User(email=email, username=username, password=generate_password_hash(
-                password1, method='sha256'))
+            new_user = User(
+                email=email, 
+                username=username, 
+                password=generate_password_hash(password1, method='sha256'),
+                avatar = pic.read(),
+                avatar_filename = filename,
+                avatar_mimetype = mime,
+                firstname = request.form.get('firstname'),
+                lastname = request.form.get('lastname'),
+                address = request.form.get('address'),
+                city = request.form.get('city'),
+                state = request.form.get('state'),
+                zip = request.form.get('zip'),
+                phone = request.form.get('phone'),
+                dob = datetime.datetime.strptime(request.form.get('dob'),"%Y-%m-%d"),
+            )
             db.session.add(new_user)
             db.session.commit()
+            
             login_user(new_user, remember=True)
             flash('User created!')
+            
+            profile = db.session.query(User).filter_by(username=username).first()
+            filename = str(profile.id)+"."+mime[-3:]
+            profile.avatar_filename = filename
+            db.session.commit()
+
+            pic.seek(0)
+            pic.save(os.path.join('website','static','images', filename))
+        
+            
             return redirect(url_for('views.home'))
 
-    return render_template("signup.html", user=current_user)
+    states = States.query.all()
+    return render_template("signup.html", user=User, states=states)
 
 
 @auth.route("/logout")

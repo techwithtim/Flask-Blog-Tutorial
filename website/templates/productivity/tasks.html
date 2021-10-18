@@ -48,7 +48,7 @@
         </table>
         <nav aria-label="Task InComplete Pageinate">
             <ul class="pagination justify-content-start">
-                {% for page in incomplete.iter_pages(left_edge=3, right_edge=3, left_current=3, right_current=3) %}
+                {% for page in complete.iter_pages(left_edge=3, right_edge=3, left_current=3, right_current=3) %}
                 <li class="page-item">
                     {% if page %}
                     <a class="page-link" href="{{ url_for('prod.tasks', page_num=page) }}">{{ page }}</a>
@@ -119,7 +119,7 @@
         </table>
         <nav aria-label="Task Complete Pageinate">
             <ul class="pagination justify-content-start">
-                {% for page in complete.iter_pages(left_edge=3, right_edge=3, left_current=3, right_current=3) %}
+                {% for page in incomplete.iter_pages(left_edge=3, right_edge=3, left_current=3, right_current=3) %}
                 <li class="page-item">
                     {% if page %}
                     <a class="page-link" href="{{ url_for('prod.tasks', page_num=page) }}">{{ page }}</a>

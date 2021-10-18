@@ -56,15 +56,15 @@ Percent Complete
         <tr>
             <td>
                 {% if task.checked %}
-                <a href="{{ url_for('views.goalyesTOno', taskid=task.id, goalid=goal.id) }}"><button name="markdone" class="btn btn-warning">Undone</button></a>
+                <a href="{{ url_for('prod.goalyesTOno', taskid=task.id, goalid=goal.id) }}"><button name="markdone" class="btn btn-warning">Undone</button></a>
                 {% else %}
-                <a href="{{ url_for('views.goalnoTOyes', taskid=task.id, goalid=goal.id) }}"><button name="markdone" class="btn btn-success">Complete</button></a>
+                <a href="{{ url_for('prod.goalnoTOyes', taskid=task.id, goalid=goal.id) }}"><button name="markdone" class="btn btn-success">Complete</button></a>
                 {% endif %}
             </td>
             <td>{{task.item}}</td>
             <td>{{task.goalname}}</td>
             <td>{{task.duedate.strftime("%m/%d/%y")}}</td>
-            <td><a href="{{ url_for('views.deletegoal', taskid=task.id, goalid=goal.id) }}"><button class="btn btn-outline-danger">x</button></a></td>
+            <td><a href="{{ url_for('prod.deletegoal', taskid=task.id, goalid=goal.id) }}"><button class="btn btn-outline-danger">x</button></a></td>
         </tr>
         {% endfor %}
     </tbody>

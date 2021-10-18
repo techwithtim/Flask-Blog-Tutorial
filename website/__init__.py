@@ -10,9 +10,13 @@ DB_NAME = "database.db"
 
 def create_app():
     app = Flask(__name__)
+    UPLOAD_FOLDER = 'website/static/images'
+    ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+
     app._static_folder = 'static'   
     app.config['SECRET_KEY'] = "helloworld"
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     db.init_app(app)
     
     Migrate(app,db)

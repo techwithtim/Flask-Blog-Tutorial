@@ -110,8 +110,8 @@
       <div class="dropdown">
         <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1"
           data-bs-toggle="dropdown" aria-expanded="false">
-          {% set fn = 'images/'+current_user.avatar %}
-          <img src="{{url_for('static', filename=fn)}}" alt="" width="64" height="64" class="rounded-circle me-2">
+          {% set fn = 'images/'+current_user.avatar_filename %}
+          <img src="{{url_for('static', filename=fn)}}" alt="pic" width="64" height="64" class="rounded-circle me-2">
           <strong>{{current_user.username}}</strong>
         </a>
         <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
