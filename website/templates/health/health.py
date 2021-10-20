@@ -1,12 +1,15 @@
 from operator import or_
 from flask import Blueprint, render_template, request, flash, redirect, url_for, send_file, after_this_request
+from flask.templating import render_template_string
 from flask_login import login_required
 
 from website.models import *
-from website.notion import get_supplies
+from flask_mail import Message
 from datetime import datetime, timedelta
 from dateutil import relativedelta
-from website import db
+from website import db, mail
+import css_inline, html2text
+
 
 from subprocess import run, PIPE
 from sqlalchemy.sql import func, desc, or_
@@ -28,7 +31,7 @@ def healthHome():
 def doctors():
     if request.method == 'POST':
         newdr = Doctor(
-            name=request.form.get('drname'), 
+            name=request.form.get('drname').title(), 
             facilityfk=request.form.get('facility'), 
             userid=request.form.get('thisuserid'),
             address=request.form.get('address'),
@@ -259,13 +262,13 @@ def medications_reorder():
             filename = "ics.ics"
             fullname = os.path.join(path,filename)
             results = db.session.query(Medications).filter(Medications.process == True).filter(Medications.userid == flask_login.current_user.id).all()
-
+            cal = request.form.get('calendar')
             if len(results) == 0:
                 message = "No medications found to process.  Please check the process field and re-run this program"
                 print(message)
                 redirect(url_for ('health.medications_reorder'), message=message)
             else:
-                make_ics(fullname)
+                make_ics(fullname, cal)
                 for result in results:
                     details_ics(result,fullname)
                 close_ics(path,filename,fullname)
@@ -317,27 +320,64 @@ def medications_reorder():
 @login_required
 def cpap():
     if request.method == "POST":
-        run([sys.executable,'cpap/main.py'], shell=False, stdout=PIPE)
-        flash("Order Script ran!", category='sucess')
-        #BUG: Sort By Date (Currently A String) Want It Done By Date.
-        #TODO: Make to where multi users are capable.  Will need to factor in every user has a notion secrete key
-        #TODO: Figure out why this page does not work on the published website and fix it.
+        lastordered = datetime.datetime.strptime(request.form.get('lastordered'),"%Y-%m-%d")
+        nextorder = lastordered + timedelta(days = int(request.form.get('howoften')))
+        newsupply = Cpap(
+            name = request.form.get('name'),
+            itemnum = request.form.get('itemnum'),
+            howoften = request.form.get('howoften'),
+            lastordered = lastordered,
+            nextorderdate = nextorder,
+            imageURL = request.form.get('imageURL'),
+            userid = request.form.get('thisuserid')
+        ) 
+        db.session.add(newsupply)
+        db.session.commit()
         return redirect(url_for('health.cpap'))
     
-    supplies = get_supplies()
-    cpapsupplies = []
-    for i in range(len(supplies['results'])):
-        id = supplies['results'][i]['id']
-        item = supplies['results'][i]['properties']['Item']['title'][0]['plain_text']
-        itemNum = supplies['results'][i]['properties']['Item#']['rich_text'][0]['plain_text']
-        howOften = supplies['results'][i]['properties']['How often (days)']['number']
-        lastOrdered = datetime.datetime.strptime(supplies['results'][i]['properties']['Last Ordered']['date']['start'],"%Y-%m-%d")
-        imgUrl = supplies['results'][i]['properties']['ImageURL']['url']
-        nextOrder = datetime.datetime.strptime(supplies['results'][i]['properties']['Last Ordered']['date']['start'],"%Y-%m-%d") + timedelta(days=howOften)
-        littlesupply = [id,item,itemNum,howOften,lastOrdered.strftime("%m-%d-%Y"),imgUrl,nextOrder.strftime("%m-%d-%Y")]
-        cpapsupplies.append(littlesupply)
-    cpapsupplies.sort(key= lambda x: x[6])
-    return render_template("health/cpap.html", user=User, supplies=cpapsupplies)
+    cntCpap = db.session.query(Cpap).filter(Cpap.nextorderdate <= datetime.datetime.now()+timedelta(days=5)).filter(Cpap.userid == flask_login.current_user.id).count()
+    if cntCpap != 0:
+        cpaps = db.session.query(Cpap).filter(Cpap.nextorderdate <= datetime.datetime.now()+timedelta(days=5)).filter(Cpap.userid == flask_login.current_user.id).all()
+        template = render_template('/emails/reorder_cpap.html', user=User, cpaps=cpaps)
+        inlined = css_inline.inline(template)
+        msg = Message()
+        msg.subject = 'CPAP order for ' + flask_login.current_user.firstname + " " + flask_login.current_user.lastname
+        msg.sender = flask_login.current_user.email
+        msg.recipients = ['paul@mailtrap.io', 'rbtm2006@me.com']
+        msg.html = inlined
+        msg.body = html2text.html2text(inlined)
+        mail.send(msg)
+
+    cpaps = db.session.query(Cpap).filter(Cpap.userid == flask_login.current_user.id).order_by(Cpap.nextorderdate).all()
+    return render_template("health/cpap.html", user=User, cpaps=cpaps)
+
+@health.route("/cpap/delete/<id>", methods=['GET'])
+@login_required
+def deletecpap(id):
+    Cpap.query.filter_by(id=id).delete()
+    db.session.commit()
+    return redirect(url_for('health.cpap'))
+
+@health.route("/cpap/<id>", methods=['GET', 'POST'])
+@login_required
+def updatecpap(id):
+    if request.method == "POST":
+        lastordered = datetime.datetime.strptime(request.form.get('lastordered'),"%Y-%m-%d")
+        nextorder = lastordered + timedelta(days = int(request.form.get('howoften')))
+        
+        cpap = db.session.query(Cpap).filter_by(id=id).first()
+        cpap.name = request.form.get('name'),
+        cpap.lastordered = lastordered
+        cpap.nextorderdate = nextorder
+        cpap.howoften = request.form.get('howoften')
+        cpap.imageURL = request.form.get('imageURL')
+        cpap.itemnum = request.form.get('itemnum')
+        db.session.commit()
+        
+        return redirect(url_for('health.cpap'))
+    
+    cpap = Cpap.query.filter_by(id=id).first()
+    return render_template('health/cpap_single.html', user=User, cpap=cpap)
 
 @health.route("/deletingMed/<id>")
 @login_required
@@ -373,7 +413,7 @@ def allergies():
         db.session.add(allergic)
         db.session.commit()
     
-    allergies = db.session.query(Allergies).filter(Allergies.userid ==flask_login.current_user.id).order_by(Allergies.name).all()
+    allergies = db.session.query(Allergies).filter(Allergies.userid ==flask_login.current_user.id).order_by(desc(Allergies.dateadded), Allergies.name).all()
     return render_template("health/allergies.html", user=User, allergies=allergies)
 
 @health.route("/deletingAllergy/<id>")
@@ -433,7 +473,7 @@ def makeCard(id):
 def doctorsEdit(id):
     if request.method == 'POST':
         editDr = db.session.query(Doctor).filter(Doctor.id == id).first()
-        editDr.name=request.form.get('drname')
+        editDr.name=request.form.get('drname').title()
         editDr.facilityfk=request.form.get('facility')
         editDr.userid=request.form.get('thisuserid')
         editDr.address=request.form.get('address')

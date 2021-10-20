@@ -1,31 +1,90 @@
 {% extends "health/health-div.html" %}
+
 {% block title %}
-    CPAP Supplies
+CPAP Supplies
 {% endblock %}
 
 {% block content %}
-<br>
-<form action="/cpap" method="POST">
-<input type="submit" value="ReOrder Supplies">
-</form>
-{% for supply in supplies %}
-<!-- FIXME: Have this into two columns -->
-<div class="card mb-3 border-dark justify-content-around" style="max-width: 500px;">
-    <div class="row g-0">
-        <div class="col md-4">
-            <img src={{supply[5]}} class="img-fluid rounded-start"><br />
-        </div>
-        <div class="col md-8">
-            <div class="card-body">
-                <h5 class="card-title">{{supply[1]}}<br>({{supply[2]}})</h5>
-                <p class="card-text">
-                    How Often to Reorder: every {{supply[3]}} days<br>
-                    When To Reorder: {{supply[6]}}</p>
-                <p class="card-text"><small class="text-muted">Last Ordered: {{supply[4]}} </small></p>
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+    Add New CPAP Supply
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add New CPAP Supply</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
+            <div class="modal-body">
+                <form action="/health/cpap" method="post" class="row g-2">
+                    <div class="col-8">
+                        <label class="form-label" for="name">Name of CPAP Supply</label>
+                        <input class="form-control" type="text" name="name" id="name">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" for="itemnum">Item Number</label>
+                        <input class="form-control" type="text" name="itemnum" id="itemnum">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label" for="lastordered">Last Ordered</label>
+                        <input class="form-control" type="date" name="lastordered" id="lastordered">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label" for="howoften">How Many days to reorder</label>
+                        <input class="form-control" type="number" name="howoften" id="howoften">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label" for="imageURL">URL for Image</label>
+                        <input class="form-control" type="url" name="imageURL" id="imageURL">
+                    </div>
+                    
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <input type="hidden" name='thisuserid' value="{{current_user.id}}">
+                <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+            </form>
         </div>
     </div>
 </div>
-<br>
-{% endfor%}
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <th></th>
+        <th>Name <br>
+            Last Ordered <br>
+            Next Order <br>
+            Item Number
+        </th>
+    </thead>
+    <tbody>
+        {% for cpap in cpaps %}
+        <tr>
+            <td width="135px"><a href="/health/cpap/{{cpap.id}}"><img src="{{cpap.imageURL}}" class="btn" width="125px"
+                        height="125px"></a>
+            </td>
+            <td>
+                <strong>{{cpap.name}}</strong> <br>
+                <p class="small">({{cpap.itemnum}})</p>
+                Last Ordered: {{cpap.lastordered.strftime("%A %B %d, %Y")}} <br>
+                Next Order Date: {{cpap.nextorderdate.strftime("%A %B %d, %Y")}} <br>
+            </td>
+            <td width="5%">
+                <a href="/health/cpap/{{cpap.id}}" class="btn btn-primary" role="button"><i class="fas fa-edit"></i></a>
+            </td>
+            <td width="5%">
+                <a href="/health/cpap/delete/{{cpap.id}}"><button class="btn btn-danger"><i
+                            class="fas fa-trash-alt"></i></button></a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}

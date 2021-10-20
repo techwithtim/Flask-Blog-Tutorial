@@ -7,9 +7,10 @@ from datetime import timedelta
 from website.models import Projects, Tasks
 from flask_login import current_user
 
-def make_ics(fullname):
+def make_ics(fullname, cal):
     with open(fullname, 'w') as my_file:
         my_file.write('BEGIN:VCALENDAR\nVERSION:2.0\n')
+        my_file.write('X-WR-CALNAME:'+ cal + "\n")
     
 def details_ics(med, fullname):
     with open (fullname, 'a') as my_file:

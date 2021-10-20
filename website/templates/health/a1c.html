@@ -46,7 +46,7 @@ A1C for {{current_user.firstname}} {{current_user.lastname}}
                             {% for doctor in doctors %}
                             {% if doctor.id == result.doctorfk %}
                             <td>{{doctor.name}}</td>
-                            <td><a href="/health/a1c/delete/{{result.id}}"><button><i
+                            <td><a href="/health/a1c/delete/{{result.id}}"><button class="btn btn-danger"><i
                                             class="fas fa-trash"></i></button></a></td>
                             {% endif %}
                             {% endfor %}

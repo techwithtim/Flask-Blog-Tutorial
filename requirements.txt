@@ -2,8 +2,11 @@ Flask
 Flask-Login
 Flask-SQLAlchemy
 Flask-Migrate
+Flask-Mail
+html2text
 ics
 lxml
 requests
 pdfkit
+css_inline
 wifi-qrcode-generator

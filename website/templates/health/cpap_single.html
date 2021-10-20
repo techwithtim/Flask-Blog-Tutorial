@@ -1,0 +1,34 @@
+{% extends "health/health-div.html" %}
+
+{% block title %}
+CPAP Supplies
+{% endblock %}
+
+{% block content %}
+<form action="/health/cpap/{{cpap.id}}" method="post" class="row g-2">
+    <div class="col-8">
+        <label class="form-label" for="name">Name of CPAP Supply</label>
+        <input class="form-control" type="text" name="name" id="name" value={{cpap.name}}>
+    </div>
+    <div class="col-4">
+        <label class="form-label" for="itemnum">Item Number</label>
+        <input class="form-control" type="text" name="itemnum" id="itemnum" value={{cpap.itemnum}}>
+    </div>
+    <div class="col-6">
+        <label class="form-label" for="lastordered">Last Ordered</label>
+        <input class="form-control" type="date" name="lastordered" id="lastordered" value={{cpap.lastordered.strftime('%Y-%m-%d')}}>
+    </div>
+    <div class="col-6">
+        <label class="form-label" for="howoften">How Many days to reorder</label>
+        <input class="form-control" type="number" name="howoften" id="howoften" value={{cpap.howoften}}>
+    </div>
+    <div class="col-12">
+        <label class="form-label" for="imageURL">URL for Image</label>
+        <input class="form-control" type="url" name="imageURL" id="imageURL" value={{cpap.imageURL}}>
+    </div>
+    <div class="col-4">
+        <input type="hidden" name='thisuserid' value="{{current_user.id}}">
+        <button type="submit" class="btn btn-primary">Save changes</button>
+    </div>
+</form>
+{% endblock %}

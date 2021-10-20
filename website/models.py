@@ -408,3 +408,15 @@ class HousingHistory(db.Model):
     update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
     date_created = db.Column(db.DateTime(timezone=True), default=func.now())
     
+class Cpap(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text)
+    lastordered = db.Column(db.Date)
+    nextorderdate = db.Column(db.Date)
+    howoften = db.Column(db.Integer)
+    imageURL = db.Column(db.Text)
+    itemnum = db.Column(db.Text)
+    userid = db.Column(db.Integer)
+    update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
+    date_created = db.Column(db.DateTime(timezone=True), default=func.now())
+    

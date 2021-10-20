@@ -12,6 +12,12 @@
 <form action="/health/medications/reorder" , method="POST">
     <input type="date" name="reorder_date" id="reorder_date"><button type="submit" name="process" value="ReOrder">ReOrder</button>
     <div>
+        <select name="calendar" id="calendar">
+            <option value="Jeremy - Medical">Jeremy - Medical</option>
+            <option value="Sandy Medical">Sandy Medical</option>
+            <option value="Family">Family</option>
+            <option value="Shawn-Personal">Shawn-Personal</option>
+        </select>
         <button type="submit" name="process" id="process" value="PROCESS MEDICATIONS" class="btn btn-primary">PROCESS MEDICATIONS</button>
     </div>
     <table class="table table-bordered table-hover">

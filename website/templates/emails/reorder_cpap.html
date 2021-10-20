@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Baloo+Chettan+2:wght@400;500;800&family=Nunito:wght@400;900&family=Poppins:ital,wght@0,400;1,700&family=Staatliches&display=swap');
+    </style>
+    <title>CPAP Supply Request </title>
+    <style>
+        .indexloop {
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .container {
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            display: grid;
+            grid-template-columns: 100%;
+            grid-template-rows: auto auto auto auto;
+            gap: 0px 0px;
+            grid-auto-flow: row;
+            grid-template-areas:
+                "header"
+                "subheader"
+                "shipping";
+            border-left: 2px solid #000000;
+            border-right: 2px solid #000000;
+            border-top: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+        }
+
+        
+        .shipping {
+            background-color: #eeeeee;
+            display:grid;
+            grid-template-columns: 60% 5% 35%;
+            grid-template-rows: auto auto;
+            gap: 0px 0px;
+            grid-template-areas:
+            "order . customer"
+            "order . ship";
+            grid-area: shipping;
+            color: black;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            padding-left: 20px;
+            padding-right: 20px;
+            
+        }
+
+        .small{
+            font-size: 12px;
+        }
+        
+        .order {
+            grid-area: order;
+            font-size: 14px;
+            text-align: left;
+            list-style: decimal;
+        }
+
+        .customer {
+            grid-area: customer;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .ship {
+            grid-area: ship;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .subheader {
+            grid-area: subheader;
+            background-color: #FFFFFF;
+            color: #242424;
+            font-size: 14px;
+            text-align: left;
+            padding-left: 20px;
+        }
+
+        .header {
+            grid-area: header;
+            background-color: #ffcc99;
+            color: #242424;
+            font-size: 30px;
+            text-align: center;
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+
+        .tableinfo {
+            background-color: #FFFFFF;
+            color: #242424;
+            font-size: 14px;
+        }
+
+        .tableinfo_title {
+            padding: 5px;
+            background-color: #99CCFF;
+            color: black;
+            font-size: 150%;
+            text-align: center;
+            font-family: 'Baloo Chettan 2', cursive;
+        }
+
+        .tablestyle {
+            background-color: #eeeeee;
+            border: 2px solid black;
+            font-family: 'Baloo Chettan 2', cursive;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="shipping">
+            <div class="order">
+                <table width="100%" border="0" align="left" cellpadding="5" cellspacing="0" class="tablestyle">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="tableinfo_title">
+                                Order
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tableinfo">
+                                <table>
+                                    {% for cpap in cpaps %}
+                                    <tr>
+                                        <td class="indexloop">{{loop.index}}</td>
+                                        <td>
+                                            <strong>{{cpap.name}}</strong> - ({{cpap.itemnum}})<br>
+                                            Last Ordered: {{cpap.lastordered.strftime("%A %B %d, %Y")}}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="customer">
+                <table width="100%" border="0" align="right" cellpadding="5" cellspacing="0" class="tablestyle">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="tableinfo_title"">
+                                Customer
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class=" tableinfo">
+                                {{current_user.firstname}} {{current_user.lastname}}<br>
+                                dob: {{current_user.dob.strftime("%m/%d/%Y")}}<br>
+                                {{current_user.email}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="ship">
+                <table width="100%" border="0" align="right" cellpadding="5" cellspacing="0" class="tablestyle">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="tableinfo_title">
+                                Shipping
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tableinfo">
+                                {{current_user.firstname}} {{current_user.lastname}}<br>
+                                {{current_user.address}}<br>
+                                {{current_user.city}}, {{current_user.state}} {{current_user.zip}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="header">
+            CPAP Supply Request
+        </div>
+        <div class="subheader">
+            Please fulfill the following request for CPAP supplies.
+        </div>
+    </div>
+</body>
+
+</html>

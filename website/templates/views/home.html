@@ -1,150 +1,242 @@
 {% extends "base.html" %}
+
 {% block title %}
 Home
 {% endblock %}
+
 {% block content %}
 <h1 class="display-1 text-center">{{current_user.firstname}}'s Dashboard</h1>
-
-<div class="row">
-    <div class="col-7">
-        <div id="Tasks">
-            {% if cntTasks != 0 %}
-            <h6 class="display-6 text-center">Tasks - {{cntTasks}}</h6>
-            <table class="table table-striped">
-                <caption>Only listed are tasks with dates today or prior</caption>
-                <thead>
-                    <th>Task</th>
-                    <th>Due</th>
-                    <th>Project</th>
-                </thead>
-                <tbody>
-                    {% for task in tasks %}
-                    {% if task.duedate.strftime('%Y-%m-%d') == task.duedate.now().strftime('%Y-%m-%d') %}<tr
-                        class="text-primary">
-                        {% else %}
-                    <tr class="text-danger">{% endif %}
-                        <td>{{task.item}}</td>
-                        <td>{{task.duedate.strftime("%m/%d/%y")}}</td>
-                        <td>{{task.nameOfProject}}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            {% endif %}
+<div id="accordion">
+    {% if cntTasks != 0  %}
+    <div class="card">
+        <div class="card-header" id="tasksHeading">
+            <h5 class="mb-0">
+                <button class="btn" data-toggle="collapse" data-target="#tasks" aria-expanded="true"
+                    aria-controls="tasks"><h4>
+                    Tasks <span class="badge rounded-pill alert-primary">{{cntTasks}}</span>
+                </h4></button>
+            </h5>
         </div>
-        <div id="Projects">
-            {% if cntProjects != 0 %}
-            <h6 class="display-6 text-center border-warning" style="border-top: 5px solid">Projects to Review -
-                {{cntProjects}}</h6>
-            <table class="table table-striped">
-                <thead>
-                    <th>Project</th>
-                    <th>Review Date</th>
-                </thead>
-                <tbody>
-                    {% for project in projects %}
-                    {% if project.next_review >= project.next_review.now() %}<tr class="text-primary">
-                        {% elif project.next_review < project.next_review.now() %}
-                    <tr class="text-danger">{% else %}
-                    <tr>{% endif %}
-                        <td><a class="text-decoration-none text-body"
-                                href="productivity/projects/{{project.id}}">{{project.name}}</a></td>
-                        <td>{{project.next_review.strftime("%m/%d/%y")}}</td>
-                    </tr>
-                    {% endfor %}
 
-                </tbody>
-            </table>
-            {% endif %}
-        </div>
-        <div id="Meds">
-            {% if cntMeds != 0 %}
-            <h6 class="display-6 text-center border-warning" style="border-top: 5px solid">Medications - {{cntMeds}}
-            </h6>
-            <a href="{{ url_for('health.medications_reorder') }}"><button class="btn btn-success">Reorder</button></a>
-            <table class="table table-striped">
-                <caption class="table-caption">* Due within the next 5 days</caption>
-                <thead>
-                    <th>Medication</th>
-                    <th>Dose</th>
-                    <th>Reason</th>
-                    <th>Date</th>
-                    <th> </th>
-                </thead>
-                <tbody>
-                    {% for med in meds %}
-                    {% if med.next_refill.strftime("%m/%d/%Y") >= med.next_refill.now().strftime("%m/%d/%Y") %}
-                    <tr class="text-success">
-                        <td><a class="text-success" href="/health/medupdate/{{med.id}}">{% else %}
-                    <tr class="text-danger">
-                        <td><a class="text-danger" href="/health/medupdate/{{med.id}}">{% endif %}
-                                {{med.name}}</a></td>
-                        <td>{{med.dose}}</td>
-                        <td>{{med.reason_for_taking}}</td>
-                        <td>{{med.next_refill.strftime("%m/%d/%Y")}}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            {% endif %}
+        <div id="tasks" class="collapse collapsed" aria-labelledby="tasksHeading" data-parent="#accordion">
+            <div class="card-body">
+                <table class="table table-striped">
+                    <caption>Only listed are tasks with dates today or prior</caption>
+                    <thead>
+                        <th>Task</th>
+                        <th>Due</th>
+                        <th>Project</th>
+                    </thead>
+                    <tbody>
+                        {% for task in tasks %}
+                        {% if task.duedate.strftime('%Y-%m-%d') == task.duedate.now().strftime('%Y-%m-%d') %}<tr
+                            class="text-primary">
+                            {% else %}
+                        <tr class="text-danger">{% endif %}
+                            <td>{{task.item}}</td>
+                            <td>{{task.duedate.strftime("%m/%d/%y")}}</td>
+                            <td>{{task.nameOfProject}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
+    {% endif %}
 
-    <div class="col-5">
-        <div id="Menu">
-            <h6 class="display-6 text-center">Menu</h6>
-            <!-- List of All Dates and Dishes -->
-            <table class="table table-sm table-hover">
-                <thead>
-                    <th>Date</th>
-                    <th>Item</th>
-                </thead>
-                <tbody>
-                    {% for date, plan in plans | groupby('date') %}
-                    <tr>
-                        <form action="/plan/single/{{date.strftime('%Y-%m-%d')}}" , method="POST">
-                            <td><button type="submit" class="btn" name="dateselector" id="dateselector"
-                                    value="{{date.strftime('%Y-%m-%d')}}">{{ date.strftime('%A %b %d, %Y') }}</button>
+    {% if cntProjects != 0 %}
+    <div class="card">
+        <div class="card-header" id="projectsHeading">
+            <h5 class="mb-0">
+                <button class="btn collapsed" data-toggle="collapse" data-target="#projects" aria-expanded="false"
+                    aria-controls="projects"><h4>
+                    Projects <span class="badge rounded-pill alert-primary">{{cntProjects}}</span>
+                </h4></button>
+            </h5>
+        </div>
+        <div id="projects" class="collapse" aria-labelledby="projectsHeading" data-parent="#accordion">
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <th>Project</th>
+                        <th>Review Date</th>
+                    </thead>
+                    <tbody>
+                        {% for project in projects %}
+                        {% if project.next_review >= project.next_review.now() %}<tr class="text-primary">
+                            {% elif project.next_review < project.next_review.now() %}
+                        <tr class="text-danger">{% else %}
+                        <tr>{% endif %}
+                            <td><a class="text-decoration-none text-body"
+                                    href="productivity/projects/{{project.id}}">{{project.name}}</a></td>
+                            <td>{{project.next_review.strftime("%m/%d/%y")}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if cntMeds != 0 %}
+    <div class="card" class="main">
+        <div class="card-header" id="medsHeader">
+            <h5 class="mb-0">
+                <button class="btn collapsed" data-toggle="collapse" data-target="#meds" aria-expanded="false"
+                    aria-controls="meds"><h4>
+                    Medications <span class="badge rounded-pill alert-primary">{{cntMeds}}</span>
+                </h4></button>
+            </h5>
+        </div>
+        <div id="meds" class="collapse" aria-labelledby="medsHeader" data-parent="#accordion">
+            <div class="card-body">
+                <a href="{{ url_for('health.medications_reorder') }}"><button
+                        class="btn btn-success">Reorder</button></a>
+                <table class="table table-striped">
+                    <caption class="table-caption">* Due within the next 5 days</caption>
+                    <thead>
+                        <th>Medication</th>
+                        <th>Dose</th>
+                        <th>Reason</th>
+                        <th>Date</th>
+                        <th> </th>
+                    </thead>
+                    <tbody>
+                        {% for med in meds %}
+                        {% if med.next_refill.strftime("%m/%d/%Y") >= med.next_refill.now().strftime("%m/%d/%Y") %}
+                        <tr class="text-success">
+                            <td><a class="text-success" href="/health/medupdate/{{med.id}}">{% else %}
+                        <tr class="text-danger">
+                            <td><a class="text-danger" href="/health/medupdate/{{med.id}}">{% endif %}
+                                    {{med.name}}</a></td>
+                            <td>{{med.dose}}</td>
+                            <td>{{med.reason_for_taking}}</td>
+                            <td>{{med.next_refill.strftime("%m/%d/%Y")}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if cntMenu != 0 %}
+    <div class="card" class="main">
+        <div class="card-header" id="menuHeader">
+            <h5 class="mb-0">
+                <button class="btn collapsed" data-toggle="collapse" data-target="#menu" aria-expanded="false"
+                    aria-controls="menu"><h4>
+                    Menu <span class="badge rounded-pill alert-primary">{{cntMenu}}</span>
+                </h4></button>
+            </h5>
+        </div>
+        <div id="menu" class="collapse" aria-labelledby="menuHeader" data-parent="#accordion">
+            <div class="card-body">
+                <table class="table table-sm table-hover">
+                    <thead>
+                        <th>Date</th>
+                        <th>Item</th>
+                    </thead>
+                    <tbody>
+                        {% for date, plan in plans | groupby('date') %}
+                        <tr>
+                            <form action="/plan/single/{{date.strftime('%Y-%m-%d')}}" , method="POST">
+                                <td><button type="submit" class="btn" name="dateselector" id="dateselector"
+                                        value="{{date.strftime('%Y-%m-%d')}}">{{ date.strftime('%A %b %d, %Y') }}</button>
+                                </td>
+                            </form>
+                            <td>
+                                <ul class="list-group">
+                                    {% for plan in plans %}
+                                    {% if plan.date == date %}
+                                    <li class="list-group-item">{{ plan.item }}</li>
+                                    {% endif %}
+                                    {% endfor %}
+                                </ul>
                             </td>
-                        </form>
-                        <td>
-                            <ul class="list-group">
-                                {% for plan in plans %}
-                                {% if plan.date == date %}
-                                <li class="list-group-item">{{ plan.item }}</li>
-                                {% endif %}
-                                {% endfor %}
-                            </ul>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        <div id="A1C">
-            {% if cntA1C != 0 %}
-            <h6 class="display-6 text-center border-warning" style="border-top: 5px solid">Current A1C</h6>
-            <table class="table table-striped">
-                <thead>
-                    <th>Date</th>
-                    <th>A1C</th>
-                    <th>E.A.G</th>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>{{currentvalue.ld.strftime("%m/%d/%Y")}}</td>
-                        <td>{{currentvalue.testresult}}</td>
-                        <td>{{eag}}</td>
-                    </tr>
-                </tbody>
-            </table>
-            {% endif %}
-        </div>
-        <div id="CPAP">
-            {% if current_user.id == 1 %}
-            <h6 class="display-6 text-center border-warning" style="border-top: 5px solid">C-PAP Supplies</h6></b>
-            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
+    {% endif %}
+
+    {% if cntA1C != 0 %}
+    <div class="card">
+        <div class="card-header" id="a1cHeader">
+            <h5 class="mb-0">
+                <button class="btn collapsed" data-toggle="collapse" data-target="#a1c" aria-expanded="false"
+                    aria-controls="a1c"><h4>
+                    Latest A1C: <span class="badge rounded-pill alert-primary">{{cntA1C}}</span>
+                </h4></button>
+            </h5>
+        </div>
+        <div id="a1c" class="collapse" aria-labelledby="a1cHeader" data-parent="#accordion">
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <th>Date</th>
+                        <th>A1C</th>
+                        <th>E.A.G</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{currentvalue.ld.strftime("%m/%d/%Y")}}</td>
+                            <td>{{currentvalue.testresult}}</td>
+                            <td>{{eag}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if cntCpap != 0 %}
+    <div class="card">
+        <div class="card-header" id="cpapHeader">
+            <h5 class="mb-0">
+                <button class="btn collapsed" data-toggle="collapse" data-target="#cpap" aria-expanded="false"
+                    aria-controls="cpap"><h4>
+                    CPAP Supplies <span class="badge rounded-pill alert-primary">{{cntCpap}}</span>
+                </h4></button>
+            </h5>
+        </div>
+        <div id="cpap" class="collapse" aria-labelledby="cpapHeader" data-parent="#accordion">
+            <div class="card-body">
+                <table class="table table-sm table-hover">
+                    <thead>
+                        <th></th>
+                        <th>Name <br>
+                            Last Ordered <br>
+                            Next Order <br>
+                            Item Number
+                        </th>
+                    </thead>
+                    <tbody>
+                        {% for cpap in cpaps %}
+                        <tr>
+                            <td width="100px"><a href="/health/cpap/{{cpap.id}}"><img src="{{cpap.imageURL}}"
+                                        class="btn" width="90" height="90px"></a>
+                            </td>
+                            <td>
+                                <strong>{{cpap.name}}</strong> <br>
+                                <p class="small">({{cpap.itemnum}})</p>
+                                Last Ordered: {{cpap.lastordered.strftime("%A %B %d, %Y")}} <br>
+                                Next Order Date: {{cpap.nextorderdate.strftime("%A %B %d, %Y")}} <br>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
