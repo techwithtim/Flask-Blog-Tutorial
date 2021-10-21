@@ -42,12 +42,6 @@ html {
   left: 0;
 }
 
-#clockdate {
-  color: white; 
-  font-size: 13px;
-  text-align: right;
-  padding-right: 10px;
-}
 
 .main {
   margin-left: 280px;

@@ -8,7 +8,17 @@
 
   <link rel="stylesheet" type="text/css" href="{{url_for('static', filename = 'css/bootstrap.css')}}">
   <link rel="stylesheet" type="text/css" href="{{url_for('static', filename = 'css/sidebars.css')}}">
+  <link rel="stylesheet" type="text/css" href="{{url_for('static', filename = 'css/sidebar-themes.css')}}">
+  <link rel="stylesheet" type="text/css" href="{{url_for('static', filename = 'css/main.css')}}">
+  <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+    integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+    integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+  <link rel="stylesheet" href="//malihu.github.io/custom-scrollbar/jquery.mCustomScrollbar.min.css">
+
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
     integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
   </script>
@@ -27,150 +37,362 @@
 </head>
 
 <body onload="startTime()">
-  <!-- NEW -->
-  <div class="sidebar">
-  <div class="sidebar_content">
-    <div class="flex-shrink-0 p-3 bg-dark" style="width: 280px;">
-      <a href="/" class="d-flex align-items-center pb-3 mb-3 link-light text-decoration-none border-bottom">
-        <svg class="bi me-2" width="30" height="24">
-          <use xlink:href="#bootstrap" /></svg>
-        <span class="fs-5 fw-semibold text-white">My Life</span>
-      </a>
-      <ul class="list-unstyled ps-0">
-        {% if user.is_authenticated %}
-        <li class="mb-1">
-          <button class="btn btn-outline-light btn-toggle align-items-center rounded collapsed text-info"
-            data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">
-            Home
-          </button>
-          <div class="collapse" id="home-collapse">
-            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ">
-              <li><a href="/home" class="link-light rounded">Home</a></li>
-            </ul>
+  <div class="page-wrapper default-theme sidebar-bg bg1 toggled">
+    <nav id="sidebar" class="sidebar-wrapper">
+      <div class="sidebar-content">
+        <!-- sidebar-brand  -->
+        <div class="sidebar-item sidebar-brand">
+          <a href="#">pro sidebar</a>
+        </div>
+        <!-- sidebar-header  -->
+        <div class="sidebar-item sidebar-header d-flex flex-nowrap">
+          <div class="user-pic">
+            {% set fn = 'images/'+current_user.avatar_filename %}
+            <img class="img-responsive img-rounded" src="{{url_for('static', filename=fn)}}" alt="User picture">
           </div>
-        </li>
-        <li class="mb-1">
-          <button class="btn btn-outline-light btn-toggle align-items-center rounded collapsed text-info"
-            data-bs-toggle="collapse" data-bs-target="#menu-collapse" aria-expanded="true">
-            Menu
-          </button>
-          <div class="collapse" id="menu-collapse">
-            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ">
-              <li><a href="/menu" class="link-light rounded">Menu</a></li>
-              <li><a href="/menu/recipe" class="link-light rounded">Recipe</a></li>
-              <li><a href="/menu/shopping" class="link-light rounded">Shopping List</a></li>
-            </ul>
+          <div class="user-info">
+            <span class="user-name">{{current_user.firstname}}
+              <strong>{{current_user.lastname}}</strong>
+            </span>
+            <span class="user-role">Administrator</span>
+            <span class="user-status">
+              <i class="fa fa-circle"></i>
+              <span>Online</span>
+            </span>
           </div>
-        </li>
-        <li class="mb-1">
-          <button class="btn btn-outline-light btn-toggle align-items-center rounded collapsed text-info"
-            data-bs-toggle="collapse" data-bs-target="#health-collapse" aria-expanded="true">
-            Health
-          </button>
-          <div class="collapse" id="health-collapse">
-            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ">
-              <li><a href="/health/facilities" class="link-light rounded">Facilities</a></li>
-              <li><a href="/health/doctors" class="link-light rounded">Doctors</a></li>
-              <li><a href="/health/medications" class="link-light rounded">Medications</a></li>
-              <li><a href="/health//medlist" class="link-light rounded">Medication List</a></li>
-              <li><a href="/health/hospital" class="link-light rounded">Hospitalizations</a></li>
-              <li><a href="/health/allergies" class="link-light rounded">Allergies</a></li>
-              <li><a href="/health/surgeries" class="link-light rounded">Surgeries</a></li>
-              <li><a href="/health/a1c" class="link-light rounded">A1C</a></li>
-              <li><a href="/health/cpap" class="link-light rounded">CPAP Supplies</a></li>
-              <li><a href="https://mychart.salemhealth.org/mychart/Authentication/Login?" target="_blank"
-                  class="link-light rounded">Salem Health MyChart</a></li>
-            </ul>
+        </div>
+        <!-- sidebar-search  -->
+        <div class="sidebar-item sidebar-search">
+          <div>
+            <div id="clockdate">
+              <div class="clockdate-wrapper d-inline-flex">
+                <div id="date"></div>
+              </div>
+            </div>
           </div>
-        </li>
-        <li class="mb-1">
-          <button class="btn btn-outline-light btn-toggle align-items-center rounded collapsed text-info"
-            data-bs-toggle="collapse" data-bs-target="#prod-collapse" aria-expanded="true">
-            Productivity
-          </button>
-          <div class="collapse" id="prod-collapse">
-            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ">
-              <li><a href="/productivity/goals" class="link-light rounded">Goals</a></li>
-              <li><a href="/productivity/projects" class="link-light rounded">Projects</a></li>
-              <li><a href="/productivity/tasks" class="link-light rounded">Tasks</a></li>
-            </ul>
-          </div>
-        </li>
-        <li class="mb-1">
-          <button class="btn btn-outline-light btn-toggle align-items-center rounded collapsed text-info"
-            data-bs-toggle="collapse" data-bs-target="#personal-collapse" aria-expanded="true">
-            Personal
-          </button>
-          <div class="collapse" id="personal-collapse">
-            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ">
-              <li><a href="/vehicle/vehicle" class="link-light rounded">Cars</a></li>
-              <li><a href="/personal/wifi" class="link-light rounded">Wifi</a></li>
-              <li><a href="/personal/housinghistory" class="link-light rounded">Housing History</a></li>
-            </ul>
-          </div>
-        </li>
-      </ul>
-    </div>
-  </div>
-  <div class="footer">
-    <div class="dropdown">
-      <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1"
-        data-bs-toggle="dropdown" aria-expanded="false">
-        {% set fn = 'images/'+current_user.avatar_filename %}
-        <img src="{{url_for('static', filename=fn)}}" alt="pic" width="64" height="64" class="rounded-circle me-2">
-        <strong>{{current_user.username}}</strong>
-      </a>
-      <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-        <li><a class="dropdown-item" href="/profile">Profile</a></li>
-        <li><a class="dropdown-item" href="/settings">Settings</a></li>
-        <li>
-          <hr class="dropdown-divider">
-        </li>
-        <li><a class="dropdown-item" href="/logout">Sign out</a></li>
-      </ul>
-      {% else %}
-      <li><a class="nav-item nav-link" href="/login">Login</a></li>
-      <li><a class="nav-item nav-link" href="/sign-up">Sign Up</a></li>
-      {% endif %}
-    </div>
-    <div id="clockdate">
-      <div class="clockdate-wrapper d-inline-flex">
-        <div id="date"></div>
+        </div>
+        <!-- sidebar-menu  -->
+        <div class=" sidebar-item sidebar-menu">
+          <ul>
+            <li class="header-menu">
+              <span>General</span>
+            </li>
+            <li class="sidebar-dropdown">
+              <a href="/home">
+                <i class="fa fa-tachometer-alt"></i>
+                <span class="menu-text">Dashboard</span>
+                <!-- <span class="badge badge-pill badge-warning">New</span> -->
+              </a>
+              <div class="sidebar-submenu">
+                <ul>
+                  <li>
+                    <a href="/home">Home
+                      <!-- <span class="badge badge-pill badge-success">Pro</span> -->
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li class="sidebar-dropdown">
+              <a href="#">
+                <i class="fas fa-utensils"></i>
+                <span class="menu-text">Menu</span>
+                <!-- <span class="badge badge-pill badge-danger">3</span> -->
+              </a>
+              <div class="sidebar-submenu">
+                <ul>
+                  <li>
+                    <a href="/menu">Menu</a>
+                  </li>
+                  <li>
+                    <a href="/menu/recipe">Recipe</a>
+                  </li>
+                  <li>
+                    <a href="/menu/shopping">Shopping List</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li class="sidebar-dropdown">
+              <a href="#">
+                <i class="fas fa-heartbeat"></i>
+                <span class="menu-text">Health</span>
+              </a>
+              <div class="sidebar-submenu">
+                <ul>
+                  <li>
+                    <a href="/health/facilities">Facilities</a>
+                  </li>
+                  <li>
+                    <a href="/health/doctors">Doctors</a>
+                  </li>
+                  <li>
+                    <a href="/health/medications">Medications</a>
+                  </li>
+                  <li>
+                    <a href="/health//medlist">Medication List</a>
+                  </li>
+                  <li>
+                    <a href="/health/hospital">Hospitalizations</a>
+                  </li>
+                  <li>
+                    <a href="/health/allergies">Allergies</a>
+                  </li>
+                  <li>
+                    <a href="/health/surgeries">Surgeries</a>
+                  </li>
+                  <li>
+                    <a href="/health/A1C">A1C</a>
+                  </li>
+                  <li>
+                    <a href="/health/cpap">CPAP Supplies</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li class="sidebar-dropdown">
+              <a href="#">
+                <i class="fas fa-tasks"></i>
+                <span class="menu-text">Productivity</span>
+              </a>
+              <div class="sidebar-submenu">
+                <ul>
+                  <li>
+                    <a href="/productivity/goals">Goals</a>
+                  </li>
+                  <li>
+                    <a href="/productivity/projects">Projects</a>
+                  </li>
+                  <li>
+                    <a href="/productivity/tasks">Tasks</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li class="sidebar-dropdown">
+              <a href="#">
+                <i class="fas fa-grin-alt"></i>
+                <span class="menu-text">Personal</span>
+              </a>
+              <div class="sidebar-submenu">
+                <ul>
+                  <li>
+                    <a href="/vehicle/vehicle">Vehicles</a>
+                  </li>
+                  <li>
+                    <a href="/personal/wifi">Wifi</a>
+                  </li>
+                  <li>
+                    <a href="/personal/housinghistory">Housing History</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+        </div>
+        <!-- sidebar-menu  -->
       </div>
-    </div>
-  </div>
-  </div>
-  {% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-  {% for category, message in messages %}
-  {% if category == 'error' %}
-  <div class="alert alert-danger alter-dismissable fade show main" role="alert">
-    {{ message }}
-    <button type="button" class="close" data-dismiss="alert">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  {% else %}
-  <div class="alert alert-success alter-dismissable fade show main" role="alert">
-    {{ message }}
-    <button type="button" class="btn btn-outline-dark" data-dismiss="alert">
-      <span aria-hidden="false"><i class="fas fa-window-close"></i></span>
-    </button>
-  </div>
-  {% endif %}
-  {% endfor %}
-  {% endif %}
-  {% endwith %}
-  <div class="d-flex flex-column flex-shrink-0 p-3 bg-light">
-    <div id="submenu" class="main">
-      {% block submenu %}{% endblock %}
-    </div>
-    <main class="main">
-      {% block content %}
-      {% endblock %}
-    </main>
-  </div>
+      <div class="sidebar-footer">
+        <div class="dropdown">
 
+          <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-bell"></i>
+            <span class="badge badge-pill badge-warning notification">3</span>
+          </a>
+          <div class="dropdown-menu notifications" aria-labelledby="dropdownMenuMessage">
+            <div class="notifications-header">
+              <i class="fa fa-bell"></i>
+              Notifications
+            </div>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#">
+              <div class="notification-content">
+                <div class="icon">
+                  <i class="fas fa-check text-success border border-success"></i>
+                </div>
+                <div class="content">
+                  <div class="notification-detail">Lorem ipsum dolor sit amet consectetur adipisicing
+                    elit. In totam explicabo</div>
+                  <div class="notification-time">
+                    6 minutes ago
+                  </div>
+                </div>
+              </div>
+            </a>
+            <a class="dropdown-item" href="#">
+              <div class="notification-content">
+                <div class="icon">
+                  <i class="fas fa-exclamation text-info border border-info"></i>
+                </div>
+                <div class="content">
+                  <div class="notification-detail">Lorem ipsum dolor sit amet consectetur adipisicing
+                    elit. In totam explicabo</div>
+                  <div class="notification-time">
+                    Today
+                  </div>
+                </div>
+              </div>
+            </a>
+            <a class="dropdown-item" href="#">
+              <div class="notification-content">
+                <div class="icon">
+                  <i class="fas fa-exclamation-triangle text-warning border border-warning"></i>
+                </div>
+                <div class="content">
+                  <div class="notification-detail">Lorem ipsum dolor sit amet consectetur adipisicing
+                    elit. In totam explicabo</div>
+                  <div class="notification-time">
+                    Yesterday
+                  </div>
+                </div>
+              </div>
+            </a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item text-center" href="#">View all notifications</a>
+          </div>
+        </div>
+        <div class="dropdown">
+          <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-envelope"></i>
+            <span class="badge badge-pill badge-success notification">7</span>
+          </a>
+          <div class="dropdown-menu messages" aria-labelledby="dropdownMenuMessage">
+            <div class="messages-header">
+              <i class="fa fa-envelope"></i>
+              Messages
+            </div>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#">
+              <div class="message-content">
+                <div class="pic">
+                  <img src="img/user.jpg" alt="">
+                </div>
+                <div class="content">
+                  <div class="message-title">
+                    <strong> Jhon doe</strong>
+                  </div>
+                  <div class="message-detail">Lorem ipsum dolor sit amet consectetur adipisicing
+                    elit. In totam explicabo</div>
+                </div>
+              </div>
+
+            </a>
+            <a class="dropdown-item" href="#">
+              <div class="message-content">
+                <div class="pic">
+                  <img src="img/user.jpg" alt="">
+                </div>
+                <div class="content">
+                  <div class="message-title">
+                    <strong> Jhon doe</strong>
+                  </div>
+                  <div class="message-detail">Lorem ipsum dolor sit amet consectetur adipisicing
+                    elit. In totam explicabo</div>
+                </div>
+              </div>
+
+            </a>
+            <a class="dropdown-item" href="#">
+              <div class="message-content">
+                <div class="pic">
+                  <img src="img/user.jpg" alt="">
+                </div>
+                <div class="content">
+                  <div class="message-title">
+                    <strong> Jhon doe</strong>
+                  </div>
+                  <div class="message-detail">Lorem ipsum dolor sit amet consectetur adipisicing
+                    elit. In totam explicabo</div>
+                </div>
+              </div>
+            </a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item text-center" href="#">View all messages</a>
+
+          </div>
+        </div>
+        <div class="dropdown">
+          <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-cog"></i>
+            <span class="badge-sonar"></span>
+          </a>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuMessage">
+            <a class="dropdown-item" href="#">My profile</a>
+            <a class="dropdown-item" href="#">Help</a>
+            <a class="dropdown-item" href="#">Setting</a>
+          </div>
+        </div>
+        <div>
+          <a href="/logout">
+            <i class="fa fa-power-off"></i>
+          </a>
+        </div>
+        <div class="pinned-footer">
+          <a href="#">
+            <i class="fas fa-ellipsis-h"></i>
+          </a>
+        </div>
+      </div>
+    </nav>
+
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    {% if category == 'error' %}
+    <div class="alert alert-danger alter-dismissable fade show main" role="alert">
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% else %}
+    <div class="alert alert-success alter-dismissable fade show main" role="alert">
+      {{ message }}
+      <button type="button" class="btn btn-outline-dark" data-dismiss="alert">
+        <span aria-hidden="false"><i class="fas fa-window-close"></i></span>
+      </button>
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <!-- page-content  -->
+    <main class="page-content pt-2">
+      <div id="overlay" class="overlay"></div>
+      <div class="container-fluid p-5">
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div id="submenu">
+              {% block submenu %}{% endblock %}
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-12">
+              {% block content %}
+              {% endblock %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- page-content" -->
+  </div>
+  <!-- page-wrapper -->
+
+
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+    integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous">
+  </script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+    integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous">
+  </script>
+  <script src="//malihu.github.io/custom-scrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
+  <script src="{{url_for('static', filename = 'js/main.js')}}"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
   </script>
