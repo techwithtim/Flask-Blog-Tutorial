@@ -336,6 +336,13 @@ def cpap():
         return redirect(url_for('health.cpap'))
     
     cntCpap = db.session.query(Cpap).filter(Cpap.nextorderdate <= datetime.datetime.now()+timedelta(days=5)).filter(Cpap.userid == flask_login.current_user.id).count()
+    cpaps = db.session.query(Cpap).filter(Cpap.userid == flask_login.current_user.id).order_by(Cpap.nextorderdate).all()
+    return render_template("health/cpap.html", user=User, cpaps=cpaps, cntCpap=cntCpap)
+
+@health.route("/cpap/reorder", methods=['GET'])
+@login_required
+def cpap_reorder():
+    cntCpap = db.session.query(Cpap).filter(Cpap.nextorderdate <= datetime.datetime.now()+timedelta(days=5)).filter(Cpap.userid == flask_login.current_user.id).count()
     if cntCpap != 0:
         cpaps = db.session.query(Cpap).filter(Cpap.nextorderdate <= datetime.datetime.now()+timedelta(days=5)).filter(Cpap.userid == flask_login.current_user.id).all()
         template = render_template('/emails/reorder_cpap.html', user=User, cpaps=cpaps)
@@ -347,9 +354,8 @@ def cpap():
         msg.html = inlined
         msg.body = html2text.html2text(inlined)
         mail.send(msg)
-
-    cpaps = db.session.query(Cpap).filter(Cpap.userid == flask_login.current_user.id).order_by(Cpap.nextorderdate).all()
-    return render_template("health/cpap.html", user=User, cpaps=cpaps)
+        flash('Email Sent Sucessfully', category='success')
+    return redirect(url_for('health.cpap'))
 
 @health.route("/cpap/delete/<id>", methods=['GET'])
 @login_required
@@ -365,13 +371,13 @@ def updatecpap(id):
         lastordered = datetime.datetime.strptime(request.form.get('lastordered'),"%Y-%m-%d")
         nextorder = lastordered + timedelta(days = int(request.form.get('howoften')))
         
-        cpap = db.session.query(Cpap).filter_by(id=id).first()
-        cpap.name = request.form.get('name'),
-        cpap.lastordered = lastordered
-        cpap.nextorderdate = nextorder
-        cpap.howoften = request.form.get('howoften')
-        cpap.imageURL = request.form.get('imageURL')
-        cpap.itemnum = request.form.get('itemnum')
+        updatecpap = db.session.query(Cpap).filter_by(id=id).first()
+        updatecpap.name = request.form.get('name')
+        updatecpap.lastordered = lastordered
+        updatecpap.nextorderdate = nextorder
+        updatecpap.howoften = request.form.get('howoften')
+        updatecpap.imageURL = request.form.get('imageURL')
+        updatecpap.itemnum = request.form.get('itemnum')
         db.session.commit()
         
         return redirect(url_for('health.cpap'))

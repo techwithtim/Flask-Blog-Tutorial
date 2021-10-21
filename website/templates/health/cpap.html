@@ -9,6 +9,10 @@ CPAP Supplies
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
     Add New CPAP Supply
 </button>
+{% if cntCpap != 0 %}
+<a href="/health/cpap/reorder" class="btn btn-primary">Re-Order Supplies</a>
+{% endif %}
+
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"

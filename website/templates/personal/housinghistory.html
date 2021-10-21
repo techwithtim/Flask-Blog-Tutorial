@@ -8,12 +8,14 @@ Housing History
 {% endblock %}
 
 {% block submenu %}
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-    Add New Housing History
-</button>
 {% endblock %}
 
 {% block content %}
+<h4 class="display-4 text-center">{{current_user.firstname}}'s Housing History</h4>
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+    Add New Housing History
+</button>
+<a href="/personal/exportcsv" class="btn btn-info">Export CSV</a>
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">

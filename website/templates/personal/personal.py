@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, send_file, after_this_request
 from flask_login import login_required
 from website.models import *
 from website import db
@@ -108,3 +108,44 @@ def deletehouse(id):
     db.session.query(HousingHistory).filter_by(id=id).delete()
     db.session.commit()
     return redirect(url_for('personal.housinghistory'))
+
+@personal.route("/exportcsv", methods=['GET'])
+@login_required
+def exportcsv():
+    import csv
+    houses = db.session.query(HousingHistory).filter(HousingHistory.userid == flask_login.current_user.id).order_by(desc(HousingHistory.movein)).all()
+    headings = []
+    data = []
+    
+    headings = list(HousingHistory.__table__.columns.keys())
+    headings.remove('id')
+    headings.remove('update_time')
+    headings.remove('date_created')
+    headings.remove('userid')
+    headings.insert(6,'length_of_stay')
+    
+    for house in houses:
+        delta = relativedelta.relativedelta(house.moveout, house.movein)
+        if delta.years >= 1:
+            length = f'{delta.years} years, {delta.months} months'
+        elif delta.years == 0 and delta.months == 1:
+            length = f'{delta.months} month'
+        elif delta.years == 0 and delta.months > 1:
+            length = f'{delta.months} months'
+        else: length = 'error'
+        little = [house.movein.strftime("%m/%Y"), house.moveout.strftime("%m/%Y"), house.address, house.city, house.state, house.zip, length]
+        data.append(little)
+    filename = str(flask_login.current_user.firstname).lower() +'_housinghistory.csv'
+    with open('website/static/'+filename, 'w') as f:
+        writer = csv.writer(f)
+        writer.writerow(headings)
+        writer.writerows(data)
+        f.close()
+    
+    full = f"static/{filename}"
+    @after_this_request
+    def filedelete(response):
+        if os.path.exists('website/static/'+filename):
+            os.remove('website/static/'+filename)
+        return response
+    return send_file(full, as_attachment=True)
