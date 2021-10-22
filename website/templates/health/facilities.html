@@ -4,8 +4,11 @@
 {{current_user.username}} Facilities
 {% endblock %}
 
+{% block proheader %}
+Facility List for {{current_user.firstname}}
+{% endblock %}
+
 {% block content %}
-<h1 class="display-1 text-center">Facility List for {{current_user.firstname}} {{current_user.lastname}}</h1>
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary col-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
     Add New Facility

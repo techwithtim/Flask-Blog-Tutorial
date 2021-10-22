@@ -10,6 +10,10 @@ Housing History
 {% block submenu %}
 {% endblock %}
 
+{% block proheader %}
+Edit Housing
+{% endblock %}
+
 {% block content %}
 <form action="{{url_for('personal.edithousing', id=house.id)}}" , method="POST" class="row g-2">
     <div class="col-6">

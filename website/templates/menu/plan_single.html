@@ -6,9 +6,14 @@ Dinner for {{date.strftime('%A, %B %d, %Y')}}
 {% endfor %}
 {% endblock %}
 
-{% block header %}
+{% block proheader %}
 {% for date, item in items | groupby('date') %}
-<h4 class="display-4 text-center">{{date.strftime('%A, %B %d, %Y')}}</h4>
+{{date.strftime('%a %m/%d/%y')}} Meal Plan
+{% endfor %}
+{% endblock %}
+
+{% block content %}
+{% for date, item in items | groupby('date') %}
 <form action="/plan/single/{{date.strftime('%Y-%m-%d')}}" method='POST'>
     <div class="input-group mb-3">
         <input type="hidden" name="datefield" class="form-control form-control-color" value="{{ date }}">

@@ -4,9 +4,9 @@
 {{current_user.username}} Project
 {% endblock %}
 
-{% block header %}
+{% block proheader %}
 {% for project in projects %}
-<h1 class="display-1 text-center">{{project.name}}</h1>
+{{project.name}}
 {% endfor %}
 {% endblock %}
 

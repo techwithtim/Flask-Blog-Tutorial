@@ -4,8 +4,11 @@
 {{current_user.username}} Doctors
 {% endblock %}
 
+{% block proheader %}
+Edit {{doctors.name}}
+{% endblock %}
+
 {% block content %}
-<h1 class="display-1 text-center">Edit {{doctors.name}}</h1>
 <form action="/health/doctors/edit/{{doctors.id}}" method="POST" class="row g-3">
     <div class="col-6">
         <label for="drname">Doctor's Name</label>

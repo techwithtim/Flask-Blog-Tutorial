@@ -9,8 +9,11 @@
 {% block submenu %}
 {% endblock %}
 
+{% block proheader %}
+Profile for {{current_user.username}}
+{% endblock %}
+
 {% block content %}
-<div class="display-6">Profile for {{current_user.username}}</div>
 
 <form action="/profile" enctype=multipart/form-data method="POST" class="row g-3">
     <div class="col-6">

@@ -4,6 +4,10 @@
 CPAP Supplies
 {% endblock %}
 
+{% block proheader %}
+CPAP Supplies for {{current_user.firstname}}
+{% endblock %}
+
 {% block content %}
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">

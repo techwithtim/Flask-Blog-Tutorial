@@ -4,9 +4,9 @@
 {{current_user.username}} Goal
 {% endblock %}
 
-{% block header %}
+{% block proheader %}
 {% for goal in goals %}
-<h1 class="display-1 text-center">{{goal.name}}</h1>
+{{goal.name}}
 {% endfor %}
 {% endblock %}
 

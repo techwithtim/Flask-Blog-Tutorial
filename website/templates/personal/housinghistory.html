@@ -10,8 +10,11 @@ Housing History
 {% block submenu %}
 {% endblock %}
 
+{% block proheader %}
+{{current_user.firstname}}'s Housing History
+{% endblock %}
+
 {% block content %}
-<h4 class="display-4 text-center">{{current_user.firstname}}'s Housing History</h4>
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
     Add New Housing History
 </button>

@@ -4,13 +4,11 @@
 Guill Menu
 {% endblock %}
 
-{% block header %}
-<h1 class="display-1 text-center">Guill Menu</h1>
-<h4 class="display-4 text-center">Planner</h4>
+{% block proheader %}
+Guill Menu Planner
 {% endblock %}
 
 {% block menu %}
-
     {% for date, plan in plans | groupby('date') %}
     <!-- List of All Dates and Dishes -->
     <div class="input-group mb-3">

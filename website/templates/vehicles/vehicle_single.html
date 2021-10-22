@@ -13,6 +13,10 @@
 </button>
 {% endblock %}
 
+{% block proheader %}
+{{veh.year}} {{veh.make}} {{veh.model}} {{veh.trim}}
+{% endblock %}
+
 {% block content %}
 <div class="text-center">
     <h4 class="display-4">{{veh.year}} {{veh.make}} {{veh.model}} {{veh.trim}}</h4>

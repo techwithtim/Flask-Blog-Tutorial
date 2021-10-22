@@ -13,8 +13,14 @@
     }
 </style>
 {% endblock %}
+
 {% block submenu %}
 {% endblock %}
+
+{% block proheader %}
+{{current_user.firstname}} Medication List
+{% endblock %}
+
 {% block content %}
 <div class="header">
     <H4>{{current_user.firstname}} {{current_user.lastname}} Medications</H4>

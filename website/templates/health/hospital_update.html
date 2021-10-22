@@ -4,8 +4,11 @@
 Update
 {% endblock %}
 
+{% block proheader %}
+Update Hospitalization
+{% endblock %}
+
 {% block content %}
-<h1 class="display-1 text-center">Update Hospitalization</h1>
 <form action="{{ url_for('health.hospital_update', id=stay.id) }}" method="POST" class="row g-3">
     <div class="col-6">
         <label for="sdate" class="form-label">Start Date</label>

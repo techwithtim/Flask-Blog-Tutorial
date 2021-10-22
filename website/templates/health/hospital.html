@@ -4,8 +4,11 @@
 {{current_user.username}} Hospitalizations
 {% endblock %}
 
+{% block proheader %}
+Hospitalizations for {{current_user.firstname}}
+{% endblock %}
+
 {% block content %}
-<h1 class="display-1 text-center">Hospitalizations for {{current_user.firstname}} {{current_user.lastname}}</h1>
 
 <table class="table table-bordered">
     <thead>

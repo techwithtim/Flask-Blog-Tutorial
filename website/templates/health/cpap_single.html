@@ -4,6 +4,10 @@
 CPAP Supplies
 {% endblock %}
 
+{% block proheader %}
+Edit {{cpap.name}}
+{% endblock %}
+
 {% block content %}
 <form action="/health/cpap/{{cpap.id}}" method="post" class="row g-2">
     <div class="col-8">

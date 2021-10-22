@@ -4,8 +4,11 @@
 Edit Allergy
 {% endblock %}
 
+{% block proheader %}
+Edit {{allergy.name}}
+{% endblock %}
+
 {% block content %}
-<h1 class="display-1 text-danger text-center">Edit {{allergy.name}}</h1>
 <form action="/health/allergy/{{allergy.id}}" , method="POST" class="row g-3">
     <div class="col-3">
         <label for="name">Name of Allergy</label>

@@ -4,8 +4,11 @@
 {{current_user.username}} Medications
 {% endblock %}
 
+{% block proheader %}
+Medications for {{current_user.firstname}}
+{% endblock %}
+
 {% block content %}
-<h1 class="display-1 text-center">Medication List for {{current_user.firstname}} {{current_user.lastname}}</h1>
 
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
     Add New Medication

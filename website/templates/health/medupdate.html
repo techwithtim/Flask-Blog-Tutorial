@@ -4,8 +4,11 @@
 {{current_user.username}} Medications
 {% endblock %}
 
+{% block proheader %}
+Edit {{meds.name}}
+{% endblock %}
+
 {% block content %}
-<h1 class="display-1 text-center">Edit {{meds.name}}</h1>
 <form action="/health/medications" method='POST'>
     <input type="submit" name="exportPDF" class='btn btn-warning' value="exportPDF">
 </form>

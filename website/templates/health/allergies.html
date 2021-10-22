@@ -4,8 +4,11 @@
 {{current_user.username}} Allergic Medications
 {% endblock %}
 
+{% block proheader %}
+Allergy List for {{current_user.firstname}}
+{% endblock %}
+
 {% block content %}
-<h1 class="display-1 text-danger text-center">Allergy List for {{current_user.firstname}} {{current_user.lastname}}</h1>
 <form action="/health/allergies" , method="POST" class="row g-3">
     <div class="col-3">
         <label for="name">Name of Allergy</label>

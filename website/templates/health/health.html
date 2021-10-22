@@ -4,7 +4,10 @@
 {{current_user.username}} Health
 {% endblock %}
 
+{% block proheader %}
+{{current_user.firstname}}'s Health</h1>
+{% endblock %}
+
 {% block content %}
-<h1 class="display-1 text-center">{{current_user.firstname}} {{current_user.lastname}} Health</h1>
 {% endblock %}
 

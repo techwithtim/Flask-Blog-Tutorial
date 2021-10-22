@@ -4,8 +4,11 @@
 Home
 {% endblock %}
 
+{% block proheader %}
+{{current_user.firstname}}'s Dashboard
+{% endblock %}
+
 {% block content %}
-<h1 class="display-1 text-center">{{current_user.firstname}}'s Dashboard</h1>
 <div id="accordion">
     {% if cntTasks != 0  %}
     <div class="card">
