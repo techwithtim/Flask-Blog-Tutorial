@@ -1,5 +1,0 @@
-[X] get data from db
-[X] count the results
-[X] if none, display message
-[X] if some, write ics and put tasks in todos
-[X] set boolean to false
