@@ -61,14 +61,10 @@
             </span>
           </div>
         </div>
-        <!-- sidebar-search  -->
-        <div class="sidebar-item sidebar-search">
-          <div>
-            <div id="clockdate">
-              <div class="clockdate-wrapper d-inline-flex">
-                <div id="date"></div>
-              </div>
-            </div>
+        <!-- sidebar-clock  -->
+        <div class="clockdate sidebar-item sidebar-search">
+          <div class="clockdate-wrapper d-inline-flex">
+            <div id="date"></div>
           </div>
         </div>
         <!-- sidebar-menu  -->
@@ -191,68 +187,27 @@
                 </ul>
               </div>
             </li>
+            <li class="sidebar-dropdown">
+              <a href="#">
+                <i class="fa fa-cog"></i>
+                <span class="menu-text">Settings</span>
+              </a>
+              <div class="sidebar-submenu">
+                <ul>
+                  <li>
+                    <a href="{{url_for('views.profile')}}">Profile</a>
+                  </li>
+                  <li>
+                    <a href="{{url_for('settings.settingsHome')}}">Settings</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+          </ul>
         </div>
         <!-- sidebar-menu  -->
       </div>
       <div class="sidebar-footer">
-        <div class="dropdown">
-
-          <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fa fa-bell"></i>
-            <span class="badge badge-pill badge-warning notification">3</span>
-          </a>
-          <div class="dropdown-menu notifications" aria-labelledby="dropdownMenuMessage">
-            <div class="notifications-header">
-              <i class="fa fa-bell"></i>
-              Notifications
-            </div>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">
-              <div class="notification-content">
-                <div class="icon">
-                  <i class="fas fa-check text-success border border-success"></i>
-                </div>
-                <div class="content">
-                  <div class="notification-detail">Lorem ipsum dolor sit amet consectetur adipisicing
-                    elit. In totam explicabo</div>
-                  <div class="notification-time">
-                    6 minutes ago
-                  </div>
-                </div>
-              </div>
-            </a>
-            <a class="dropdown-item" href="#">
-              <div class="notification-content">
-                <div class="icon">
-                  <i class="fas fa-exclamation text-info border border-info"></i>
-                </div>
-                <div class="content">
-                  <div class="notification-detail">Lorem ipsum dolor sit amet consectetur adipisicing
-                    elit. In totam explicabo</div>
-                  <div class="notification-time">
-                    Today
-                  </div>
-                </div>
-              </div>
-            </a>
-            <a class="dropdown-item" href="#">
-              <div class="notification-content">
-                <div class="icon">
-                  <i class="fas fa-exclamation-triangle text-warning border border-warning"></i>
-                </div>
-                <div class="content">
-                  <div class="notification-detail">Lorem ipsum dolor sit amet consectetur adipisicing
-                    elit. In totam explicabo</div>
-                  <div class="notification-time">
-                    Yesterday
-                  </div>
-                </div>
-              </div>
-            </a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item text-center" href="#">View all notifications</a>
-          </div>
-        </div>
         <div class="dropdown">
           <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <i class="fa fa-envelope"></i>
