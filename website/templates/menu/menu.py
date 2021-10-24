@@ -228,21 +228,22 @@ def shopping():
     counts = db.session.query(Recipe.catagory, func.count(Recipe.catagory)).filter(Recipe.dishfk == Planner.dishfk).group_by(Recipe.catagory).all()
     return render_template("menu/shopping.html", user=User, items=items, counts=counts)#, dishes=dishlist, plans=plans)
 
-@menu.route("/scrape")
+@menu.route("/scrape", methods=['GET','POST'])
 @login_required
 def scrape():
-    #TODO: work on this to perfect it
-    # scrape_recipe('https://iwashyoudry.com/garlic-parmesan-pork-chop-recipe/')
-    scraper = scrape_recipe('https://www.foodnetwork.com/recipes/food-network-kitchen/5-ingredient-instant-pot-mac-and-cheese-3649854')
-    # scraper = scrape_recipe('https://www.foodnetwork.com/recipes/food-network-kitchen/the-best-lentil-soup-7192365')
-    dishid = make_dish(scraper[0][0],scraper[0][1],scraper[0][2])
+    if request.method == "POST":
+        webstite = request.form.get('website')
+        scraper = scrape_recipe(webstite)
+        dishid = make_dish(scraper[0][0],scraper[0][1],scraper[0][2])
 
-    for ing in scraper[1][0]:
-        nuts = get_food_item(ing)
-        make_recipe(nuts,dishid)
+        for ing in scraper[1][0]:
+            nuts = get_food_item(ing)
+            make_recipe(nuts,dishid)
 
-    i=1
-    for step in scraper[2][0]:
-        make_steps(step, dishid, i) 
-        i += 1
-    return redirect(url_for('menu.menuHome'))
+        i=1
+        for step in scraper[2][0]:
+            make_steps(step, dishid, i) 
+            i += 1
+        return redirect(url_for('menu.menuHome'))
+    
+    return render_template('menu/scrape.html', user=User)
