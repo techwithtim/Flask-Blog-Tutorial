@@ -181,6 +181,13 @@ def deletePlan(id):
     return redirect(url_for('menu.menuHome'))
 
 
+@menu.route("/recipe/delete/<id>", methods=['GET','POST'])
+@login_required
+def recipe_delete(id):
+    db.session.query(Dish).filter(Dish.id == id).delete()
+    db.session.commit()
+    return redirect(url_for('menu.recipe'))
+
 @menu.route("/recipe/<id>/update", methods=['POST'])
 @login_required
 def recipe_update(id):
