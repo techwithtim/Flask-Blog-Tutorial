@@ -96,8 +96,8 @@ Housing History
                 {% endif %}
                 {% endfor %}
             </td>
-            <td><a href="{{url_for('personal.edithousing', id=house.id)}}"><button class="btn btn-primary"><i class="fas fa-edit"></i></button></a></td>
-            <td><a href="{{url_for('personal.deletehouse', id=house.id)}}"><button class="btn btn-danger"><i class="fas fa-trash-alt"></i></button></a></td>
+            <td><a href="{{url_for('personal.housing_edit', id=house.id)}}"><button class="btn btn-primary"><i class="fas fa-edit"></i></button></a></td>
+            <td><a href="{{url_for('personal.housing_delete', id=house.id)}}"><button class="btn btn-danger"><i class="fas fa-trash-alt"></i></button></a></td>
         </tr>
         {% endfor %}
     </tbody>

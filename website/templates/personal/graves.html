@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block title %}
+Grave Sites
+{% endblock %}
+
+{% block style %}
+{% endblock %}
+
+{% block proheader %}
+Grave Sites for {{current_user.firstname}}
+{% endblock %}
+
+{% block submenu %}
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#burialadd">Add A New Burial
+    Location</button>
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#graveadd">Add New Grave</button>
+
+{% endblock %}
+
+{% block content %}
+<!-- Modal for Adding a new Grave Marker -->
+<div class="modal fade" id="graveadd" tabindex="-1" role="dialog" aria-labelledby="graveaddTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="graveaddTitle">Add A New Grave Marker</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="/personal/grave" method="post" class="row g-2">
+                    <div class="col-6">
+                        <label class="form-label" for="name">Name</label>
+                        <input class="form-control" type="text" name="name" id="name">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label" for="relationship">Relationship to deceased</label>
+                        <input class="form-control" type="text" name="relationship" id="relationship">
+                    </div>
+                    <div class="col-4">
+                        <h6 style="font-family: Verdana, Geneva, Tahoma, sans-serif; font-size: 24px;"><strong>Birth
+                                Info</strong></h6>
+                        <div class="col-12">
+                            <label class="form-label" for="birthd">Birth Date</label>
+                            <input class="form-control" type="date" name="birthd" id="birthd">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="birthp">Birth Place</label>
+                            <input class="form-control" type="text" name="birthp" id="birthp">
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <h6 style="font-family: Verdana, Geneva, Tahoma, sans-serif; font-size: 24px;"><strong>Death
+                                Info</strong></h6>
+                        <div class="col-12">
+                            <label class="form-label" for="deathd">Date of Death</label>
+                            <input class="form-control" type="date" name="deathd" id="deathd">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="deathp">Place of Passing</label>
+                            <input class="form-control" type="text" name="deathp" id="deathp">
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <h6 style="font-family: Verdana, Geneva, Tahoma, sans-serif; font-size: 24px;"><strong>Obituary</strong></h6>
+                        <div class="col-12">
+                            <label class="form-label" for="obituary">Obituary</label>
+                            <textarea class="form-control" name="obituary" id="obituary" rows="4"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <h6 style="font-family: Verdana, Geneva, Tahoma, sans-serif; font-size: 24px;"><strong>Final
+                                Resting Place</strong></h6>
+                        <div class="col-12">
+                            <label class="form-label" for="cemetery">Cemetery</label>
+                            <select name="cemetery" id="cemetery" class="form-select">
+                                {% for loc in cemeteries %}
+                                <option value="{{loc.id}}">{{loc.name}} - {{loc.city}}, {{loc.state}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="plot">Plot Info</label>
+                            <input class="form-control" type="text" name="plot" id="plot">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="pictureURL">Placemarker Picture URL</label>
+                            <input class="form-control" type="text" name="pictureURL" id="pictureURL">
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <h6 style="font-family: Verdana, Geneva, Tahoma, sans-serif; font-size: 24px;"><strong>Find A
+                                Grave Info</strong></h6>
+                        <div class="col-12">
+                            <label class="form-label" for="fagid">Find A Grave ID</label>
+                            <input class="form-control" type="text" name="fagid" id="fagid">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="fagurl">Find A Grave Website</label>
+                            <input class="form-control" type="text" name="fagurl" id="fagurl">
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <h6 style="font-family: Verdana, Geneva, Tahoma, sans-serif; font-size: 24px;">
+                            <strong>Other</strong></h6>
+                        <div class="col-12">
+                            <label class="form-label" for="notes">Notes</label>
+                            <textarea class="form-control"  name="notes" id="notes" rows="4"></textarea>
+                        </div>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" name="graveadd" value="graveadd">Add New
+                    Grave Marker</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal for adding a new burial location -->
+<div class="modal fade" id="burialadd" tabindex="-1" role="dialog" aria-labelledby="burialaddTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="burialaddTitle">Add A New Burial Location</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="/personal/grave" method="post" class="row g-2">
+                    <div class="col-12">
+                        <label class="form-label" for="name">Name of Burial Location</label>
+                        <input class="form-control" type="text" name="name" id="name">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label" for="address">Address</label>
+                        <input class="form-control" type="text" name="address" id="address">
+                    </div>
+                    <div class="col-5">
+                        <label class="form-label" for="city">City</label>
+                        <input class="form-control" type="text" name="city" id="city">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" for="state">State</label>
+                        <select class="form-select" name="state" id="state">
+                            {% for state in states %}
+                            <option value="{{state.abr}}">{{state.abr}} - {{state.state}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <label class="form-label" for="zip">Zip</label>
+                        <input class="form-control" type="text" name="zip" id="zip">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label" for="phone">Phone Number</label>
+                        <input class="form-control" type="text" name="phone" id="phone">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label" for="url">Website</label>
+                        <input class="form-control" type="url" name="url" id="url">
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" name="burialadd" value="burialadd">Add New
+                    Location</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Table of grave markers in the db -->
+<table class="table table-hover table table-responsive">
+    <thead>
+        <th></th>
+        <th>Name</th>
+        <th>DOB</th>
+        <th>DOD</th>
+        <th>Location</th>
+        <th></th>
+        <th></th>
+    </thead>
+    <tbody>
+        {% for grave in graves %}
+            <td><picture><img src="{{grave.pictureURL}}" alt="" width="100" height="80"></picture></td>
+            <td>{{grave.name}} <br> <p class="small text-muted">{{grave.relationship}}</p></td>
+            <td>{{grave.birthdate}}<br> <p class="small text-muted">{{grave.birthplace}}</p></td>
+            <td>{{grave.deathdate}}<br> <p class="small text-muted">{{grave.deathplace}}</p></td>
+            <td>
+                {% for loc in cemeteries %}
+                {% if loc.id == grave.cemeteriesfk %}
+                {{loc.name}}<br> <p class="small text-muted">{{loc.city}}, {{loc.state}}</p>
+                {% endif %}
+                {% endfor %}
+                <p class="small text-muted">{{grave.plot}}</p>
+            </td>
+            <td><a href="{{url_for('personal.graves_single', id=grave.id)}}"><button class="btn btn-primary"><i class="fas fa-edit"></i></button></a></td>
+            <td><a href="{{url_for('personal.graves_delete', id=grave.id)}}"><button class="btn btn-danger"><i class="fas fa-trash-alt"></i></button></a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

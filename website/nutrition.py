@@ -2,9 +2,7 @@ import requests
 import json
 
 def get_food_item(item):
-    url = "https://trackapi.nutritionix.com/v2/natural/nutrients"
-    # url = "https://trackapi.nutritionix.com/v2/search/instant"
-    
+    url = "https://trackapi.nutritionix.com/v2/natural/nutrients"    
 
     payload='query='+item
     headers = {
@@ -15,6 +13,7 @@ def get_food_item(item):
 
     response = requests.request("POST", url, headers=headers, data=payload)
     fulljson = json.loads(response.text)
+    
     # return json.dumps(fulljson)
     with open('fulljson.json','w') as jsonfull:
         jsonfull.write(json.dumps(fulljson))
@@ -28,6 +27,9 @@ def get_food_item(item):
 def parse_results(fulljson):
     full_nutrition = {}
     
+    full_nutrition['foodname'] = fulljson['foods'][0]['food_name']
+    full_nutrition['servingqty'] = fulljson['foods'][0]['serving_qty']
+    full_nutrition['servingunit'] = fulljson['foods'][0]['serving_unit']
     #weight
     if 'serving_weight_grams' not in fulljson['foods'][0]: full_nutrition['weight'] = 0
     elif fulljson['foods'][0]['serving_weight_grams'] is None: full_nutrition['weight'] = 0

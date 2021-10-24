@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% endblock %}
+
+{% block style %}
+{% endblock %}
+
+{% block proheader %}
+Edit {{grave.name}} Info
+{% endblock %}
+
+{% block submenu %}
+{% endblock %}
+
+{% block content %}
+<form action="/personal/grave/{{grave.id}}" method="post" class="form-group">
+    <div class="row g-3">
+        <div class="col-4">
+            <picture><img src="{{grave.pictureURL}}" alt="Gravesite for {{grave.name}}" width="100%"></picture>
+            <textarea name="obituary" id="obituary" class="form-control" rows="2">{{grave.obituary}}</textarea>
+        </div>
+        <div class="col-4">
+            <label class="form-label" for="name">Name</label>
+            <input class="form-control" type="text" name="name" id="name" value="{{grave.name}}">
+            <label class="form-label" for="relationship">Relationship</label>
+            <input class="form-control" type="text" name="relationship" id="relationship" value="{{grave.relationship}}">
+            <label class="form-label" for="birthd">Date of Birth</label>
+            <input class="form-control" type="text" name="birthd" id="birthd" value="{{grave.birthdate}}">
+            <label class="form-label" for="birthp">Place of Birth</label>
+            <input class="form-control" type="text" name="birthp" id="birthp" value="{{grave.birthplace}}">
+            <label class="form-label" for="deathd">Date of Death</label>
+            <input class="form-control" type="text" name="deathd" id="deathd" value="{{grave.deathdate}}">
+            <label class="form-label" for="deathp">Place of Death</label>
+            <input class="form-control" type="text" name="deathp" id="deathp" value="{{grave.deathplace}}">
+            
+        </div>
+        <div class="col-4">
+            <label class="form-label" for="cemeteriesfk">Cemetery</label>
+            <select name="cemeteriesfk" id="cemeteriesfk" class="form-select">
+                {% for loc in cemeteries %}
+                {% if loc.id == grave.cemeteriesfk %}
+                <option selected value="{{loc.id}}">{{loc.name}} - {{loc.city}}, {{loc.state}}</option>
+                {% else %}
+                <option value="{{loc.id}}">{{loc.name}} - {{loc.city}}, {{loc.state}}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+            <label class="form-label" for="plot">Plot</label>
+            <input class="form-control" type="text" name="plot" id="plot" value="{{grave.plot}}">
+            <label class="form-label" for="pictureURL">Plot Picture</label>
+            <input class="form-control" type="text" name="pictureURL" id="pictureURL" value="{{grave.pictureURL}}">
+            <label class="form-label" for="notes">Notes</label>
+            <textarea class="form-control"name="notes" id="notes" rows="3">{{grave.notes}}</textarea>
+        </div>
+        <div class="col-3">
+            <button type="submit">Edit Infromation</button>
+        </div>
+    </div>
+</form>
+{% endblock %}

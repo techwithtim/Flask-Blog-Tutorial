@@ -1,4 +1,6 @@
 from enum import unique
+
+from sqlalchemy.orm import relation, relationship
 from website import db
 
 from flask_login import UserMixin
@@ -17,7 +19,7 @@ class User(db.Model, UserMixin):
     state=db.Column(db.String(2))
     zip=db.Column(db.String(10))
     phone=db.Column(db.String(20))
-    avatar = db.Column(db.Text, unique=True)
+    avatar = db.Column(db.Text)
     avatar_filename = db.Column(db.Text)
     avatar_mimetype = db.Column(db.Text)
     username = db.Column(db.String(150), unique=True)
@@ -420,3 +422,37 @@ class Cpap(db.Model):
     update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
     date_created = db.Column(db.DateTime(timezone=True), default=func.now())
     
+class Graves(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text)
+    relationship = db.Column(db.Text)
+    birthdate = db.Column(db.Text)
+    birthplace = db.Column(db.Text)
+    deathdate = db.Column(db.Text)
+    deathplace = db.Column(db.Text)
+    plot = db.Column(db.Text)
+    fag_id = db.Column(db.Text)
+    fag_url = db.Column(db.Text)
+    notes = db.Column(db.Text)
+    obituary = db.Column(db.Text)
+    pictureURL = db.Column(db.Text)
+    userid = db.Column(db.Integer)
+    update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
+    date_created = db.Column(db.DateTime(timezone=True), default=func.now())
+    #Forign Key
+    cemeteriesfk = db.Column(db.Integer, db.ForeignKey('cemeteries.id', ondelete="CASCADE"), nullable=False)
+
+class Cemeteries(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text)
+    address = db.Column(db.Text)
+    city = db.Column(db.Text)
+    state = db.Column(db.Text)
+    zip = db.Column(db.Text)
+    phone = db.Column(db.Text)
+    url = db.Column(db.Text)
+    userid = db.Column(db.Integer)
+    update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
+    date_created = db.Column(db.DateTime(timezone=True), default=func.now())
+    #relationships
+    graves = db.relationship('Graves', backref='cemeteries', passive_deletes=True)

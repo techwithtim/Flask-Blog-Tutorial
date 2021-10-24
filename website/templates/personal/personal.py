@@ -86,7 +86,7 @@ def housinghistory():
 
 @personal.route("/housinghistory/<id>", methods=['GET','POST'])
 @login_required
-def edithousing(id):
+def housing_edit(id):
     if request.method == "POST":
         house = db.session.query(HousingHistory).filter_by(id=id).first()
         house.movein = datetime.datetime.strptime(request.form.get('start'),"%Y-%m")
@@ -104,7 +104,7 @@ def edithousing(id):
 
 @personal.route("/housinghistory/delete/<id>", methods=['GET'])
 @login_required
-def deletehouse(id):
+def housing_delete(id):
     db.session.query(HousingHistory).filter_by(id=id).delete()
     db.session.commit()
     return redirect(url_for('personal.housinghistory'))
@@ -149,3 +149,73 @@ def exportcsv():
             os.remove('website/static/'+filename)
         return response
     return send_file(full, as_attachment=True)
+
+@personal.route('/grave', methods=['GET','POST'])
+@login_required
+def graves():
+    if request.method == "POST":
+        if request.form.get('burialadd'):
+            newcem = Cemeteries(
+                name = request.form.get('name'),
+                address = request.form.get('address'),
+                city = request.form.get('city'),
+                state = request.form.get('state'),
+                zip = request.form.get('zip'),
+                phone = request.form.get('phone'),
+                url = request.form.get('url'),
+                userid = flask_login.current_user.id
+            )
+            db.session.add(newcem)
+        elif request.form.get('graveadd'):
+            newgrave = Graves(
+                name = request.form.get('name'),
+                relationship = request.form.get('relationship'),
+                birthdate = request.form.get('birthd'),
+                birthplace = request.form.get('birthp'),
+                deathdate = request.form.get('deathd'),
+                deathplace = request.form.get('deathp'),
+                plot = request.form.get('plot'),
+                fag_id = request.form.get('fagid'),
+                fag_url = request.form.get('fagurl'),
+                notes = request.form.get('notes'),
+                obituary = request.form.get('obituary'),
+                pictureURL = request.form.get('pictureURL'),
+                cemeteriesfk = request.form.get('cemetery'),
+                userid = flask_login.current_user.id
+            )
+            db.session.add(newgrave)
+        db.session.commit()
+            
+    states = db.session.query(States).all()
+    graves = db.session.query(Graves).filter(Graves.userid == flask_login.current_user.id).order_by(desc(Graves.deathdate)).all()
+    cemeteries = db.session.query(Cemeteries).filter(Cemeteries.userid == flask_login.current_user.id).all()
+    return render_template('/personal/graves.html', user=User, graves=graves, states=states, cemeteries=cemeteries)
+
+@personal.route('/grave/<id>', methods=['GET','POST'])
+@login_required
+def graves_single(id):
+    if request.method == "POST":
+        info = db.session.query(Graves).filter(Graves.id == id).first()
+        info.name = request.form.get('name')
+        info.relationship = request.form.get('relationship')
+        info.birthdate = request.form.get('birthd')
+        info.birthplace = request.form.get('birthp')
+        info.deathdate = request.form.get('deathd')
+        info.deathplace = request.form.get('deathp')
+        info.plot = request.form.get('plot')
+        info.notes = request.form.get('notes')
+        info.obituary = request.form.get('obituary')
+        info.pictureURL = request.form.get('pictureURL')
+        info.userid = flask_login.current_user.id
+        db.session.commit()
+        return redirect(url_for('personal.graves'))
+    cemeteries = db.session.query(Cemeteries).filter(Cemeteries.userid == flask_login.current_user.id).all()
+    grave = db.session.query(Graves).filter(Graves.id == id).first()
+    return render_template('/personal/graves_single.html', user=User, grave=grave, cemeteries=cemeteries)
+
+@personal.route('/grave/delete/<id>', methods=['GET'])
+@login_required
+def graves_delete(id):
+    db.session.query(Graves).filter(Graves.id == id).delete()
+    db.session.commit()
+    return redirect(url_for('personal.graves'))
