@@ -456,3 +456,12 @@ class Cemeteries(db.Model):
     date_created = db.Column(db.DateTime(timezone=True), default=func.now())
     #relationships
     graves = db.relationship('Graves', backref='cemeteries', passive_deletes=True)
+
+class Insinfo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text)
+    phone = db.Column(db.Text)
+    policynum = db.Column(db.Text)
+    userid = db.Column(db.Integer)
+    update_time = db. Column (db. DateTime, default=datetime.datetime.now,onupdate=datetime.datetime.now)
+    date_created = db.Column(db.DateTime(timezone=True), default=func.now())

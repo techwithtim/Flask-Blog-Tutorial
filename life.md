@@ -55,3 +55,4 @@ use the following commands in order in the terminal:
 <li>[ ] Create a wallet size report in pdf that can be printed out</li>
 <li>[ ] Place the keys in the database</li>
 <li>[ ] Make each menu item selectable according to user (menu on for me off for shawn for example)</li>
+<li>[X] Grave markers</li>

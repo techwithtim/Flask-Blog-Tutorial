@@ -63,7 +63,7 @@ def vehHome():
 @login_required
 def vehsingle(id):
     if request.method =="POST":
-        if request.form['submit'] == 'Add Service':
+        if request.form.get('submit') == 'Add Service':
             newserv = Service(
                 service = request.form.get('service'),
                 place = request.form.get('place'),
@@ -127,3 +127,21 @@ def vehdelete(id):
     db.session.query(Vehicles).filter(Vehicles.id == id).delete()
     db.session.commit()
     return redirect(url_for('vehicle.vehHome'))
+
+@vehicle.route("/form", methods=['GET','POST'])
+@login_required
+def accidentform():
+    if request.method == 'POST':
+        driverlic = request.form.get('state') + " " + request.form.get('driverslic')
+        driver = db.session.query(User).filter(User.id == request.form.get('driver')).first()
+        veh = db.session.query(Vehicles).filter(Vehicles.id == request.form.get('vehicle')).first()
+        ins = db.session.query(Insinfo).filter(Insinfo.id == request.form.get('insurance')).first()
+        owner = db.session.query(User).filter(User.id == request.form.get('owner')).first()
+        return render_template("/vehicles/accidentform.html", owner=owner, ins=ins, veh=veh, driver=driver, driverlic=driverlic)
+    
+    drivers = db.session.query(User).all()
+    vehicles = db.session.query(Vehicles).filter(Vehicles.curown == True).all()
+    insurances = db.session.query(Insinfo).all()
+    owners = db.session.query(User).all()
+    states = db.session.query(States).all()
+    return render_template('/vehicles/preform.html', user=User, drivers=drivers, vehicles=vehicles, insurances=insurances, owners=owners, states=states)

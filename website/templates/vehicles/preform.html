@@ -1,0 +1,79 @@
+{% extends "/vehicles/veh_div.html" %}
+
+{% block title %}
+Pre Form Fillout
+{% endblock %}
+
+{% block style %}
+{% endblock %}
+
+{% block proheader %}
+Form Fill Out
+{% endblock %}
+
+{% block submenu %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<form action="/vehicle/form" method="post">
+    <table>
+        <!-- Owner -->
+        <tr>
+            <td>
+                <label class="form-label" for="owner">Select Vehicle Owner</label>
+                <select class="form-select" name="owner" id="owner">
+                    {% for owner in owners %}
+                    <option value="{{owner.id}}">{{owner.firstname}} {{owner.lastname}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+        <!-- Insurance -->
+        <tr>
+            <td>
+                <label class="form-label" for="insurance">Select Insurance Policy</label>
+                <select class="form-select" name="insurance" id="insurance">
+                    {% for ins in insurances %}
+                    <option value="{{ins.id}}">{{ins.name}} - {{ins.policynum}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+        <!-- Vehicle -->
+        <tr>
+            <td>
+                <label class="form-label" for="vehicle">Select Vehicle</label>
+                <select class="form-select" name="vehicle" id="vehicle">
+                    {% for veh in vehicles %}
+                    <option value="{{veh.id}}">{{veh.year}} {{veh.make}} {{veh.model}} {{veh.trim}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+        <!-- Driver -->
+        <tr>
+            <td>
+                <label class="form-label" for="driver">Select Driver</label>
+                <select class="form-select" name="driver" id="driver">
+                    {% for driver in drivers %}
+                    <option value="{{driver.id}}">{{driver.firstname}} {{driver.lastname}}</option>
+                    {% endfor %}
+                </select>
+                <label class="form-label" for="driverlic">Enter Drivers License</label>
+                <select class="form-select" name="state" id="state">
+                    {% for state in states %}
+                    <option value="{{state.abr}}">{{state.abr}} - {{state.state}}</option>
+                    {% endfor %}
+                </select>
+                <input class="form-control" type="text" name="driverslic" id="driverslic">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button type="submit">Go To Form</button>
+            </td>
+        </tr>
+    </table>
+</form>
+{% endblock %}
