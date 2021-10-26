@@ -1,0 +1,95 @@
+{% extends "menu/menu-div.html" %}
+
+{% block style %}
+{% endblock %}
+
+
+{% block title %}
+Guill Menu
+{% endblock %}
+
+{% block proheader %}
+Guill Menu Recipes
+{% endblock %}
+
+{% block content %}
+
+{% for dish in dishes %}
+<div class="card border-dark" style="width: 80rem;">
+  <div class="row">
+    <div class="col-4">
+      {% if dish.pictureURL %}
+      <img src="{{dish.pictureURL}}" class='img-fluid rounded-start' alt="Picture Of Dish" width='400'>
+      {% else %}
+      <img src="https://image.shutterstock.com/image-vector/ui-image-placeholder-wireframes-apps-260nw-1037719204.jpg"
+        class='img-fluid rounded-start' alt="Picture Of Dish" width='400'>
+      {% endif %}
+      <h5 class="display-5 text-capitalize text-center">{{dish.name}}</h5>
+      <div class='text-center'>
+        <a href="/menu/recipe/{{dish.id}}"><button class="btn btn-lg btn-success"><i class="fas fa-edit"></i> Edit</button></a>
+        <a href="{{url_for('menu.recipe_delete', id=dish.id)}}"><button class="btn btn-lg btn-danger"><i class="fas fa-trash-alt"></i> Delete</button></a>
+      </div>
+
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <div class="card-text">
+          <div class="container">
+            <div class="row">
+              <div class="col" id="Ing">
+                <h6 class="display-6 text-left"">Ingredients</h6>
+                <table class=" table table-hover">
+                  <thead>
+                    <td>Qty</td>
+                    <td>Measurement</td>
+                    <td>Ing</td>
+                    <td>Notes</td>
+                  </thead>
+                  <tbody>
+                    {% for recipe in recipes %}
+                    {% if recipe.dishfk == dish.id %}
+                    <tr>
+                      <td>{{recipe.qty}}</td>
+                      <td>{{recipe.measurement}}</td>
+                      <td>{{recipe.ing}}</td>
+                      <td>{{recipe.notes}}</td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                  </tbody>
+                  </table>
+              </div>
+              <div class="col" id="Steps">
+                <h6 class="display-6 text-left">Steps</h6>
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <td>Step</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for step in steps %}
+                    {% if dish.id == step.dishfk %}
+                    <tr>
+                      <td><b>{{step.step_num}}. </b>{{step.step_text}}</td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div>
+            <p class="card-text"><small class="text-muted">Last updated: {{dish.update_time}}</small></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<br>
+{% endfor %}
+
+
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "health/health-div.html" %}
+
+{% block title %}
+{{current_user.username}} Allergic Medications
+{% endblock %}
+
+{% block proheader %}
+Allergy List for {{current_user.firstname}}
+{% endblock %}
+
+{% block content %}
+<form action="/health/allergies" , method="POST" class="row g-3">
+    <div class="col-3">
+        <label for="name">Name of Allergy</label>
+        <input type="text" class="form-control" id="name" name="name">
+    </div>
+    <div class="col-3">
+        <label for="reaction">Reaction</label>
+        <input type="text" class="form-control" name="reaction" id="reaction">
+    </div>
+    <div class="col-3">
+        <label for="dateadded">Date Added as Allergy</label>
+        <input type="date" class="form-control" id="dateadded" name="dateadded">
+    </div>
+    <div class="col-3">
+        <input type="hidden" name='thisuserid' value="{{current_user.id}}">
+        <input type="submit" class="btn btn-primary" name='allergySubmit' value="Add Allergy">
+    </div>
+</form>
+<table class="table table-responsive table-hover">
+    <thead>
+        <th>Name of Medication</th>
+        <th>Reaction</th>
+        <th>Date Discovered</th>
+        <th></th>
+        <th></th>
+    </thead>
+    <tbody>
+        {% for allergy in allergies %}
+        <tr>
+            <td><a href="/health/allergy/{{allergy.id}}" class="btn text-danger">{{allergy.name}}</a></td>
+            <td>{{allergy.reaction}}</td>
+            <td>{{allergy.dateadded.strftime("%m-%d-%Y")}}</td>
+            <td></td>
+            <td><a href="/health/deletingAllergy/{{allergy.id}}" class="btn btn-danger" role="button"><i
+                        class="fas fa-trash-alt"></i></a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

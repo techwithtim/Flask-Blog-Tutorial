@@ -1,0 +1,186 @@
+{% extends "/vehicles/veh_div.html" %}
+
+{% block title %}
+{% endblock %}
+
+{% block style %}
+{% endblock %}
+
+{% block submenu %}
+{{ super() }}
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Add New Vehicle
+</button>
+{% endblock %}
+
+{% block proheader %}
+Vehicles
+{% endblock %}
+
+
+{% block content %}
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add New Vehicle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{url_for('vehicle.vehHome')}}" method="POST" class="row g-3">
+                    <div class="col-4">
+                        <label class="form-label" for="name">Name</label>
+                        <input class="form-control" type="text" name="name" id="name">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" for="picurl">Picture URL</label>
+                        <input class="form-control" type="text" name="picurl" id="picurl">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" for="name">Currently Owned?</label>
+                        <select class="form-select" name="curown" id="curown"">
+                            <option selected value=1>Yes</option>
+                            <option value=0>No</option>
+                        </select>
+                    </div>
+                    <div class="col-2">
+                        <label class="form-label" for="year">Year</label>
+                        <input class="form-control" type="number" name="year" id="year">
+                    </div>
+                    <div class="col-3">
+                        <label class="form-label" for="make">Make</label>
+                        <input class="form-control" type="text" name="make" id="make">
+                    </div>
+                    <div class="col-3">
+                        <label class="form-label" for="model">Model</label>
+                        <input class="form-control" type="text" name="model" id="model">
+                    </div>
+                    <div class="col-2">
+                        <label class="form-label" for="trim">Trim</label>
+                        <input class="form-control" type="text" name="trim" id="trim">
+                    </div>
+                    <div class="col-2">
+                        <label class="form-label" for="color">Color</label>
+                        <input class="form-control" type="text" name="color" id="color">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" for="licplate">License Plate</label>
+                        <input class="form-control" type="text" name="licplate" id="licplate">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" for="tagsexp">Tags Expire</label>
+                        <input class="form-control" type="month" name="tagsexp" id="tagsexp">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" for="vin">VIN Number</label>
+                        <input class="form-control" type="text" name="vin" id="vin">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" for="pdate">Purchase Date</label>
+                        <input class="form-control" type="date" name="pdate" id="pdate">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" for="purplace">Place of Purchase</label>
+                        <input class="form-control" type="text" name="purplace" id="purplace">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" for="puramt">Purchase Amount</label>
+                        <input class="form-control" type="number" name="puramt" id="puramt" default=0>
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" for="sdate">Sale Date</label>
+                        <input class="form-control" type="date" name="sdate" id="sdate">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" for="reason">Sale Reason</label>
+                        <input class="form-control" type="text" name="reason" id="reason">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" for="saleamt">Sale Amount</label>
+                        <input class="form-control" type="number" name="saleamt" id="saleamt" default=0>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Add Vehicle</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- table of Currently Owned cars -->
+<h6 class="display-6">Currently Owned Vehicles</h6>
+<table class="table table-hover table-striped">
+    <thead>
+        <th>Pic</th>
+        <th>Vehicle</th>
+        <th></th>
+        <th></th>
+    </thead>
+    <tbody>
+        {% for veh in vehs %}
+        {% if veh.curown == True %}
+        <tr>
+            <td style="width: 220px;"><a href="/vehicle/{{veh.id}}">
+                    <picture><img src="{{veh.pictureURL}}" alt="Picture of Vehicle" width="210px" height="140px">
+                    </picture>
+                </a></td>
+            <td>
+                {{veh.color}}
+                {{veh.year}}
+                {{veh.make}}
+                {{veh.model}}
+                {{veh.trim}} <br>
+                Owned for {% if veh.id in owned %}{{owned[veh.id]}}{% endif %} <br>
+                Vin: {{veh.vinnumber}} <br>
+                License Plate: {{veh.licenseplate}} <br>
+                Tags Expire: {{veh.tagsexpire.strftime('%B %Y')}}
+
+            </td>
+            <td><a href="{{url_for('vehicle.vehsingle', id=veh.id)}}"><button class="btn btn-lg btn-primary"><i
+                            class="fas fa-edit"></i></button></a></td>
+            <td><a href="{{url_for('vehicle.vehdelete', id=veh.id)}}"><button class="btn btn-lg btn-danger"><i
+                            class="fas fa-trash-alt"></i></button></a></td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- table of PREVIOUSLY Owned cars -->
+<h6 class="display-6">Previously Owned Vehicles</h6>
+<table class="table table-hover table-striped">
+    <thead>
+        <th>Pic</th>
+        <th>Vehicle</th>
+        <th></th>
+        <th></th>
+    </thead>
+    <tbody>
+        {% for veh in vehs %}
+        {% if veh.curown == False %}
+        <tr>
+            <td style="width: 220px;"><a href="/vehicle/{{veh.id}}">
+                    <picture><img src="{{veh.pictureURL}}" alt="Picture of Vehicle" width="210px" height="140px">
+                    </picture>
+                </a></td>
+            <td>
+                {{veh.color}}
+                {{veh.year}}
+                {{veh.make}}
+                {{veh.model}}
+                {{veh.trim}}
+            </td>
+            <td><a href="{{url_for('vehicle.vehsingle', id=veh.id)}}"><button class="btn btn-lg btn-primary"><i
+                            class="fas fa-edit"></i></button></a></td>
+            <td><a href="{{url_for('vehicle.vehdelete', id=veh.id)}}"><button class="btn btn-lg btn-danger"><i
+                            class="fas fa-trash-alt"></i></button></a></td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

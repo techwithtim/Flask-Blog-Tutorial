@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}
+Wifi Home Connections
+{% endblock %}
+
+{% block proheader %}
+Wifi
+{% endblock %}
+
+{% block content %}
+<table class="table table-responsive-lg">
+    <thead>
+        <th>SSID</th>
+        <th>Password</th>
+        <th></th>
+        <th></th>
+    </thead>
+    <tbody>
+        <tr>
+            <form action="{{url_for('personal.wifi')}}" method="POST" autocomplete="off">
+                <td>
+                    <input type="text" autocomplete="nope" class="form-control" name="ssid" id="ssid">
+                </td>
+                <td>
+                    <input type="password" autocomplete="new-password" class="form-control" name="password"
+                        id="password">
+                    <input type="hidden" name='thisuserid' value="{{current_user.id}}">
+                </td>
+                <td>
+                    <input type="submit" value="Add Wifi">
+                </td>
+        </tr>
+        </form>
+    </tbody>
+</table>
+
+<table class="table table-responsive-xxl">
+    <thead>
+        <th>SSID</th>
+        <th>Password</th>
+        <th>QR Code</th>
+        <th></th>
+    </thead>
+    <tbody>
+        {% for wf in wifi %}
+        <tr>
+            <td>{{wf.SSID}}</td>
+            <td>{{wf.password}}</td>
+            <td>
+                <a href="{{url_for('static', filename=wf.path)}}" target="_blank"><img
+                        src="{{url_for('static', filename=wf.path)}}" width="100" height="100"
+                        class="rounded float-left"></a>
+            </td>
+            <td>
+                <a href="{{ url_for('personal.wifidelete', id=wf.id) }}"><button class="btn btn-danger"><i
+                            class="fas fa-trash-alt"></i></button></a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

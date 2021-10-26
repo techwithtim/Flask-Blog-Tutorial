@@ -1,3 +1,13 @@
-flask
+css_inline
+Flask
+Flask-Login
 Flask-SQLAlchemy
-flask-login
+Flask-Migrate
+Flask-Mail
+html2text
+ics
+lxml
+pdfkit
+recipe_scrapers
+requests
+wifi-qrcode-generator

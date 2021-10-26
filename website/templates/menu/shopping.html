@@ -1,0 +1,41 @@
+{% extends "menu/menu-div.html" %}
+
+{% block title %}
+Guill Menu
+{% endblock %}
+
+{% block proheader %}
+Guill Menu Shopping List
+{% endblock %}
+
+{% block content %}
+<form action="/menu/shopping" method='POST'>
+<input type="submit" name="exportPDF" class='btn btn-warning' value="exportPDF" >
+</form>
+<!-- FIXME: Fix The Pdf To Make It A Single Page Width And Format It Within A Single Page Width (Perhaps Make A New Page, Then Call The Pdf To Make) -->
+{% for catagory, item in items | groupby('catagory') %}
+<div style="max-width: 7in;">
+<ul class="list-group">
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+        <h6 class="display-6 text-uppercase">{{catagory}}</h6><br>
+        {% for count in counts %}
+        {% if count[0] == catagory %}
+        <span class="badge bg-primary ">{{count[1]}}</span>
+        {% endif %}
+{% endfor %}
+    </li>
+</ul>
+{% for item in items %}
+{% if item.catagory == catagory %}
+<div class="list-group">
+    {% if item.IngCount <= 1 %}
+    <div class="list-group-item list-group-item-action">{{item.ing}}</div>
+    {% else %}
+    <div class="list-group-item list-group-item-action">{{item.ing}} x {{item.IngCount}}</div>
+    {% endif %}
+</div>
+{% endif %}
+{% endfor %}
+{% endfor %}
+</div>
+{% endblock %}

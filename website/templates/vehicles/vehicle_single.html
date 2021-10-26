@@ -1,0 +1,174 @@
+{% extends "/vehicles/veh_div.html" %}
+
+{% block title %}
+{% endblock %}
+
+{% block style %}
+{% endblock %}
+
+{% block submenu %}
+{{ super() }}
+<!-- Button trigger modal -->
+<button type="button" class="btn" data-toggle="modal" data-target="#exampleModal">
+    Add Service for this vehicle
+</button>
+{% endblock %}
+
+{% block proheader %}
+{{veh.year}} {{veh.make}} {{veh.model}} {{veh.trim}}
+{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <h4 class="display-4">{{veh.year}} {{veh.make}} {{veh.model}} {{veh.trim}}</h4>
+    Purchased: {{veh.purchase_date.strftime("%B %d, %Y")}} <br>
+    Owned for: {{owned}}
+</div>
+<div class="text-center">
+    <img src="{{veh.pictureURL}}" alt="Picture of Vehicle" width="30%" height="15%"
+        class="rounded img-fluid border-dark">
+</div>
+<div class="row">
+    <div class="col-6">
+        <form action='{{url_for("vehicle.vehsingle", id=veh.id)}}' method="POST" class="row g-0">
+            <div class="col-6">
+                <label class="form-label" for="name">Currently Owned?</label>
+                <select class="form-select" name="curown" id="curown" value="{{veh.curown}}">
+                    <option {% if veh.curown == 1 %}selected{% endif %} value=1>Yes</option>
+                    <option {% if veh.curown == 0 %}selected{% endif %} value=0>No</option>
+                </select>
+            </div>
+            <div class="col-6">
+                <label class="form-label" for="picurl">Picture URL</label>
+                <input class="form-control" type="text" name="picurl" id="picurl" value="{{veh.pictureURL}}">
+            </div>
+            <div class="col-2">
+                <label class="form-label" for="year">Year</label>
+                <input class="form-control" type="number" name="year" id="year" value="{{veh.year}}">
+            </div>
+            <div class="col-3">
+                <label class="form-label" for="make">Make</label>
+                <input class="form-control" type="text" name="make" id="make" value="{{veh.make}}">
+            </div>
+            <div class="col-3">
+                <label class="form-label" for="model">Model</label>
+                <input class="form-control" type="text" name="model" id="model" value="{{veh.model}}">
+            </div>
+            <div class="col-2">
+                <label class="form-label" for="trim">Trim</label>
+                <input class="form-control" type="text" name="trim" id="trim" value="{{veh.trim}}">
+            </div>
+            <div class="col-2">
+                <label class="form-label" for="color">Color</label>
+                <input class="form-control" type="text" name="color" id="color" value="{{veh.color}}">
+            </div>
+            <div class="col-4">
+                <label class="form-label" for="licplate">License Plate</label>
+                <input class="form-control" type="text" name="licplate" id="licplate" value="{{veh.licenseplate}}">
+            </div>
+            <div class="col-4">
+                <label class="form-label" for="tagsexp">Tags Expire</label>
+                <input class="form-control" type="month" name="tagsexp" id="tagsexp"
+                    value='{{veh.tagsexpire.strftime("%Y-%m")}}'>
+            </div>
+            <div class="col-4">
+                <label class="form-label" for="vin">VIN Number</label>
+                <input class="form-control" type="text" name="vin" id="vin" value="{{veh.vinnumber}}">
+            </div>
+            <div class="col-4">
+                <label class="form-label" for="pdate">Purchase Date</label>
+                <input class="form-control" type="date" name="pdate" id="pdate"
+                    value='{{veh.purchase_date.strftime("%Y-%m-%d")}}'>
+            </div>
+            <div class="col-4">
+                <label class="form-label" for="purplace">Place of Purchase</label>
+                <input class="form-control" type="text" name="purplace" id="purplace" value="{{veh.purchasefrom}}">
+            </div>
+            <div class="col-4">
+                <label class="form-label" for="puramt">Purchase Amount</label>
+                <input class="form-control" type="number" name="puramt" id="puramt" value="{{veh.purchaseprice}}">
+            </div>
+            <div class="col-4">
+                <label class="form-label" for="sdate">Sale Date</label>
+                <input class="form-control" type="date" name="sdate" id="sdate"
+                    value='{{veh.sell_date.strftime("%Y-%m-%d")}}'>
+            </div>
+            <div class="col-4">
+                <label class="form-label" for="reason">Sale Reason</label>
+                <input class="form-control" type="text" name="reason" id="reason" value="{{veh.reasonforsale}}">
+            </div>
+            <div class="col-4">
+                <label class="form-label" for="saleamt">Sale Amount</label>
+                <input class="form-control" type="number" name="saleamt" id="saleamt" value="{{veh.saleamount}}">
+            </div>
+            <button type="submit" class="btn btn-primary">Edit Vehicle</button>
+        </form>
+    </div>
+
+    <div class="col-6">
+        <table class="table table-hover table-bordered">
+            <thead>
+                <th>Service <br>Facility</th>
+                <th>Date</th>
+                <th>Cost</th>
+                <th>Mileage</th>
+            </thead>
+            <tbody>
+                {% for service in services %}
+                <tr>
+                    <td>{{service.service}} <br> <span class="text text-muted small">{{service.place}}</span></td>
+                    <td>{{service.date.strftime("%m/%d/%y")}}</td>
+                    <td>{{"${:,.2f}".format(service.cost)}}</td>
+                    <td>{{"{:,.0f}".format(service.mileage|float)}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add A Service</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="/vehicle/{{veh.id}}" method="post" class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label" for="service">Service</label>
+                        <input class="form-control" type="text" name="service" id="service">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label" for="place">Facility</label>
+                        <input class="form-control" type="text" name="place" id="place">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" for="cost">Cost</label>
+                        <input class="form-control" type="number" name="cost" id="cost" step="0.01">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" for="mileage">Mileage</label>
+                        <input class="form-control" type="number" name="mileage" id="mileage">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" for="date">Date of Service</label>
+                        <input class="form-control" type="date" name="date" id="date">
+                    </div>
+                    </table>
+            </div>
+            <div class="modal-footer">
+                <input type="hidden" name="vehid" value="{{veh.id}}">
+                <button class="btn btn-primary" type="submit" name="submit" id="submit" value="Add Service">Add
+                    Service</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends "health/health-div.html" %}
+
+{% block title %}
+{{current_user.username}} Hospitalizations
+{% endblock %}
+
+{% block proheader %}
+Hospitalizations for {{current_user.firstname}}
+{% endblock %}
+
+{% block content %}
+
+<table class="table table-bordered">
+    <thead>
+        <th>Dates</th>
+        <th>Length</th>
+        <th>Reason</th>
+        <th>Doctor</th>
+        <th>Facility</th>
+        <th></th>
+    </thead>
+    <tbody>
+        
+        {% for stay in stays %}
+        <tr>
+            <td><a href="{{ url_for('health.hospital_update', id=stay.id) }}" class="btn">{{stay.datestart.strftime("%m/%d/%y")}} -
+                    {{stay.dateend.strftime("%m/%d/%y")}}</a></td>
+            <td>
+                {% for lgh in los %}
+                {% if lgh['id'] == stay.id %}
+                {{lgh['stay']}}
+                {% endif %}
+                {% endfor %}
+            </td>
+            <td>{{stay.reason}}</td>
+            <td>
+                {% for doctor in doctors  %}
+                {% if stay.doctorfk == doctor.id %}
+                {{doctor.name}}
+                {% endif %}
+                {% endfor %}
+            </td>
+            <td>
+                {% for facility in facilities  %}
+                {% if stay.facilityfk == facility.id %}
+                {{facility.name}}
+                {% endif %}
+                {% endfor %}
+            </td>
+            <td><a href="/health/hospital/delete/{{stay.id}}"><button class="btn btn-danger"><i
+                            class="fas fa-trash-alt"></i></button></a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Add New Hospitalization
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Hospitalization</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/health/hospital" method="POST" class="row g-3">
+                    <div class="col-6">
+                        <label for="sdate" class="form-label">Start Date</label>
+                        <input type="date" class="form-control" name="sdate" id="sdate">
+                    </div>
+                    <div class="col-6">
+                        <label for="edate" class="form-label">End Date</label>
+                        <input type="date" class="form-control" name="edate" id="edate">
+                    </div>
+                    <div class="col-md-12">
+                        <label for="reason" class="form-label">Reason</label>
+                        <input type="text" class="form-control" id="reason" name="reason">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="doctor" class="form-label">Doctor</label>
+                        <select name="doctor" id="doctor" class="form-select">
+                            {% for doctor in doctors %}
+                            <option value="{{doctor.id}}">{{doctor.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="facility" class="form-label">Facility</label>
+                        <select name="facility" id="facility" class="form-select">
+                            {% for facility in facilities %}
+                            <option value="{{facility.id}}">{{facility.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Add Hospitalization</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

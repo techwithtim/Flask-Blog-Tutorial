@@ -1,0 +1,43 @@
+{% extends "menu/menu-div.html" %}
+
+{% block title %}
+Guill Menu
+{% endblock %}
+
+{% block proheader %}
+Guill Menu Planner
+{% endblock %}
+
+{% block content %}
+    {% for date, plan in plans | groupby('date') %}
+    <!-- List of All Dates and Dishes -->
+    <div class="input-group mb-3">
+        <h4>{{ date.strftime('%A, %B %d, %Y') }}</h4>
+        <form action="/menu/{{date.strftime('%Y-%m-%d')}}" , method="POST">
+            <button type="submit" class="btn btn-outline-primary" name="dateselector" id="dateselector" value="{{date.strftime('%Y-%m-%d')}}">Go</button>
+        </form>
+    </div>
+    <form action="/menu/" method='POST'>
+        <div class="input-group mb-3">
+            <input type="hidden" name="datefield" class="form-control form-control-color" value="{{ date }}">
+            <select class="form-control" id="dishid" name='dishid' placeholder="Type to search...">
+                {% for dish in dishes %}
+                <option value="{{dish.id}}">{{dish.name}}</option>
+                {% endfor %}
+                <input type="submit" class="btn btn-outline-primary">
+        </div>
+    </form>
+    {% for plan in plans %}
+    {% if plan.date == date %}
+    <div class="lead d-flex justify-content-between">
+        {{ plan.item }}
+        <span title="{{plan.item}}"><a href="{{url_for('menu.deletePlan', id=plan.id)}}" class="btn btn-outline-danger btn-sm" tabindex="-1"
+                role="button">X</a></span>
+    </div>
+    {% endif %}
+    {% endfor %}
+    <br>
+    <hr>
+    <br>
+    {% endfor %}
+{% endblock %}

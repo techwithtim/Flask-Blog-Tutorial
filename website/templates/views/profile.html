@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% endblock %}
+
+{% block style %}
+{% endblock %}
+
+{% block submenu %}
+{% endblock %}
+
+{% block proheader %}
+Profile for {{current_user.username}}
+{% endblock %}
+
+{% block content %}
+
+<form action="/profile" enctype=multipart/form-data method="POST" class="row g-3">
+    <div class="col-6">
+        <label for="firstname" class="form-label">First Name</label>
+        <input type="text" class="form-control" name="firstname" id="firstname" value="{{profile.firstname}}">
+    </div>
+    <div class="col-6">
+        <label for="lastname" class="form-label">Last Name</label>
+        <input type="text" class="form-control" name="lastname" id="lastname" value="{{profile.lastname}}">
+    </div>
+    <div class="col-4">
+        <label for="address" class="form-label">Address</label>
+        <input type="text" class="form-control" name="address" id="address" value="{{profile.address}}">
+    </div>
+    <div class="col-md-3">
+        <label for="city" class="form-label">City</label>
+        <input type="text" class="form-control" id="city" name="city" value="{{profile.city}}">
+    </div>
+    <div class="col-md-2">
+        <label for="state" class="form-label">State</label>
+        <select type="text" name="state" id="state" class="form-select">
+            {% for state in states %}
+            {% if state.abr == profile.state %}
+            <option selected value="{{state.abr}}">{{state.state}}</option>
+            {% else %}
+            <option value="{{state.abr}}">{{state.state}}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-3">
+        <label for="zip" class="form-label">Zip</label>
+        <input type="text" class="form-control" id="zip" name="zip" value="{{profile.zip}}">
+    </div>
+    <div class="col-4">
+        <label for="phone" class="form-label">Phone</label>
+        <input type="tel" class="form-control" id="phone" name="phone" value="{{profile.phone}}">
+    </div>
+    <div class="col-4">
+        <label for="email" class="form-label">Email</label>
+        <input type="text" class="form-control" id="email" name="email" value="{{profile.email}}">
+    </div>
+    <div class="col-4">
+        <label class="form-label" for="dob">Birthdate</label>
+        <input type="date" name="dob" id="dob" class="form-control" value="{{profile.dob.strftime('%Y-%m-%d')}}">
+    </div>
+    <div class="col-4">
+        <label class="form-label" for="un">Username</label>
+        <input type="text" name="un" id="un" class="form-control" value="{{profile.username}}">
+    </div>
+    <div class="col-4">
+        <label class="form-label" for="pw">Password</label>
+        <input type="password" name="pw" id="pw" class="form-control" value="{{profile.password}}">
+    </div>
+    <div class="col-4">
+        <label class="form-label" for="avatar">Avatar</label>
+        <input type="file" name="avatar" id="avatar" class="form-control">
+        {% set fn = 'images/'+current_user.avatar_filename %}
+          <img src="{{url_for('static', filename=fn)}}" alt="pic" width="64" height="64" class="rounded-circle me-2">
+    </div>
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Save Information</button>
+    </div>
+</form>
+{% endblock %}

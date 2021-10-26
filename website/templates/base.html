@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" type="text/css" href="{{url_for('static', filename = 'css/bootstrap.css')}}">
+  <link rel="stylesheet" type="text/css" href="{{url_for('static', filename = 'css/sidebars.css')}}">
+  <link rel="stylesheet" type="text/css" href="{{url_for('static', filename = 'css/sidebar-themes.css')}}">
+  <link rel="stylesheet" type="text/css" href="{{url_for('static', filename = 'css/main.css')}}">
+  <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+    integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+    integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+  <link rel="stylesheet" href="//malihu.github.io/custom-scrollbar/jquery.mCustomScrollbar.min.css">
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"
+    integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous">
+  </script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"
+    integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous">
+  </script>
+  <script src="https://kit.fontawesome.com/999ca2bb93.js" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+  <title>{% block title %}{% endblock %}</title>
+
+  {% block style %}{% endblock %}
+</head>
+
+<body onload="startTime()">
+  <div class="page-wrapper default-theme sidebar-bg bg1 toggled">
+    <nav id="sidebar" class="sidebar-wrapper">
+      <div class="sidebar-content">
+        <!-- sidebar-brand  -->
+        <div class="sidebar-item sidebar-brand">
+          <a href="#">{% block proheader %}pro sidebar{% endblock %}</a>
+        </div>
+        <!-- sidebar-header  -->
+        <div class="sidebar-item sidebar-header d-flex flex-nowrap">
+          <div class="user-pic">
+            {% set fn = 'images/'+current_user.avatar_filename %}
+            <img class="img-responsive img-rounded" src="{{url_for('static', filename=fn)}}" alt="User picture">
+          </div>
+          <div class="user-info">
+            <span class="user-name">{{current_user.firstname}}
+              <strong>{{current_user.lastname}}</strong>
+            </span>
+            <span class="user-role">Administrator</span>
+            <span class="user-status">
+              <i class="fa fa-circle"></i>
+              <span>Online</span>
+            </span>
+          </div>
+        </div>
+        <!-- sidebar-clock  -->
+        <div class="clockdate sidebar-item sidebar-search">
+          <div class="clockdate-wrapper d-inline-flex">
+            <div id="date"></div>
+          </div>
+        </div>
+        <!-- sidebar-menu  -->
+        <div class=" sidebar-item sidebar-menu">
+          <ul>
+            <li class="header-menu">
+              <span>General</span>
+            </li>
+            <li class="sidebar-dropdown">
+              <a href="/home">
+                <i class="fa fa-tachometer-alt"></i>
+                <span class="menu-text">Dashboard</span>
+                <!-- <span class="badge badge-pill badge-warning">New</span> -->
+              </a>
+              <div class="sidebar-submenu">
+                <ul>
+                  <li>
+                    <a href="/home">Home
+                      <!-- <span class="badge badge-pill badge-success">Pro</span> -->
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li class="sidebar-dropdown">
+              <a href="#">
+                <i class="fas fa-utensils"></i>
+                <span class="menu-text">Menu</span>
+                <!-- <span class="badge badge-pill badge-danger">3</span> -->
+              </a>
+              <div class="sidebar-submenu">
+                <ul>
+                  <li>
+                    <a href="/menu">Menu</a>
+                  </li>
+                  <li>
+                    <a href="/menu/recipe">Recipe</a>
+                  </li>
+                  <li>
+                    <a href="/menu/shopping">Shopping List</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li class="sidebar-dropdown">
+              <a href="#">
+                <i class="fas fa-heartbeat"></i>
+                <span class="menu-text">Health</span>
+              </a>
+              <div class="sidebar-submenu">
+                <ul>
+                  <li>
+                    <a href="/health/facilities">Facilities</a>
+                  </li>
+                  <li>
+                    <a href="/health/doctors">Doctors</a>
+                  </li>
+                  <li>
+                    <a href="/health/medications">Medications</a>
+                  </li>
+                  <li>
+                    <a href="/health//medlist">Medication List</a>
+                  </li>
+                  <li>
+                    <a href="/health/hospital">Hospitalizations</a>
+                  </li>
+                  <li>
+                    <a href="/health/allergies">Allergies</a>
+                  </li>
+                  <li>
+                    <a href="/health/surgeries">Surgeries</a>
+                  </li>
+                  <li>
+                    <a href="/health/a1c">A1C</a>
+                  </li>
+                  <li>
+                    <a href="/health/cpap">CPAP Supplies</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li class="sidebar-dropdown">
+              <a href="#">
+                <i class="fas fa-tasks"></i>
+                <span class="menu-text">Productivity</span>
+              </a>
+              <div class="sidebar-submenu">
+                <ul>
+                  <li>
+                    <a href="/productivity/goals">Goals</a>
+                  </li>
+                  <li>
+                    <a href="/productivity/projects">Projects</a>
+                  </li>
+                  <li>
+                    <a href="/productivity/tasks">Tasks</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li class="sidebar-dropdown">
+              <a href="#">
+                <i class="fas fa-grin-alt"></i>
+                <span class="menu-text">Personal</span>
+              </a>
+              <div class="sidebar-submenu">
+                <ul>
+                  <li>
+                    <a href="/vehicle/vehicle">Vehicles</a>
+                  </li>
+                  <li>
+                    <a href="/personal/wifi">Wifi</a>
+                  </li>
+                  <li>
+                    <a href="/personal/housinghistory">Housing History</a>
+                  </li>
+                  <li>
+                    <a href="/personal/grave">Grave Markers</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li class="sidebar-dropdown">
+              <a href="#">
+                <i class="fa fa-cog"></i>
+                <span class="menu-text">Settings</span>
+              </a>
+              <div class="sidebar-submenu">
+                <ul>
+                  <li>
+                    <a href="{{url_for('views.profile')}}">Profile</a>
+                  </li>
+                  <li>
+                    <a href="{{url_for('settings.settingsHome')}}">Settings</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <!-- sidebar-menu  -->
+      </div>
+      <div class="sidebar-footer">
+        <div class="dropdown">
+          <a id="pin-sidebar" class="btn" href="#"><i class="fas fa-thumbtack"></i></a>
+        </div>
+        <div>
+          <a href="/logout">
+            <i class="fa fa-power-off"></i>
+          </a>
+        </div>
+        <div class="pinned-footer">
+          <a href="#">
+            <i class="fas fa-ellipsis-h"></i>
+          </a>
+        </div>
+      </div>
+    </nav>
+
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    {% if category == 'error' %}
+    <div class="alert alert-danger alter-dismissable fade show main" role="alert">
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% else %}
+    <div class="alert alert-success alter-dismissable fade show main" role="alert">
+      {{ message }}
+      <button type="button" class="btn btn-outline-dark" data-dismiss="alert">
+        <span aria-hidden="false"><i class="fas fa-window-close"></i></span>
+      </button>
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <!-- page-content  -->
+    <main class="page-content pt-2">
+      <div id="overlay" class="overlay"></div>
+      <div class="container-fluid p-5">
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div id="submenu">
+              {% block submenu %}{% endblock %}
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-12">
+              {% block content %}
+              {% endblock %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- page-content -->
+  </div>
+  <!-- page-wrapper -->
+
+
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+    integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous">
+  </script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+    integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous">
+  </script>
+  <script src="//malihu.github.io/custom-scrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
+  <script src="{{url_for('static', filename = 'js/main.js')}}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+  </script>
+  <script>
+    function startTime() {
+      var today = new Date();
+      var hr = today.getHours();
+      var min = today.getMinutes();
+      var sec = today.getSeconds();
+      ap = (hr < 12) ? "<span>AM</span>" : "<span>PM</span>";
+      hr = (hr == 0) ? 12 : hr;
+      hr = (hr > 12) ? hr - 12 : hr;
+      //Add a zero in front of numbers<10
+      hr = checkTime(hr);
+      min = checkTime(min);
+      sec = checkTime(sec);
+
+      var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+      var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      var curWeekDay = days[today.getDay()];
+      var curDay = today.getDate();
+      var curMonth = months[today.getMonth()];
+      var curYear = today.getFullYear();
+      date = curWeekDay + ", " + curMonth + " " + curDay + " " + curYear + " - " + hr + ":" + min + " " + ap
+      document.getElementById("date").innerHTML = date;
+
+      time = hr + ":" + min + ":" + sec + " " + ap
+      document.getElementById("clock").innerHTML = time;
+
+      var time = setTimeout(function () {
+        startTime()
+      }, 500);
+    }
+
+    function checkTime(i) {
+      if (i < 10) {
+        i = "0" + i;
+      }
+      return i;
+    }
+  </script>
+</body>
+
+</html>

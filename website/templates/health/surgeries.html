@@ -1,0 +1,95 @@
+{% extends "health/health-div.html" %}
+
+{% block title %}
+{{current_user.username}} Surgeries
+{% endblock %}
+
+{% block proheader %}
+Surgeries for {{current_user.firstname}}
+{% endblock %}
+
+{% block content %}
+<table class="table table-info">
+    <thead>
+        <th>Name</th>
+        <th>Start Date</th>
+        <th>Description</th>
+        <th>Body Part</th>
+        <th>Doctor</th>
+        <th>Facility</th>
+        <th> </th>
+    </thead>
+    <tbody>
+        <form action="/health/surgeries" method="post">
+            <tr>
+                <td>
+                    <input type="text" class="form-control" name="name" id="name">
+                </td>
+                <td>
+                    <input type="date" class="form-control" name="sdate" id="sdate">
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="desc" id="desc">
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="bodypart" id="bodypart">
+                </td>
+                <td>
+                    <select name="doctor" id="doctor" class="form-select" >
+                        {% for doctor in doctors %}
+                        <option value="{{doctor.id}}">{{doctor.name}}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <select name="facility" id="facility" class="form-select">
+                        {% for facility in facilities %}
+                        <option value="{{facility.id}}">{{facility.name}}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <input type="hidden" name="thisuserid" value="{{current_user.id}}">
+                    <input type="submit" class = "btn btn-secondary" value="Add New Surgery">
+                </td>
+            </tr>
+        </form>
+    </tbody>
+</table>
+
+
+<!-- EXISTING DATA IN DB -->
+<table class="table table-bordered">
+    <thead>
+        <th>Start Date</th>
+        <th>Age</th>
+        <th>Description</th>
+        <th>Body Part</th>
+        <th>Doctor</th>
+        <th>Facility</th>
+        <th> </th>
+    </thead>
+    <tbody>
+        {% for surg in surgeries %}
+        <tr>
+            <td>{{surg.startdate.strftime("%m/%d/%Y")}}</td>
+            <td>{{surg.age}}</td>
+            <td>{{surg.description}}</td>
+            <td>{{surg.body_part}}</td>
+            {% for doctor in doctors %}
+            {% if surg.doctorfk == doctor.id %}
+            <td>{{doctor.name}}</td>
+            {% endif %}
+            {% endfor %}
+            {% for facility in facilities %}
+            {% if surg.facilityfk == facility.id %}
+            <td>{{facility.name}}</td>
+            {% endif %}
+            {% endfor %}
+            <td><a href="/health/surgery/delete/{{surg.id}}"><button class="btn btn-outline-danger btn-sm"><i
+                class="fas fa-trash"></i></button></a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

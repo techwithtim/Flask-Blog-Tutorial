@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block submenu %}
+<div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+    <a href="/health/facilities"><button type="button" class="btn">Facilities</button></a>
+    <a href="/health/doctors"><button type="button" class="btn">Doctors</button></a>
+    <a href="/health/surgeries"><button type="button" class="btn">Surgeries</button></a>
+    <a href="/health/hospital"><button type="button" class="btn">Hospitalizations</button></a>
+    <a href="/health/allergies"><button type="button" class="btn">Allergies</button></a>
+    <a href="/health/medications"><button type="button" class="btn">Medications</button></a>
+    <a href="/health/medlist"><button type="button" class="btn">Medication List</button></a>
+    <a href="/health/cpap"><button type="button" class="btn">CPAP Supplies</button></a>
+</div>
+{% endblock %}
+
+{% block title %}
+{{current_user.username}} Health Information
+{% endblock %}
+
+{% block content %}
+{% endblock %}
+

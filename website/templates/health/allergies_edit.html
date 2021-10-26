@@ -1,0 +1,31 @@
+{% extends "health/health-div.html" %}
+
+{% block title %}
+Edit Allergy
+{% endblock %}
+
+{% block proheader %}
+Edit {{allergy.name}}
+{% endblock %}
+
+{% block content %}
+<form action="/health/allergy/{{allergy.id}}" , method="POST" class="row g-3">
+    <div class="col-3">
+        <label for="name">Name of Allergy</label>
+        <input type="text" class="form-control" id="name" name="name" value="{{allergy.name}}">
+    </div>
+    <div class="col-3">
+        <label for="reaction">Reaction</label>
+        <input type="text" class="form-control" name="reaction" id="reaction" value="{{allergy.reaction}}">
+    </div>
+    <div class="col-3">
+        <label for="dateadded">Date Added as Allergy</label>
+        <input type="date" class="form-control" id="dateadded" name="dateadded"
+            value="{{allergy.dateadded.strftime('%Y-%d-%m')}}">
+    </div>
+    <div class="col-3">
+        <input type="hidden" name='thisuserid' value="{{current_user.id}}">
+        <input type="submit" class="btn btn-primary" name='allergySubmit' value="Edit Allergy">
+    </div>
+</form>
+{% endblock %}

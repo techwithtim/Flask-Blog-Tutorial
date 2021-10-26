@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}
+Housing History
+{% endblock %}
+
+{% block style %}
+{% endblock %}
+
+{% block submenu %}
+{% endblock %}
+
+{% block proheader %}
+Edit Housing
+{% endblock %}
+
+{% block content %}
+<form action="{{url_for('personal.edithousing', id=house.id)}}" , method="POST" class="row g-2">
+    <div class="col-6">
+        <label for="start" class="form-label">Move In Month/Year</label>
+        <input type="month" class="form-control" name="start" id="start" value="{{house.movein.strftime('%Y-%m')}}">
+    </div>
+    <div class="col-6">
+        <label for="end" class="form-label">Move Out Month/Year</label>
+        <input type="month" class="form-control" name="end" id="end" value="{{house.moveout.strftime('%Y-%m')}}">
+    </div>
+    <div class="col-6">
+        <label for="address" class="form-label">Address</label>
+        <input type="text" class="form-control" name="address" id="address" value="{{house.address}}">
+    </div>
+    <div class="col-2">
+        <label for="city" class="form-label">City</label>
+        <input type="text" class="form-control" name="city" id="city" value="{{house.city}}">
+    </div>
+    <div class="col-2">
+        <label for="state" class="form-label">State</label>
+        <select type="text" name="state" id="state" class="form-select">
+            {% for state in states %}
+            {% if state.abr == house.state %}
+            <option selected value="{{state.abr}}">{{state.abr}} - {{state.state}}</option>
+            {% else %}
+            <option value="{{state.abr}}">{{state.state}}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-2">
+        <label for="zip" class="form-label">Zip</label>
+        <input type="text" class="form-control" name="zip" id="zip" value="{{house.zip}}">
+    </div>
+    <div class="col-3">
+        <input type="hidden" name='thisuserid' value="{{current_user.id}}">
+        <input type="submit" class="btn btn-primary" name="submit" id="submit" value="Edit Housing History">
+    </div>
+</form>
+{% endblock %}

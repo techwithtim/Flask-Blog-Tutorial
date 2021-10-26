@@ -1,0 +1,17 @@
+{% extends "menu/menu-div.html" %}
+
+{% block title %}
+Scrape a Recipe
+{% endblock %}
+
+{% block proheader %}
+Scrape a Recipe
+{% endblock %}
+
+{% block content %}
+<form action="{{url_for('menu.scrape')}}", method="POST">
+    <label class="form-label" for="website">Website</label>
+    <input class="form-control" type="url" name="website" id="website">
+    <button type="submit" class="btn btn-primary">Scrape Recipe</button>
+</form>
+{% endblock %}

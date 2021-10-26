@@ -1,0 +1,116 @@
+{% extends "menu/menu-div.html" %}
+
+{% block title %}
+{% for date, item in items | groupby('date') %}
+Dinner for {{date.strftime('%A, %B %d, %Y')}}
+{% endfor %}
+{% endblock %}
+
+{% block proheader %}
+{% for date, item in items | groupby('date') %}
+{{date.strftime('%a %m/%d/%y')}} Meal Plan
+{% endfor %}
+{% endblock %}
+
+{% block content %}
+{% for date, item in items | groupby('date') %}
+<form action="/plan/single/{{date.strftime('%Y-%m-%d')}}" method='POST'>
+    <div class="input-group mb-3">
+        <input type="hidden" name="datefield" class="form-control form-control-color" value="{{ date }}">
+        <select class="form-control" id="dishid" name='dishid' placeholder="Type to search...">
+            {% for dish in dishlist %}
+            <option value="{{dish.id}}">{{dish.name}}</option>
+            {% endfor %}
+            <input type="submit" name='AddDishToPlanner' class="btn btn-outline-sucess" value="AddDishToPlanner">
+    </div>
+</form>
+{% endfor %}
+
+{% for item in items %}
+<div class="card border-dark mb-3" style="max-width: 1900px;">
+    <div class="row g-0">
+        <div class="col-md-4 border-dark">
+            <a href="/menu/recipe/{{item.dishfk}}"><img src="{{item.pictureURL}}" class="img-fluid rounded-start"
+                    alt="{{item.item}}"></a>
+        </div>
+        <div class="col-md-8">
+            <div class="container-fluid justify-content-between">
+                <div class="card-body">
+                    <p class="card-title display-4">
+                        <bold>{{item.item}}</bold>
+                    </p>
+                    <div class="row g-0">
+                        <div class="col card-text">
+                            <table>
+                                {% for recipe in recipes %}
+                                {% if recipe.dishfk == item.dishfk %}
+                                <tr>
+                                    <td>
+                                        {{recipe.qty}} {{recipe.measurement}} {{recipe.ing}}
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </table>
+                        </div>
+                        <div class="col card-text">
+                            <table>
+                                {% for step in steps %}
+                                {% if step.dishfk == item.dishfk %}
+                                <tr>
+                                    <td>
+                                        {{step.step_num}}. {{step.step_text}}
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer col">
+                {% for dish in dishs %}
+                {% if dish.id == item.dishfk %}
+                Number of Servings: {{dish.numServings}} <br>
+                Serving Size: {{dish.servingSize}}
+                <div class="small">
+                    {% set carb = {'total_amount': 0} %}
+                    {% for rec in recipes %}
+                    {% if dish.id == rec.dishfk %}
+                    {% if carb.update({'total_amount': carb.total_amount + rec.carb_total }) %}{% endif %}
+                    {% set fiber = rec.carb_fiber %}
+                    {% endif %}
+                    {% endfor %}
+                    Total Carbs: {{ "%.2f"|format(carb.total_amount / dish.numServings) }} per serving
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<!-- {% for date, plan in plans | groupby('date') %}
+<h4>{{ date.strftime('%A, %B %d, %Y') }}<br></h4>
+<form action="/menu" method='POST'>
+    <div class="input-group mb-3">
+        <input type="hidden" name="datefield" class="form-control form-control-color" value="{{ date }}">
+        <select class="form-control" id="dishid" name='dishid' placeholder="Type to search...">
+            {% for dish in dishes %}
+            <option value="{{dish.id}}">{{dish.name}}</option>
+            {% endfor %}
+            <input type="submit" class="btn btn-outline-primary">
+    </div>
+</form>
+{% for plan in plans %}
+{% if plan.date == date %}
+<div class="lead d-flex justify-content-between">
+    {{ plan.item }}
+    <span title="{{plan.item}}"><a href="/deletingPlan/{{plan.id}}" class="btn btn-outline-danger btn-sm" tabindex="-1" role="button">X</a></span>
+</div>
+{% endif %}
+{% endfor %} <br><br>
+{% endfor %} -->
+{% endblock %}

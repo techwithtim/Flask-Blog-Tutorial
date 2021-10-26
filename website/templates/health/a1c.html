@@ -1,0 +1,114 @@
+{% extends "health/health-div.html" %}
+
+{% block title %}
+A1C for {{current_user.firstname}} {{current_user.lastname}}
+{% endblock %}
+
+{% block proheader %}
+Current A1C: {{currentvalue.testresult}}% EAG: {{eag}}
+{% endblock %}
+
+{% block content %}
+<div class="form-floating">
+    <form action="/health/a1c" , method="POST">
+        <label for="name">Date of test</label>
+        <input type="date" class="form-control" id="testdate" name="testdate">
+        <label for="reaction">Test Result (0.0)</label>
+        <input type="float" class="form-control" name="testresult" id="testresult">
+        <select name="doctor" id="doctor" class='form-select'>
+            {% for doctor in doctors %}
+            <option value="{{doctor.id}}">{{doctor.name}}</option>
+            {% endfor %}
+        </select>
+        <input type="hidden" name='thisuserid' value="{{current_user.id}}">
+        <input type="submit" name='a1cSubmit' value="Add A1C">
+    </form>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div id="table">
+                <table class="table table-responsive table-striped">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Result</th>
+                            <th>Avg Gluclose</th>
+                            <th>Doctor</th>
+                            <th><i class='fas fa-trash'></i></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for result in results %}
+                        <tr>
+                            <td>{{result.date.strftime("%B %d, %Y")}}</td>
+                            <td>{{result.testresult}}</td>
+                            <td>{{(28.7 * result.testresult - 46.7) | round | int }}</td>
+                            {% for doctor in doctors %}
+                            {% if doctor.id == result.doctorfk %}
+                            <td>{{doctor.name}}</td>
+                            <td><a href="/health/a1c/delete/{{result.id}}"><button class="btn btn-danger"><i
+                                            class="fas fa-trash"></i></button></a></td>
+                            {% endif %}
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col">
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.0.2/chart.min.js"></script>
+            <canvas id="myChart" width="200" height="200"></canvas>
+            <script>
+                var label = JSON.parse('{{labels | tojson | safe}}');
+                var dataset = JSON.parse('{{dataset | tojson | safe}}');
+
+                    var ctx = document.getElementById('myChart').getContext('2d');
+                var myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: label,
+                        datasets: [{
+                            label: 'A1C',
+                            data: dataset,
+                            borderColor: "#3e95cd",
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        stacked: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'A1C History for {{current_user.firstname}} {{current_user.lastname}}'
+                            }
+                        },
+                        scales: {
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+
+                                // grid line settings
+                                grid: {
+                                    drawOnChartArea: false, // only want the grid lines for one axis to show up
+                                },
+                            },
+                        }
+                    }
+                });
+            </script>
+        </div>
+    </div>
+</div>
+{% endblock %}
