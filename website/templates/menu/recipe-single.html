@@ -148,7 +148,6 @@
 </style>
 {% endblock %}
 
-
 {% block title %}
 Guill Menu - Recipe for {{dish.name}}
 {% endblock %}
@@ -157,110 +156,98 @@ Guill Menu - Recipe for {{dish.name}}
 {{dish.name}}
 {% endblock %}
 
+{% block submenu %}
+{{ super() }}
+<button type="button" class="btn" data-toggle="modal" data-target="#Nutrition">Nutrition
+  Information</button>
+{% endblock %}
+
 {% block content %}
 <div class="container">
   <div class="row">
-    <div class="col-3" id="Picture and Information">
+    <div class="col-12 text-center" id="Picture and Information">
       {% if dish.pictureURL %}
-      <img src="{{dish.pictureURL}}" class='img-thumbnail' alt="Picture Of Dish">
+      <picture><img src="{{dish.pictureURL}}" class='img-thumbnail' alt="Picture Of Dish" width="300px"></picture>
       {% else %}
       <img src="https://image.shutterstock.com/image-vector/ui-image-placeholder-wireframes-apps-260nw-1037719204.jpg"
         class='img-thumbnail' alt="Picture Of Dish">
       {% endif %}
-      <form action="/menu/recipe/{{dish.id}}/update" method="POST">
-        <label for="picurl">Picture URL</label>
-        <input type="text" name="picurl" class="form-control" value="{{dish.pictureURL}}">
-        <label for="servings">Servings</label>
-        <input type="text" name="servings" class="form-control" value="{{dish.numServings}}">
-        <label for="servingSize">Serving Size</label>
-        <input type="text" name="servingSize" class="form-control" value="{{dish.servingSize}}">
-        <label for="prepTime">Prep Time</label>
-        <input type="text" name="prepTime" class="form-control" value="{{dish.prepTime}}">
-        <label for="cooktime">Cook Time</label>
-        <input type="text" name="cooktime" class="form-control" value="{{dish.cookTime}}">
-        <label for="cookTemp">Cook Time</label>
-        <input type="text" name="cookTemp" class="form-control" value="{{dish.cookTemp}}">
-        <button class="btn btn-primary" type="submit">Save</button>
+      <form action="/menu/recipe/{{dish.id}}/update" method="POST" class="row g-1">
+        <div class="col-3">
+          <label class="form-label" for="picurl">Picture URL</label>
+          <input class="form-control" type="text" name="picurl" class="form-control" value="{{dish.pictureURL}}">
+        </div>
+        <div class="col-1">
+          <label class="form-label" for="servings">Servings</label>
+          <input class="form-control" type="text" name="servings" class="form-control" value="{{dish.numServings}}">
+        </div>
+        <div class="col">
+          <label class="form-label" for="servingSize">Serving Size</label>
+          <input class="form-control" type="text" name="servingSize" class="form-control" value="{{dish.servingSize}}">
+        </div>
+        <div class="col">
+          <label class="form-label" for="prepTime">Prep Time</label>
+          <input class="form-control" type="text" name="prepTime" class="form-control" value="{{dish.prepTime}}">
+        </div>
+        <div class="col">
+          <label class="form-label" for="cooktime">Cook Time</label>
+          <input class="form-control" type="text" name="cooktime" class="form-control" value="{{dish.cookTime}}">
+        </div>
+        <div class="col">
+          <label class="form-label" for="cookTemp">Cook Temp</label>
+          <input class="form-control" type="text" name="cookTemp" class="form-control" value="{{dish.cookTemp}}">
+        </div>
+        <div class="col">
+          <label class="form-label" for="sub"> </label>
+          <button class="btn btn-primary" type="submit" name="sub">Save</button>
       </form>
     </div>
-    <div class="col-6" id="Recipe and Steps">
-      <h6 class="display-6 text-left"><b>Recipe</b></h6>
-      <form action="/menu/recipe/{{dish.id}}" method="POST">
-        <div class="row g-1">
-          <div class="col-sm-1">
-            <input type="text" id="qty" name="qty" class="form-control" placeholder="Qty" />
-          </div>
-          <div class="col-sm-2">
-            <input type="text" id="measurement" name="measurement" class="form-control" placeholder="Measurement" />
-          </div>
-          <div class="col-sm-4">
-            <input type="text" id="ing" name="ing" class="form-control" placeholder="Ingredience" />
-          </div>
-          <div class="col-sm-2">
-            <select class="form-control" id="catagory" name='catagory'>
-              <option value="DidNotSelect">Choose a catagory...</option>
-              {% for item in catagories %}
-              <option value="{{item}}">{{item}}</option>
-              {% endfor %}
-          </div>
-          <div class="col-sm">
-            <input type="text" id="notes" name="notes" class="form-control" placeholder="Notes" />
-            <input type="hidden" id="dishid" name="dishid" class="form-control" value="{{dish.id}}" />
-          </div>
-          <div class="col">
-            <input class="btn btn-primary" id="submit_button" name="submit_button" type="submit" value="Recipe"></input>
-          </div>
-        </div>
-      </form>
-      <br>
-      <table class="table">
+  </div>
+  <div class="row">
+    <br>
+    <div class="col-6" id="Recipe">
+      <div class="col-6 float-start">
+        <h6 class="display-6"><strong>Recipe</strong></h6>
+      </div>
+      <div class="col-6 float-end text-end">
+        <button type="button" class="btn btn-primary align-bottom" data-toggle="modal" data-target="#Ing"><i
+            class="fas fa-plus-square"></i> Add Item</button>
+      </div>
+
+      <table class="table table-sm table-responsive">
         <thead>
           <tr>
+            <td>Ingredient</td>
             <td></td>
-            <td>Qty</td>
-            <td>Measurement</td>
-            <td>Ing</td>
-            <td>Notes</td>
-            <td>Delete</td>
           </tr>
         </thead>
         <tbody>
           {% for recipe in recipes %}
           <tr>
             <td><img class="img-thumbnail" src="{{recipe.pictureURL}}" width="60"></td>
-            <td class="lead">{{recipe.qty}}</td>
-            <td class="lead">{{recipe.measurement}}</td>
-            <td class="lead">{{recipe.ing}}</td>
-            <td class="lead">{{recipe.notes}}</td>
-            <td><a href="/deletingIng/{{recipe.id}}/{{dish.id}}" class="btn btn-outline-danger btn-sm" tabindex="-1"
-                role="button">X</a></td>
+            <td class="lead text-start text-body">{{recipe.qty}} {{recipe.measurement}} {{recipe.ing}}</td>
+            <td><a href="{{url_for('menu.deleteIng',recID=recipe.id, dishID=dish.id)}}" class="btn btn-danger btn-sm"
+                tabindex="-1" role="button"><i class="fas fa-trash-alt"></i></a></td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
-      <br><br>
-
-      <!-- Steps -->
-      <h6 class="display-6 text-left"><b>Steps</b></h6>
-      <form action="/menu/recipe/{{dish.id}}" method="POST">
-        <div class="form-group row g-1">
-          <div class="col-lg-10">
-            <input type="text" id="stepdesc" name="stepdesc" class="form-control"
-              placeholder="Enter Step Description"></input>
-            <input type="hidden" id="dishid" name="dishid" calss="form-control" value="{{dish.id}}" />
-          </div>
-          <div class="col">
-            <input class="btn btn-primary" name="submit_button" id="submit_button" type="submit" value="Steps"></input>
-          </div>
-        </div>
-      </form>
+    </div>
+    <div class="col-6" id="Steps">
+      <div class="col-6 float-start">
+        <h6 class="display-6 text-left"><b>Steps</b></h6>
+      </div>
+      <div class="col-6 float-end text-end align-bottom">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"><i
+            class="fas fa-shoe-prints"></i> Add Step</button>
+      </div>
       <br>
-      <table class="table">
+      <table class="table table-sm table-responsive">
         <thead>
           <tr>
-            <td style="width: 10%">Number</td>
-            <td style="max-width: 10%">Step</td>
-            <td style="width: 10%">Delete</td>
+            <td>Number</td>
+            <td>Step</td>
+            <td>Delete</td>
           </tr>
         </thead>
         <tbody>
@@ -268,226 +255,318 @@ Guill Menu - Recipe for {{dish.name}}
           <tr>
             <th scope="row" class="lead">{{step.step_num}}</th>
             <td class="lead">{{step.step_text}}</td>
-            <td><a href="/deletingStep/{{step.id}}/{{dish.id}}" class="btn btn-outline-danger btn-sm" tabindex="-1"
-                role="button">X</a></td>
+            <td><a href="{{url_for('menu.deleteStep',stepID=step.id, dishID=dish.id)}}" class="btn btn-danger"
+                tabindex="-1" role="button"><i class="fas fa-trash-alt"></i></a></td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
-  <div class="col-3" id="Nutrition Information">
-    <!-- <img src="https://s.cdpn.io/3/NutritionFacts.gif" class="image"> -->
-    <section class="performance-facts">
-      <header class="performance-facts__header">
-        <h1 class="performance-facts__title">Nutrition Facts</h1>
-        <p>Serving Size: {{ dish.servingSize}}
-          <p>Servings: {{dish.numServings}}</p>
-      </header>
-      <table class="performance-facts__table">
-        <thead>
-          <tr>
-            <th colspan="3" class="small-info">
-              Amount Per Serving
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th colspan="2">
-              <b>Calories</b>
-              {{ (nutrition.calories/dish.numServings) | round(1) }}
-            </th>
-            <td>
-              Calories from Fat
-              {{ ((nutrition.fat_total/dish.numServings)*9) | round(1) }}
-            </td>
-          </tr>
-          <tr class="thick-row">
-            <td colspan="3" class="small-info">
-              <b>% Daily Value*</b>
-            </td>
-          </tr>
-          <tr>
-            <th colspan="2">
-              <b>Total Fat</b>
-              {{ (nutrition.fat_total/dish.numServings) | round(1) }}g
-            </th>
-            <td>
-              <b>{{ (((nutrition.fat_total/dish.numServings)/65)*100) | round(1) }}%</b>
-            </td>
-          </tr>
-          <tr>
-            <td class="blank-cell">
-            </td>
-            <th>
-              Saturated Fat
-              {{ (nutrition.fat_sat/dish.numServings) | round(1) }}g
-            </th>
-            <td>
-              {{ (((nutrition.fat_sat/dish.numServings)/20)*100) | round(1) }}%
-            </td>
-          </tr>
-          <tr>
-            <td class="blank-cell">
-            </td>
-            <th>
-              Trans Fat
-              {{ (nutrition.fat_trans/dish.numServings) | round(1) }}g
-            </th>
-            <td>
-              {{ (((nutrition.fat_trans/dish.numServings)/2)*100) | round(1) }}%
-            </td>
-          </tr>
-          <tr>
-            <th colspan="2">
-              <b>Cholesterol</b>
-              {{ (nutrition.cholesterol/dish.numServings) | round(1) }}mg
-            </th>
-            <td>
-              <b>{{ (((nutrition.cholesterol/dish.numServings)/300)*100) | round(1) }}%</b>
-            </td>
-          </tr>
-          <tr>
-            <th colspan="2">
-              <b>Sodium</b>
-              {{ (nutrition.sodium/dish.numServings) | round(1) }}mg
-            </th>
-            <td>
-              <b>{{ (((nutrition.sodium/dish.numServings)/2400)*100) | round(1) }}%</b>
-            </td>
-          </tr>
-          <tr>
-            <th colspan="2">
-              <b>Potassium</b>
-              {{ (nutrition.potassium/dish.numServings) | round(1) }}mg
-            </th>
-            <td>
-              <b> {{ (((nutrition.potassium/dish.numServings)/4700)*100) | round(1) }}%</b>
-            </td>
-          </tr>
-          <tr>
-            <th colspan="2">
-              <b>Total Carbohydrate</b>
-              {{ (nutrition.carb_total/dish.numServings) | round(1) }}g
-            </th>
-            <td>
-              <b>{{ (((nutrition.carb_total/dish.numServings)/300)*100) | round(1) }}%</b>
-            </td>
-          </tr>
-          <tr>
-            <th colspan="2">
-              <b>Net Carbs</b>
-              {{ ((nutrition.carb_total-nutrition.carb_fiber)/dish.numServings) | round(1) }}g
-            </th>
-            <td>
-              <b>{{ ((((nutrition.carb_total-nutrition.carb_fiber)/dish.numServings)/225)*100) | round(1) }}%</b>
-            </td>
-          </tr>
-          <tr>
-            <td class="blank-cell">
-            </td>
-            <th>
-              Dietary Fiber
-              {{ (nutrition.carb_fiber/dish.numServings) | round(1) }}g
-            </th>
-            <td>
-              {{ (((nutrition.carb_fiber/dish.numServings)/25)*100) | round(1) }}%
-            </td>
-          </tr>
-          <tr>
-            <td class="blank-cell">
-            </td>
-            <th>
-              Sugars
-              {{ (nutrition.carb_sugar/dish.numServings) | round(1) }}g
-            </th>
-            <td>
-              {{ (((nutrition.carb_sugar/dish.numServings)/50)*100) | round(1) }}%
-            </td>
-          </tr>
-          <tr class="thick-end">
-            <th colspan="2">
-              <b>Protein</b>
-              {{ (nutrition.protein/dish.numServings) | round(1) }}g
-            </th>
-            <td>
-              <b>{{ (((nutrition.protein/dish.numServings)/46)*100) | round(1) }}%</b>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+  </div>
 
-      <p class="small-info">* Percent Daily Values are based on a 2,000 calorie diet. Your daily values may be higher
-        or
-        lower depending on your calorie needs:</p>
 
-      <table class="performance-facts__table--small small-info">
-        <thead>
-          <tr>
-            <td colspan="2"></td>
-            <th>Calories:</th>
-            <th>2,000</th>
-            <th>2,500</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th colspan="2">Total Fat</th>
-            <td>Less than</td>
-            <td>65g</td>
-            <td>80g</td>
-          </tr>
-          <tr>
-            <td class="blank-cell"></td>
-            <th>Saturated Fat</th>
-            <td>Less than</td>
-            <td>20g</td>
-            <td>25g</td>
-          </tr>
-          <tr>
-            <th colspan="2">Cholesterol</th>
-            <td>Less than</td>
-            <td>300mg</td>
-            <td>300 mg</td>
-          </tr>
-          <tr>
-            <th colspan="2">Sodium</th>
-            <td>Less than</td>
-            <td>2,400mg</td>
-            <td>2,400mg</td>
-          </tr>
-          <tr>
-            <th colspan="2">Potassium</th>
-            <td>Less than</td>
-            <td>4,700mg</td>
-            <td>5,800mg</td>
-          </tr>
-          <tr>
-            <th colspan="3">Total Carbohydrate</th>
-            <td>300g</td>
-            <td>375g</td>
-          </tr>
-          <tr>
-            <td class="blank-cell"></td>
-            <th colspan="2">Dietary Fiber</th>
-            <td>25g</td>
-            <td>30g</td>
-          </tr>
-        </tbody>
-      </table>
+  <!-- Nutrition Modal -->
+  <div class="modal fade" id="Nutrition" tabindex="-1" role="dialog" aria-labelledby="NutritionLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="col-3" id="Nutrition Information">
+            <!-- <img src="https://s.cdpn.io/3/NutritionFacts.gif" class="image"> -->
+            <section class="performance-facts">
+              <header class="performance-facts__header">
+                <h1 class="performance-facts__title">Nutrition Facts</h1>
+                <p>Serving Size: {{ dish.servingSize}}
+                  <p>Servings: {{dish.numServings}}</p>
+              </header>
+              <table class="performance-facts__table">
+                <thead>
+                  <tr>
+                    <th colspan="3" class="small-info">
+                      Amount Per Serving
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th colspan="2">
+                      <b>Calories</b>
+                      {{ (nutrition.calories/dish.numServings) | round(1) }}
+                    </th>
+                    <td>
+                      Calories from Fat
+                      {{ ((nutrition.fat_total/dish.numServings)*9) | round(1) }}
+                    </td>
+                  </tr>
+                  <tr class="thick-row">
+                    <td colspan="3" class="small-info">
+                      <b>% Daily Value*</b>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th colspan="2">
+                      <b>Total Fat</b>
+                      {{ (nutrition.fat_total/dish.numServings) | round(1) }}g
+                    </th>
+                    <td>
+                      <b>{{ (((nutrition.fat_total/dish.numServings)/65)*100) | round(1) }}%</b>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="blank-cell">
+                    </td>
+                    <th>
+                      Saturated Fat
+                      {{ (nutrition.fat_sat/dish.numServings) | round(1) }}g
+                    </th>
+                    <td>
+                      {{ (((nutrition.fat_sat/dish.numServings)/20)*100) | round(1) }}%
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="blank-cell">
+                    </td>
+                    <th>
+                      Trans Fat
+                      {{ (nutrition.fat_trans/dish.numServings) | round(1) }}g
+                    </th>
+                    <td>
+                      {{ (((nutrition.fat_trans/dish.numServings)/2)*100) | round(1) }}%
+                    </td>
+                  </tr>
+                  <tr>
+                    <th colspan="2">
+                      <b>Cholesterol</b>
+                      {{ (nutrition.cholesterol/dish.numServings) | round(1) }}mg
+                    </th>
+                    <td>
+                      <b>{{ (((nutrition.cholesterol/dish.numServings)/300)*100) | round(1) }}%</b>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th colspan="2">
+                      <b>Sodium</b>
+                      {{ (nutrition.sodium/dish.numServings) | round(1) }}mg
+                    </th>
+                    <td>
+                      <b>{{ (((nutrition.sodium/dish.numServings)/2400)*100) | round(1) }}%</b>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th colspan="2">
+                      <b>Potassium</b>
+                      {{ (nutrition.potassium/dish.numServings) | round(1) }}mg
+                    </th>
+                    <td>
+                      <b> {{ (((nutrition.potassium/dish.numServings)/4700)*100) | round(1) }}%</b>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th colspan="2">
+                      <b>Total Carbohydrate</b>
+                      {{ (nutrition.carb_total/dish.numServings) | round(1) }}g
+                    </th>
+                    <td>
+                      <b>{{ (((nutrition.carb_total/dish.numServings)/300)*100) | round(1) }}%</b>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th colspan="2">
+                      <b>Net Carbs</b>
+                      {{ ((nutrition.carb_total-nutrition.carb_fiber)/dish.numServings) | round(1) }}g
+                    </th>
+                    <td>
+                      <b>{{ ((((nutrition.carb_total-nutrition.carb_fiber)/dish.numServings)/225)*100) | round(1) }}%</b>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="blank-cell">
+                    </td>
+                    <th>
+                      Dietary Fiber
+                      {{ (nutrition.carb_fiber/dish.numServings) | round(1) }}g
+                    </th>
+                    <td>
+                      {{ (((nutrition.carb_fiber/dish.numServings)/25)*100) | round(1) }}%
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="blank-cell">
+                    </td>
+                    <th>
+                      Sugars
+                      {{ (nutrition.carb_sugar/dish.numServings) | round(1) }}g
+                    </th>
+                    <td>
+                      {{ (((nutrition.carb_sugar/dish.numServings)/50)*100) | round(1) }}%
+                    </td>
+                  </tr>
+                  <tr class="thick-end">
+                    <th colspan="2">
+                      <b>Protein</b>
+                      {{ (nutrition.protein/dish.numServings) | round(1) }}g
+                    </th>
+                    <td>
+                      <b>{{ (((nutrition.protein/dish.numServings)/46)*100) | round(1) }}%</b>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
 
-      <p class="small-info">
-        Calories per gram:
-      </p>
-      <p class="small-info text-center">
-        Fat 9
-        &bull;
-        Carbohydrate 4
-        &bull;
-        Protein 4
-      </p>
+              <p class="small-info">* Percent Daily Values are based on a 2,000 calorie diet. Your daily values may be
+                higher
+                or
+                lower depending on your calorie needs:</p>
 
-    </section>
+              <table class="performance-facts__table--small small-info">
+                <thead>
+                  <tr>
+                    <td colspan="2"></td>
+                    <th>Calories:</th>
+                    <th>2,000</th>
+                    <th>2,500</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th colspan="2">Total Fat</th>
+                    <td>Less than</td>
+                    <td>65g</td>
+                    <td>80g</td>
+                  </tr>
+                  <tr>
+                    <td class="blank-cell"></td>
+                    <th>Saturated Fat</th>
+                    <td>Less than</td>
+                    <td>20g</td>
+                    <td>25g</td>
+                  </tr>
+                  <tr>
+                    <th colspan="2">Cholesterol</th>
+                    <td>Less than</td>
+                    <td>300mg</td>
+                    <td>300 mg</td>
+                  </tr>
+                  <tr>
+                    <th colspan="2">Sodium</th>
+                    <td>Less than</td>
+                    <td>2,400mg</td>
+                    <td>2,400mg</td>
+                  </tr>
+                  <tr>
+                    <th colspan="2">Potassium</th>
+                    <td>Less than</td>
+                    <td>4,700mg</td>
+                    <td>5,800mg</td>
+                  </tr>
+                  <tr>
+                    <th colspan="3">Total Carbohydrate</th>
+                    <td>300g</td>
+                    <td>375g</td>
+                  </tr>
+                  <tr>
+                    <td class="blank-cell"></td>
+                    <th colspan="2">Dietary Fiber</th>
+                    <td>25g</td>
+                    <td>30g</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <p class="small-info">
+                Calories per gram:
+              </p>
+              <p class="small-info text-center">
+                Fat 9
+                &bull;
+                Carbohydrate 4
+                &bull;
+                Protein 4
+              </p>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Ingredient Modal -->
+<div class="modal fade" id="Ing" tabindex="-1" role="dialog" aria-labelledby="IngLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="IngLabel">Add Ingredient</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="/menu/recipe/{{dish.id}}" method="POST">
+          <div class="row g-3">
+            <div class="col-4">
+              <input type="text" id="qty" name="qty" class="form-control" placeholder="Qty" />
+            </div>
+            <div class="col-4">
+              <input type="text" id="measurement" name="measurement" class="form-control" placeholder="Measurement" />
+            </div>
+            <div class="col-4">
+              <input type="text" id="ing" name="ing" class="form-control" placeholder="Ingredience" />
+            </div>
+            <div class="col-12">
+              <select class="form-control" id="catagory" name='catagory'>
+                <option value="DidNotSelect">Choose a catagory...</option>
+                {% for item in catagories %}
+                <option value="{{item}}">{{item}}</option>
+                {% endfor %}
+            </div>
+            <div class="col-12">
+              <textarea id="notes" name="notes" class="form-control" row="2"></textarea>
+              <input type="hidden" id="dishid" name="dishid" class="form-control" value="{{dish.id}}" />
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Step Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add Step</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="/menu/recipe/{{dish.id}}" method="POST">
+          <div class="form-group row g-1">
+            <div class="col-lg-10">
+              <input type="text" id="stepdesc" name="stepdesc" class="form-control"
+                placeholder="Enter Step Description"></input>
+              <input type="hidden" id="dishid" name="dishid" calss="form-control" value="{{dish.id}}" />
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}

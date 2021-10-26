@@ -26,8 +26,7 @@ Guill Menu Recipes
       {% endif %}
       <h5 class="display-5 text-capitalize text-center">{{dish.name}}</h5>
       <div class='text-center'>
-        <a href="/menu/recipe/{{dish.id}}"><button class="btn btn-lg btn-success"><i class="fas fa-edit"></i> Edit</button></a>
-        <a href="{{url_for('menu.recipe_delete', id=dish.id)}}"><button class="btn btn-lg btn-danger"><i class="fas fa-trash-alt"></i> Delete</button></a>
+        <a href="/menu/recipe/{{dish.id}}"><button class="btn btn-lg btn-success">Edit</button></a>
       </div>
 
     </div>

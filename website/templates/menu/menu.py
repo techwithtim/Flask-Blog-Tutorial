@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for
+from flask.helpers import flash
 from flask_login import login_required
 from website.models import *
 from datetime import datetime, timedelta
@@ -101,8 +102,7 @@ def recipe():
 @login_required
 def recipe_single(id):
     if request.method == "POST":
-        step = request.form['submit_button']
-        if request.form['submit_button'] == 'Steps':
+        if request.form.get('submit_button') == 'Steps':
             num = Steps.query.filter_by(dishfk=id).all()
             
             step = Steps(
@@ -245,6 +245,11 @@ def scrape():
 
         for ing in scraper[1][0]:
             nuts = get_food_item(ing)
+            if nuts == 0:
+                db.session.query(Dish).filter(Dish.id == dishid).delete()
+                db.session.commit()
+                flash("Problem importing.  Try again",category='error')
+                return redirect(url_for('menu.menuHome'))
             make_recipe(nuts,dishid)
 
         i=1

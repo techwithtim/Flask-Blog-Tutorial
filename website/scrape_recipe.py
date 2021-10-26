@@ -6,23 +6,40 @@ def scrape_recipe(website):
     scraper = scrape_me(website,wild_mode=True)
 
     title = scraper.title()
-    # cooktime = scraper.cook_time()
-    # preptime = scraper.prep_time()
+    
+    try:
+        if scraper.cook_time() == 0 or scraper.cook_time() == None:
+            cooktime = 0
+        else:
+            cooktime = scraper.cook_time()
+    except: cooktime = 0
+        
+    try:
+        if scraper.prep_time() == 0 or scraper.prep_time() == None:
+            preptime = 0
+        else: 
+            preptime = scraper.prep_time()
+    except: preptime = 0
+    
+    try:
+        yeild = int(''.join(i for i in scraper.yields() if i.isdigit()))
+        if yeild == 0 or yeild == None:
+            yeild = 1
+    except: yeild = 1
+    
     ings = scraper.ingredients()
-    inst=scraper.instructions()
-    img = scraper.image() 
-    yeild = scraper.yields()
+    inst=scraper.instructions().split('\n')
+    img = scraper.image()
     
-    inst = inst.split('\n')
-    
-    return [[title, img, yeild], [ings], [inst]]
+        
+    return [[title, img, yeild, cooktime, preptime], [ings], [inst]]
 
 
 def make_dish(title, img, yeild):
     newdish = Dish(
         name = title,
         pictureURL = img,
-        numServings = int(''.join(i for i in yeild if i.isdigit())),
+        numServings = yeild,
     )
     db.session.add(newdish)
     db.session.commit()
